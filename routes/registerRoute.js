@@ -1,5 +1,5 @@
 import express from "express";
-import verifyToken from "../utils/authorization.js";
+import verifyToken from "../middlewares/authorization.js";
 import connection from "../db/connection.js";
 import verifyAge from "../utils/ageVerfy.js";
 
@@ -8,7 +8,6 @@ route.post("/mobile", verifyToken, (req, res) => {
   let phone = req.ObtainedData.phone;
   let password = req.body.password;
   let dob = req.body.dob;
-  console.log(dob);
   let username = req.body.username;
   let userid = username.split(" ")[0] + Date.now();
   let isAdult = verifyAge(dob);
