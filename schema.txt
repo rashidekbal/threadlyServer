@@ -1,0 +1,20 @@
+create table otpmodel (phone varchar (255)  not null,
+                      otp int  NOT NULL,
+                     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                      flag boolean default false);
+
+
+
+create table users (
+  userid text not null,
+  username text not null,
+  email text ,
+  phone text ,
+  pass text not null,
+  bio text(500) not null Default ("i am a gpgrammer"),
+  profilepic text ,
+  dob date not null,
+  createdAt DATETIME not null default CURRENT_TIMESTAMP
+)
+
+

@@ -1,0 +1,28 @@
+localhost:8000/api/otp/generateOtpMobile  send otp api requires ex:- {"phone":9123481953}
+
+//verifyotp api  
+
+localhost:8000/api/otp/verifyOtpMobile
+
+requires 
+{
+  "phone":"91224819532",
+  "otp":"564812"
+}
+// resend otp api
+
+localhost:8000/api/otp/resendOtpMobile
+requires
+{"phone":9123481953}
+
+
+// register api
+http://localhost:8000/api/auth/register/mobile
+
+requires beare token from the verifyotp api 
+
+{
+  "password":"pass"
+  "dob":"dob"
+  "name":"name"
+}

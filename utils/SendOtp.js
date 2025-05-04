@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 //generate anmd store and send otp model
 let sendOtp = (req, res) => {
   let OTP = Math.floor(100000 + Math.random() * 900000);
-  let phone = req.body.mobile;
+  let phone = req.body.phone;
   let query = `insert into otpmodel (phone,otp) values ('${phone}',${OTP})`;
   connection.query(query, (err, result) => {
     if (!err) {
@@ -20,13 +20,13 @@ let sendOtp = (req, res) => {
       };
       request(options, (error, response) => {
         if (!error) {
-          res.json({ msg: "sucess", status: response.statusCode });
+          res.sendStatus(response.statusCode);
         } else {
           res.json({ msg: "error occured in sending otp" });
         }
       });
     } else {
-      res.status(500);
+      res.sendStatus(500);
     }
   });
 };
@@ -38,20 +38,22 @@ function verifyOtp(req, res) {
   let query = `SELECT * FROM otpmodel WHERE phone= '${phone}' AND otp='${otp}' AND createdAt >=NOW() -INTERVAL 5 MINUTE AND flag='false' `;
   connection.query(query, (err, response) => {
     if (!err) {
-      console.log(response);
       if (response.length > 0) {
-        let token = jwt.sign({ phone: phone }, process.env.SECRET_KEY);
+        let token = jwt.sign({ phone: phone }, process.env.SECRET_KEY, {
+          expiresIn: "5m",
+        });
         connection.query(
           `delete from otpmodel WHERE phone= '${phone}' AND otp='${otp}'`,
           (error, result) => {}
         );
-        res.status(200).json({ token: token });
+        res.json({ token: token });
       } else {
-        res.status(401).json({ msg: "invalid otp" });
+        res.sendStatus(401).json({ msg: "invalid otp" });
       }
     } else {
-      res.status(500).json({ msg: "something went wrong" });
+      res.sendStatus(500).json({ msg: "something went wrong" });
     }
   });
 }
+
 export { sendOtp, verifyOtp };
