@@ -2,8 +2,10 @@ import express, { json } from "express";
 import OptRoute from "./routes/otpRoute.js";
 import connection from "./db/connection.js";
 import registerRoute from "./routes/registerRoute.js";
+import cors from "cors";
 let app = express();
 app.use(express.json());
+app.use(cors({ origin: "*" }));
 
 app.get("/", (req, res) => {
   res.send("welcome");

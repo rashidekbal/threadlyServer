@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 //generate anmd store and send otp model
 let sendOtp = (req, res) => {
   let OTP = Math.floor(100000 + Math.random() * 900000);
-  let phone = req.body.phone;
+  let phone = req.body.nameValuePairs.phone;
   let query = `insert into otpmodel (phone,otp) values ('${phone}',${OTP})`;
   connection.query(query, (err, result) => {
     if (!err) {
@@ -20,7 +20,7 @@ let sendOtp = (req, res) => {
       };
       request(options, (error, response) => {
         if (!error) {
-          res.sendStatus(response.statusCode);
+          res.json({ message: "sucess" });
         } else {
           res.sendStatus(500);
         }
@@ -33,8 +33,8 @@ let sendOtp = (req, res) => {
 
 //otp verify model
 function verifyOtp(req, res) {
-  let otp = req.body.otp;
-  let phone = req.body.phone;
+  let otp = req.body.nameValuePairs.otp;
+  let phone = req.body.nameValuePairs.phone;
   let query = `SELECT * FROM otpmodel WHERE phone= '${phone}' AND otp='${otp}' AND createdAt >=NOW() -INTERVAL 5 MINUTE AND flag='false' `;
   connection.query(query, (err, response) => {
     if (!err) {

@@ -1,6 +1,6 @@
 import connection from "../db/connection.js";
 export default function ifUserExistsMobile(req, res, next) {
-  let query = `select * from users where phone ='${req.body.phone}'`;
+  let query = `select * from users where phone ='${req.body.nameValuePairs.phone}'`;
   connection.query(query, (err, response) => {
     if (!err) {
       if (response.length > 0) return res.sendStatus(409);

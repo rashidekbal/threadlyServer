@@ -26,3 +26,8 @@ requires beare token from the verifyotp api
   "dob":"dob"
   "name":"name"
 }
+
+
+test api port forwarded
+
+https://rjwqzfvg-8000.inc1.devtunnels.ms/

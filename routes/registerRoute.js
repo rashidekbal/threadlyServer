@@ -6,9 +6,9 @@ import verifyAge from "../utils/ageVerfy.js";
 let route = express.Router();
 route.post("/mobile", verifyToken, (req, res) => {
   let phone = req.ObtainedData.phone;
-  let password = req.body.password;
-  let dob = req.body.dob;
-  let username = req.body.username;
+  let password = req.body.nameValuePairs.password;
+  let dob = req.body.nameValuePairs.dob;
+  let username = req.body.nameValuePairs.username;
   if (!phone || !password || !dob || !username) {
     return res.sendStatus(400);
   }
