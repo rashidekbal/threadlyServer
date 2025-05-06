@@ -22,7 +22,7 @@ let sendOtp = (req, res) => {
         if (!error) {
           res.sendStatus(response.statusCode);
         } else {
-          res.json({ msg: "error occured in sending otp" });
+          res.sendStatus(500);
         }
       });
     } else {

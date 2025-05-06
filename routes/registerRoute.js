@@ -9,6 +9,10 @@ route.post("/mobile", verifyToken, (req, res) => {
   let password = req.body.password;
   let dob = req.body.dob;
   let username = req.body.username;
+  if (!phone || !password || !dob || !username) {
+    return res.sendStatus(400);
+  }
+
   let userid = username.split(" ")[0] + Date.now();
   let isAdult = verifyAge(dob);
   let db_query = `insert into users (userid,username,phone,pass,dob) values (?,?,?,?,?)`;
