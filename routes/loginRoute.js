@@ -5,17 +5,23 @@ import "dotenv/config";
 import bcrypt from "bcrypt";
 let router = express.Router();
 router.post("/mobile", async (req, res) => {
-  let phone = req.body.nameValuePair.phone;
-  let password = req.body.nameValuePair.password;
-  if (!password || !phone) res.sendStatus(400);
+  let phone = req.body.nameValuePairs.phone;
+  let password = req.body.nameValuePairs.password;
+  if (!password || !phone) return res.sendStatus(400);
   try {
     let response = await fetchUser("phone", phone);
     if (response.length > 0) {
       let userdata = response[0];
       let is_match = await bcrypt.compare(password, userdata.pass);
       if (is_match) {
-        let token = jwt.sign({ id: userdata.userid }, process.env.SECRET_KEY);
-        res.json({ token: token });
+        let token = jwt.sign(userdata.userid, process.env.SECRET_KEY);
+        res.json({
+          message: "sucess",
+          username: userdata.username,
+          profile: userdata.profilepic,
+          userid: userdata.userid,
+          token: token,
+        });
       } else {
         res.sendStatus(403);
       }
@@ -23,7 +29,6 @@ router.post("/mobile", async (req, res) => {
       res.sendStatus(403);
     }
   } catch (e) {
-    console.log(e);
     res.sendStatus(403);
   }
 });

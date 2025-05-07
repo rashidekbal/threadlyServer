@@ -7,12 +7,17 @@ let router = express.Router();
 router.post("/generateOtpMobile", ifUserExistsMobile, (req, res) => {
   sendOtp(req, res);
 });
-router.post("/resendOtpMobile", ifUserExistsMobile, (req, res) => {
+router.post("/resendOtpMobile", ifUserExistsMobile, async (req, res) => {
   let phone = req.body.nameValuePairs.phone;
-  connection.query(
-    `delete from otpmodel where phone ='${phone}'`,
-    (err, result) => {}
-  );
+  let response = await new Promise((resolve, reject) => {
+    connection.query(
+      `delete from otpmodel where phone ='${phone}'`,
+      (err, result) => {
+        if (!err) resolve(result);
+        else reject("error deleting otp");
+      }
+    );
+  });
   sendOtp(req, res);
 });
 router.post("/verifyOtpMobile", verifyOtp);

@@ -35,8 +35,9 @@ let sendOtp = (req, res) => {
 function verifyOtp(req, res) {
   let otp = req.body.nameValuePairs.otp;
   let phone = req.body.nameValuePairs.phone;
-  let query = `SELECT * FROM otpmodel WHERE phone= '${phone}' AND otp='${otp}' AND createdAt >=NOW() -INTERVAL 5 MINUTE AND flag='false' `;
-  connection.query(query, (err, response) => {
+  if (!otp || !phone) return res.sendStatus(400);
+  let query = `SELECT * FROM otpmodel WHERE phone= ? AND otp=? AND createdAt >=NOW() -INTERVAL 5 MINUTE AND flag='false' `;
+  connection.query(query, [phone, otp], (err, response) => {
     if (!err) {
       if (response.length > 0) {
         let token = jwt.sign({ phone: phone }, process.env.SECRET_KEY, {
@@ -48,7 +49,7 @@ function verifyOtp(req, res) {
         );
         res.json({ token: token });
       } else {
-        res.sendStatus(401).json({ msg: "invalid otp" });
+        res.sendStatus(401);
       }
     } else {
       res.sendStatus(500).json({ msg: "something went wrong" });
