@@ -24,7 +24,7 @@ route.post("/mobile", verifyToken, (req, res) => {
   } else {
     connection.query(db_query, data, (err, response) => {
       if (!err) {
-        let token = jwt.sign(userid, process.env.SECRET_TOKEN);
+        let token = jwt.sign(userid, process.env.SECRET_KEY);
         res.json({
           message: "sucess",
           username: username,
