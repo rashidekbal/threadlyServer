@@ -2,6 +2,8 @@ import express from "express";
 import verifyToken from "../middlewares/authorization.js";
 import connection from "../db/connection.js";
 import verifyAge from "../utils/ageVerfy.js";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 let route = express.Router();
 route.post("/mobile", verifyToken, (req, res) => {
@@ -22,11 +24,13 @@ route.post("/mobile", verifyToken, (req, res) => {
   } else {
     connection.query(db_query, data, (err, response) => {
       if (!err) {
+        let token = jwt.sign(userid, process.env.SECRET_TOKEN);
         res.json({
           message: "sucess",
           username: username,
           profile: null,
           userid: userid,
+          token: token,
         });
       } else {
         res.sendStatus(500);
