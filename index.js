@@ -2,6 +2,7 @@ import express, { json } from "express";
 import OptRoute from "./routes/otpRoute.js";
 import connection from "./db/connection.js";
 import registerRoute from "./routes/registerRoute.js";
+import loginRoute from "./routes/loginRoute.js";
 import cors from "cors";
 let app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
 //routes
 app.use("/api/otp", OptRoute);
 app.use("/api/auth/register", registerRoute);
+app.use("/api/auth/login", loginRoute);
 
 connection.connect((err) => {
   if (!err) {

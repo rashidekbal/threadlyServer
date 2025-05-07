@@ -4,9 +4,10 @@ import connection from "../db/connection.js";
 import verifyAge from "../utils/ageVerfy.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import bcrypt from "bcrypt";
 
 let route = express.Router();
-route.post("/mobile", verifyToken, (req, res) => {
+route.post("/mobile", verifyToken, async (req, res) => {
   let phone = req.ObtainedData.phone;
   let password = req.body.nameValuePairs.password;
   let dob = req.body.nameValuePairs.dob;
@@ -14,13 +15,18 @@ route.post("/mobile", verifyToken, (req, res) => {
   if (!phone || !password || !dob || !username) {
     return res.sendStatus(400);
   }
+  try {
+    password = await bcrypt.hash(password, 10);
+  } catch (error) {
+    console.log(error);
+  }
 
   let userid = username.split(" ")[0] + Date.now();
   let isAdult = verifyAge(dob);
   let db_query = `insert into users (userid,username,phone,pass,dob) values (?,?,?,?,?)`;
   let data = [`${userid}`, `${username}`, `${phone}`, `${password}`, `${dob}`];
   if (!isAdult) {
-    res.sendStatus(403);
+    return res.sendStatus(403);
   } else {
     connection.query(db_query, data, (err, response) => {
       if (!err) {
