@@ -24,10 +24,11 @@ requires beare token from the verifyotp api
 {
   "password":"pass"
   "dob":"dob"
-  "name":"name"
+  "username":"name"
 }
 
 
 test api port forwarded
 
 https://rjwqzfvg-8000.inc1.devtunnels.ms/
+

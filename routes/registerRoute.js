@@ -22,7 +22,12 @@ route.post("/mobile", verifyToken, (req, res) => {
   } else {
     connection.query(db_query, data, (err, response) => {
       if (!err) {
-        res.sendStatus(201);
+        res.json({
+          message: "sucess",
+          username: username,
+          profile: null,
+          userid: userid,
+        });
       } else {
         res.sendStatus(500);
       }
