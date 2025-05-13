@@ -1,19 +1,26 @@
-localhost:8000/api/otp/generateOtpMobile  send otp api requires ex:- {"phone":9123481953}
+localhost:8000/api/otp/generateOtpMobile  send otp api requires ex:-  
+{"nameValuePairs":{
+        "phone":"9123481953"
+     
+    }}
 
 //verifyotp api  
 
 localhost:8000/api/otp/verifyOtpMobile
 
 requires 
-{
+{"nameValuePairs":{
   "phone":"91224819532",
   "otp":"564812"
-}
+}}
 // resend otp api
 
 localhost:8000/api/otp/resendOtpMobile
 requires
-{"phone":9123481953}
+{"nameValuePairs":{
+        "phone":"9123481953"
+     
+    }}
 
 
 // register api
@@ -21,12 +28,22 @@ http://localhost:8000/api/auth/register/mobile
 
 requires beare token from the verifyotp api 
 
-{
+{"nameValuePairs":{
   "password":"pass"
-  "dob":"dob"
+  "dob":"yyyy-mm-dd"
   "username":"name"
-}
+        
+     
+    }}
 
+// login mobile 
+http://localhost:8000/api/auth/login/mobile or /email or /userid
+
+{"nameValuePairs":{
+  "userid":"userid"
+  "password":"password"
+     
+    }}
 
 test api port forwarded
 

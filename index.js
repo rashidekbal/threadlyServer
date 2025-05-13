@@ -4,10 +4,14 @@ import connection from "./db/connection.js";
 import registerRoute from "./routes/registerRoute.js";
 import loginRoute from "./routes/loginRoute.js";
 import cors from "cors";
+import postRoute from "./routes/postsRoute.js";
+import LikeRouter from "./routes/likesRoute.js";
+import followRoute from "./routes/followRoute.js";
+import commentRoute from "./routes/commentsRoute.js";
 let app = express();
-app.use(express.json());
+app.use(express.json({ limit: "16kb" }));
 app.use(cors({ origin: "*" }));
-
+app.use(express.static("public"));
 app.get("/", (req, res) => {
   res.send("welcome");
 });
@@ -16,7 +20,10 @@ app.get("/", (req, res) => {
 app.use("/api/otp", OptRoute);
 app.use("/api/auth/register", registerRoute);
 app.use("/api/auth/login", loginRoute);
-
+app.use("/api/posts", postRoute);
+app.use("/api/like", LikeRouter);
+app.use("/api/follow", followRoute);
+app.use("/api/comment", commentRoute);
 connection.connect((err) => {
   if (!err) {
     console.log("connected to db");

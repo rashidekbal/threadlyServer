@@ -20,7 +20,7 @@ let sendOtp = (req, res) => {
       };
       request(options, (error, response) => {
         if (!error) {
-          res.json({ message: "sucess" });
+          res.json({ message: "sucess", statuscode: response.statusCode });
         } else {
           res.sendStatus(500);
         }

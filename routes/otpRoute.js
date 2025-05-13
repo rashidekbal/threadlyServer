@@ -1,5 +1,5 @@
 import express from "express";
-import { sendOtp, verifyOtp } from "../utils/SendOtp.js";
+import { sendOtp, verifyOtp } from "../Controllers/SendOtpController.js";
 import ifUserExistsMobile from "../middlewares/userExistance.js";
 
 import connection from "../db/connection.js";
