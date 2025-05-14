@@ -20,6 +20,7 @@ async function uploadOnColudinary(localpath) {
     });
 
     fs.unlinkSync(localpath);
+    response.url = response.url.replace("http://", "https://");
     return response.url;
   } catch (error) {
     fs.unlinkSync(localpath); //remove temp file

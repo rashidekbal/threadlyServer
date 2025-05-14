@@ -45,6 +45,27 @@ http://localhost:8000/api/auth/login/mobile or /email or /userid
      
     }}
 
+
+
+//create post 
+http://localhost:8000/api/posts/createPost
+requires logged in with bearer token
+{
+  "image":image.jpg,
+  "caption":"caption"
+}
+
+http://localhost:8000/api/posts/removePost
+requires to be logged in with bearer token
+{
+  "nameValuePairs":{
+    "postid":eg 1
+  }
+}
+http://localhost:8000/api/posts/getPostsFeed
+
+requires to be logged in with bearer token
+
 test api port forwarded
 
 https://rjwqzfvg-8000.inc1.devtunnels.ms/

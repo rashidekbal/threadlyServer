@@ -47,6 +47,24 @@ create table post_likes (
   on delete cascade
   
 );
+create table post_shares (
+  shareid int primary key auto_increment,
+  sharerid varchar(250) not null,
+  sharedto varchar (250) not null,
+  postid int not null,
+  createdAt datetime default current_timestamp,
+  foreign key (sharerid) references users(userid) 
+  on update cascade 
+  on delete cascade,
+  foreign key (sharedto) references users(userid) 
+  on update cascade 
+  on delete cascade,
+  foreign key (postid) references imagePost(postid)
+  on update cascade 
+  on delete cascade
+  
+);
+
 
 create table followers (
   followid int primary key auto_increment,
