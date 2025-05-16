@@ -8,7 +8,7 @@ let likeController = async (req, res) => {
   let query = "insert into post_likes (userid,postid) values (?,?)";
   try {
     let response = await fetchDb(query, [userid, Number(postid)]);
-    res.sendStatus(201);
+    res.json({ status: 201 });
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
@@ -21,7 +21,7 @@ let unlikeController = async (req, res) => {
   let query = "delete from post_likes where  userid = ? and postid=? ";
   try {
     let response = await fetchDb(query, [userid, Number(postid)]);
-    res.sendStatus(201);
+    res.json({ status: 201 });
   } catch (error) {
     console.log(error);
     res.sendStatus(500);

@@ -35,11 +35,12 @@ async function removePost(req, res) {
 }
 
 async function getFeed(req, res) {
-  let query = ` 
-select p.*,u.username,u.profilepic,count(distinct pl.likeid) as likeCount , count(distinct post_Comments.commentid) as commentCount,count(distinct ps.shareid) as shareCount from imagepost as p join users as u  on p.userid=u.userid left join post_likes as pl on p.postid=pl.postid  left join post_comments on p.postid=post_comments.postid left join post_shares as ps on p.postid=ps.postid group by p.postid limit 100
+  let userid = req.ObtainedData;
+  let query = ` select p.*,u.username,u.profilepic, pl.userid as likedBy,count(distinct pl.likeid) as likeCount ,count(distinct post_Comments.commentid) as commentCount,count(distinct ps.shareid) as shareCount ,count (distinct plp.likeid) as isLiked from imagepost as p join users as u  on p.userid=u.userid left join post_likes as pl on p.postid=pl.postid left join post_comments on p.postid=post_comments.postid left join post_shares as ps on p.postid=ps.postid left join post_likes as plp on p.postid=plp.postid and plp.userid=? group by p.postid limit 100
 `;
+
   try {
-    let response = await fetchDb(query, null);
+    let response = await fetchDb(query, [userid]);
 
     res.json(response);
   } catch (error) {
