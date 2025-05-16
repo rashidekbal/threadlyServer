@@ -4,7 +4,7 @@ import fetchDb from "../utils/query.js";
 async function addPost(req, res) {
   let userid = req.ObtainedData;
   let caption = req.body.caption;
-  let imagePath = req.file?.path;
+  let imagePath = req.file?.buffer;
   if (!imagePath) return res.sendStatus(500);
   try {
     let url = await uploadOnColudinary(imagePath);
