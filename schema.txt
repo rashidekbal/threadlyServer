@@ -19,7 +19,7 @@ create table users (
 
 
 
-create table imagePost (
+create table imagepost (
 postid int primary key auto_increment,
   userid varchar (250) not null,
   imageurl text  not null,
