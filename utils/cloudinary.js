@@ -10,7 +10,7 @@ cloudinary.config({
 });
 
 // Upload an image
-ync function uploadOnColudinary(buffer) {
+async function uploadOnColudinary(buffer) {
   try {
     if (!buffer) return null;
 
@@ -32,5 +32,4 @@ ync function uploadOnColudinary(buffer) {
 
 export default uploadOnColudinary;
 
-
-as
+as;
