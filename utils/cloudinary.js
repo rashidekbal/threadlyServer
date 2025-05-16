@@ -1,4 +1,16 @@
-async function uploadOnColudinary(buffer) {
+import { v2 as cloudinary } from "cloudinary";
+import "dotenv/config";
+import fs from "fs";
+
+// Configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET_KEY,
+});
+
+// Upload an image
+ync function uploadOnColudinary(buffer) {
   try {
     if (!buffer) return null;
 
@@ -17,3 +29,8 @@ async function uploadOnColudinary(buffer) {
     return null;
   }
 }
+
+export default uploadOnColudinary;
+
+
+as
