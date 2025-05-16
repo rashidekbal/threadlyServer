@@ -9,7 +9,7 @@ async function addPost(req, res) {
   try {
     let url = await uploadOnColudinary(imagePath);
     if (!url) return res.sendStatus(500);
-    let query = `insert into imagePost (userid,imageurl,caption) values (?,?,?)`;
+    let query = `insert into imagepost (userid,imageurl,caption) values (?,?,?)`;
     let data = [userid, url, caption];
     let response = await fetchDb(query, data);
     res.json({
@@ -25,7 +25,7 @@ async function removePost(req, res) {
   let postid = req.body.namevaluePairs.postid;
 
   try {
-    let query = `delete from imagePost where userid=? and postid=?`;
+    let query = `delete from imagepost where userid=? and postid=?`;
     let data = [userid, Number(postid)];
     let response = await fetchDb(query, data);
     res.sendStatus(201);

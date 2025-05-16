@@ -1,6 +1,6 @@
 create table otpmodel (phone varchar (255)  not null,
                       otp int  NOT NULL,
-                     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                       flag boolean default false);
 
 
