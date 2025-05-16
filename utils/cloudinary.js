@@ -31,5 +31,3 @@ async function uploadOnColudinary(buffer) {
 }
 
 export default uploadOnColudinary;
-
-as;
