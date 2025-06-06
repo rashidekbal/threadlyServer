@@ -1,6 +1,6 @@
 import fetchDb from "../utils/query.js";
 
-// take post id userid post id in int, and pust for like route for unlike route take like id
+// take post id userid post id in int, and post for like route for unlike route take like id
 let followController = async (req, res) => {
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;

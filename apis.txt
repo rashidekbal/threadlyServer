@@ -66,6 +66,13 @@ http://localhost:8000/api/posts/getPostsFeed
 
 requires to be logged in with bearer token
 
+
+
+
+
+
+
+
 test api port forwarded
 
 https://rjwqzfvg-8000.inc1.devtunnels.ms/

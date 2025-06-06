@@ -27,4 +27,15 @@ let unlikeController = async (req, res) => {
     res.sendStatus(500);
   }
 };
-export { likeController, unlikeController };
+async function likeAcomment(req, res) {
+  let userid = req.ObtainedData;
+  let commentid = req.params.commentid;
+  let query = `insert into comment_likes (userid,commentid) value(?,?)`;
+  try {
+    let response = await fetchDb(query, [userid, commentid]);
+    res.json({ status: 201 });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+}
+export { likeController, unlikeController, likeAcomment };

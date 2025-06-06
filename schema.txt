@@ -97,6 +97,24 @@ create table post_comments (
   on delete cascade
   
 );
+create table if not exists comment_likes (
+comment_like_id int primary key auto_increment,
+  userid varchar(250) not null, 
+  commentid int not null ,
+  createdAt datetime default current_timestamp,
+  foreign key (userid) references users(userid)  on update cascade on delete cascade,
+  foreign key (commentid) references post_comments(commentid) on update cascade on delete cascade
+)
+
+
+
+
+
+
+
+
+
+
 
 
 
