@@ -5,12 +5,13 @@ let addComentController = async (req, res) => {
   let userid = req.ObtainedData;
   let postid = req.body.nameValuePairs.postid;
   let comment = req.body.nameValuePairs.comment;
+
   if (!postid || !comment) return res.sendStatus(400);
   let query =
     "insert into post_comments (userid,postid,comment_text) values (?,?,?)";
   try {
     let response = await fetchDb(query, [userid, Number(postid), comment]);
-    res.sendStatus(201);
+    res.json({ status: 201, commnetid: response.insertId });
   } catch (error) {
     console.log(error);
     res.sendStatus(500);

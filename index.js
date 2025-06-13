@@ -8,6 +8,7 @@ import postRoute from "./routes/postsRoute.js";
 import LikeRouter from "./routes/likesRoute.js";
 import followRoute from "./routes/followRoute.js";
 import commentRoute from "./routes/commentsRoute.js";
+import usersRouter from "./routes/usersRoute.js";
 let app = express();
 app.use(express.json({ limit: "16kb" }));
 app.use(cors({ origin: "*" }));
@@ -24,6 +25,7 @@ app.use("/api/posts", postRoute);
 app.use("/api/like", LikeRouter);
 app.use("/api/follow", followRoute);
 app.use("/api/comment", commentRoute);
+app.use("/api/users", usersRouter);
 connection.connect((err) => {
   if (!err) {
     console.log("connected to db");

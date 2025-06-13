@@ -1,13 +1,30 @@
-import uploadOnColudinary from "../utils/cloudinary.js";
+import {
+  uploadOnColudinaryFromRam,
+  uploadOnColudinaryviaLocalPath,
+} from "../utils/cloudinary.js";
 import fetchDb from "../utils/query.js";
+import "dotenv/config";
 
 async function addPost(req, res) {
+  let imagePath;
+  let url;
+  let ProductionMode = process.env.PRODUCTION == "true";
+
   let userid = req.ObtainedData;
   let caption = req.body.caption;
-  let imagePath = req.file?.buffer;
-  if (!imagePath) return res.sendStatus(500);
+  if (ProductionMode) {
+    imagePath = req.file?.buffer;
+
+    if (!imagePath) return res.sendStatus(500);
+    url = await uploadOnColudinaryFromRam(imagePath);
+  } else {
+    imagePath = req.file?.path;
+    console.log(req.file.path);
+    if (!imagePath) return res.sendStatus(500);
+    url = await uploadOnColudinaryviaLocalPath(imagePath);
+  }
+
   try {
-    let url = await uploadOnColudinary(imagePath);
     if (!url) return res.sendStatus(500);
     let query = `insert into imagepost (userid,imageurl,caption) values (?,?,?)`;
     let data = [userid, url, caption];

@@ -30,6 +30,7 @@ let unlikeController = async (req, res) => {
 async function likeAcomment(req, res) {
   let userid = req.ObtainedData;
   let commentid = req.params.commentid;
+
   let query = `insert into comment_likes (userid,commentid) value(?,?)`;
   try {
     let response = await fetchDb(query, [userid, commentid]);
@@ -38,4 +39,17 @@ async function likeAcomment(req, res) {
     res.sendStatus(500);
   }
 }
-export { likeController, unlikeController, likeAcomment };
+
+async function unlikeAcomment(req, res) {
+  let userid = req.ObtainedData;
+  let commentid = req.params.commentid;
+
+  let query = `delete from comment_likes where userid= ? and commentid= ?`;
+  try {
+    let response = await fetchDb(query, [userid, commentid]);
+    res.json({ status: 201 });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+}
+export { likeController, unlikeController, likeAcomment, unlikeAcomment };

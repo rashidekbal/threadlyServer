@@ -13,7 +13,7 @@ let sendOtp = (req, res) => {
         method: "POST",
         url: "https://dbuddyz.com/send/",
         formData: {
-          token: "24d806a04d60b185bbec8e6e230eb0a2",
+          token: "0e35f73f2dbfcaeb48d084a3fdde1883",
           otp: OTP,
           tonumber: `+91` + phone,
         },

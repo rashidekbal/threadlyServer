@@ -10,7 +10,7 @@ cloudinary.config({
 });
 
 // Upload an image
-async function uploadOnColudinary(buffer) {
+async function uploadOnColudinaryFromRam(buffer) {
   try {
     if (!buffer) return null;
 
@@ -30,4 +30,21 @@ async function uploadOnColudinary(buffer) {
   }
 }
 
-export default uploadOnColudinary;
+//upload on cloudnary from storage
+
+async function uploadOnColudinaryviaLocalPath(localpath) {
+  try {
+    if (!localpath) return null;
+    let response = await cloudinary.uploader.upload(localpath, {
+      resource_type: "auto",
+    });
+    fs.unlinkSync(localpath);
+    response.url = response.url.replace("http://", "https://");
+    return response.url;
+  } catch (error) {
+    fs.unlinkSync(localpath); //remove temp file
+    return null;
+  }
+}
+
+export { uploadOnColudinaryFromRam, uploadOnColudinaryviaLocalPath };
