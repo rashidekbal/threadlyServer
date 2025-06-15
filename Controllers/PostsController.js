@@ -65,5 +65,18 @@ async function getFeed(req, res) {
     res.sendStatus(500);
   }
 }
+async function getUserPostsController(req, res) {
+  let userid = req.params.userid;
+  let query = `select imagepost.* from imagepost join users on imagepost.userid=users.userid where users.userid=? group by imagepost.postid
+`;
+  try {
+    let response = await fetchDb(query, [userid]);
+    res.json({ status: 200, data: response });
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+  res.send(userid);
+}
 
-export { addPost, removePost, getFeed };
+export { addPost, removePost, getFeed, getUserPostsController };

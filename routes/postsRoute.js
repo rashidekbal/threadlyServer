@@ -6,6 +6,7 @@ import "dotenv/config";
 import {
   addPost,
   getFeed,
+  getUserPostsController,
   removePost,
 } from "../Controllers/PostsController.js";
 let ProductionMode = process.env.PRODUCTION == "true";
@@ -25,5 +26,6 @@ if (ProductionMode) {
 }
 Router.route("/removePost").post(verifyToken, removePost);
 Router.route("/getPostsFeed").get(verifyToken, getFeed);
+Router.get("/getUserPosts/:userid", verifyToken, getUserPostsController);
 
 export default Router;

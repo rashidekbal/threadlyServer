@@ -4,11 +4,12 @@ import fetchDb from "../utils/query.js";
 let followController = async (req, res) => {
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
+
   if (!followingid) return res.sendStatus(400);
   let query = "insert into followers (followerid,followingid) values (?,?)";
   try {
     let response = await fetchDb(query, [followerid, followingid]);
-    res.sendStatus(201);
+    res.json({ status: 201, msg: "followed" });
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
