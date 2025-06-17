@@ -1,9 +1,9 @@
 import fetchDb from "../utils/query.js";
 
 // take post id userid post id in int, and pust for like route for unlike route take like id
-let likeController = async (req, res) => {
+let PostlikeController = async (req, res) => {
   let userid = req.ObtainedData;
-  let postid = req.body.nameValuePairs.postid;
+  let postid = req.params.postid;
   if (!postid) return res.sendStatus(400);
   let query = "insert into post_likes (userid,postid) values (?,?)";
   try {
@@ -14,9 +14,10 @@ let likeController = async (req, res) => {
     res.sendStatus(500);
   }
 };
-let unlikeController = async (req, res) => {
+let PostunlikeController = async (req, res) => {
   let userid = req.ObtainedData;
-  let postid = req.body.nameValuePairs.postid;
+  let postid = req.params.postid;
+
   if (!postid) return res.sendStatus(400);
   let query = "delete from post_likes where  userid = ? and postid=? ";
   try {
@@ -27,7 +28,7 @@ let unlikeController = async (req, res) => {
     res.sendStatus(500);
   }
 };
-async function likeAcomment(req, res) {
+async function CommentLikeContorller(req, res) {
   let userid = req.ObtainedData;
   let commentid = req.params.commentid;
 
@@ -40,10 +41,9 @@ async function likeAcomment(req, res) {
   }
 }
 
-async function unlikeAcomment(req, res) {
+async function CommentUnlikeController(req, res) {
   let userid = req.ObtainedData;
   let commentid = req.params.commentid;
-
   let query = `delete from comment_likes where userid= ? and commentid= ?`;
   try {
     let response = await fetchDb(query, [userid, commentid]);
@@ -52,4 +52,9 @@ async function unlikeAcomment(req, res) {
     res.sendStatus(500);
   }
 }
-export { likeController, unlikeController, likeAcomment, unlikeAcomment };
+export {
+  PostlikeController,
+  PostunlikeController,
+  CommentLikeContorller,
+  CommentUnlikeController,
+};

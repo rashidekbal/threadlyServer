@@ -50,7 +50,19 @@ async function removePost(req, res) {
     return res.sendStatus(500);
   }
 }
+let getPostinfo = async (req, res) => {
+  let userid = req.ObtainedData;
+  let postid = req.params.postid;
+  let query = `select p.*,u.username,u.profilepic, pl.userid as likedBy,count(distinct pl.likeid) as likeCount ,count(distinct post_comments.commentid) as commentCount,count(distinct ps.shareid) as shareCount ,count (distinct plp.likeid) as isLiked from imagepost as p join users as u  on p.userid=u.userid left join post_likes as pl on p.postid=pl.postid left join post_comments on p.postid=post_comments.postid left join post_shares as ps on p.postid=ps.postid left join post_likes as plp on p.postid=plp.postid and plp.userid=? where p.postid=?`;
+  try {
+    let response = await fetchDb(query, [userid, postid]);
 
+    res.json({ status: 200, data: response });
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+};
 async function getFeed(req, res) {
   let userid = req.ObtainedData;
   let query = ` select p.*,u.username,u.profilepic, pl.userid as likedBy,count(distinct pl.likeid) as likeCount ,count(distinct post_comments.commentid) as commentCount,count(distinct ps.shareid) as shareCount ,count (distinct plp.likeid) as isLiked from imagepost as p join users as u  on p.userid=u.userid left join post_likes as pl on p.postid=pl.postid left join post_comments on p.postid=post_comments.postid left join post_shares as ps on p.postid=ps.postid left join post_likes as plp on p.postid=plp.postid and plp.userid=? group by p.postid limit 100
@@ -71,12 +83,11 @@ async function getUserPostsController(req, res) {
 `;
   try {
     let response = await fetchDb(query, [userid]);
-    res.json({ status: 200, data: response });
+    return res.json({ status: 200, data: response });
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
-  res.send(userid);
 }
 
-export { addPost, removePost, getFeed, getUserPostsController };
+export { addPost, removePost, getFeed, getUserPostsController, getPostinfo };
