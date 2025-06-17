@@ -1,6 +1,7 @@
 import request from "request";
 import connection from "../db/connection.js";
 import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 //generate anmd store and send otp model
 let sendOtp = (req, res) => {
@@ -13,7 +14,7 @@ let sendOtp = (req, res) => {
         method: "POST",
         url: "https://dbuddyz.com/send/",
         formData: {
-          token: "0e35f73f2dbfcaeb48d084a3fdde1883",
+          token: process.env.DBUDDY_API_KEY,
           otp: OTP,
           tonumber: `+91` + phone,
         },
