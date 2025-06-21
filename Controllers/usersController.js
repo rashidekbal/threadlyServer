@@ -36,9 +36,9 @@ async function getUserController(req, res) {
   let userid = req.ObtainedData;
   let useridtofetch = req.params.userid;
   if (!useridtofetch) return res.sendStatus(400);
-  const query = `select users.userid,users.username,users.profilepic,users.bio ,count(distinct imgpsts.postid)as Posts ,count(distinct following.followid) as Following , count(distinct followersCount.followid) as Followers , count(distinct isFollowedByUser.followid)as isFollowedByUser from users left join imagepost as imgpsts on users.userid=imgpsts.userid left join followers as following on following.followerid=users.userid left join followers as followersCount on users.userid=followersCount.followingid left join followers as isFollowedByUser on users.userid=isFollowedByUser.followingid and isFollowedByUser.followerid=?  where users.userid=? group by users.userid`;
+  const query = `select users.userid,users.username,users.profilepic,users.bio ,count(distinct imgpsts.postid)as Posts ,count(distinct following.followid) as Following , count(distinct followersCount.followid) as Followers , count(distinct isFollowedByUser.followid)as isFollowedByUser ,count(distinct isFollowingUser.followid)as isFollowingUser from users left join imagepost as imgpsts on users.userid=imgpsts.userid left join followers as following on following.followerid=users.userid left join followers as followersCount on users.userid=followersCount.followingid left join followers as isFollowedByUser on users.userid=isFollowedByUser.followingid and isFollowedByUser.followerid=? left join followers as isFollowingUser on users.userid=isFollowingUser.followerid and isFollowingUser.followingid=? where users.userid=? group by users.userid`;
   try {
-    let response = await fetchDb(query, [userid, useridtofetch]);
+    let response = await fetchDb(query, [userid, userid, useridtofetch]);
     return res.json({ status: 200, data: response });
   } catch (err) {
     console.log(err);

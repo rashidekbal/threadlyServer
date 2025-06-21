@@ -9,6 +9,7 @@ import LikeRouter from "./routes/likesRoute.js";
 import followRoute from "./routes/followRoute.js";
 import commentRoute from "./routes/commentsRoute.js";
 import usersRouter from "./routes/usersRoute.js";
+import ForgetPasswordRoute from "./routes/ForgetPasswordRoute.js";
 let app = express();
 app.use(express.json({ limit: "16kb" }));
 app.use(cors({ origin: "*" }));
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 app.use("/api/otp", OptRoute);
 app.use("/api/auth/register", registerRoute);
 app.use("/api/auth/login", loginRoute);
+app.use("/api/resetPassword", ForgetPasswordRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/like", LikeRouter);
 app.use("/api/follow", followRoute);
