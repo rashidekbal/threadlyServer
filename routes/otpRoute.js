@@ -1,33 +1,70 @@
 import express from "express";
-import { sendOtp, verifyOtp } from "../Controllers/SendOtpController.js";
-import ifUserExistsMobile from "../middlewares/userExistance.js";
+import {
+  generateOtpEmail,
+  sendOtpMobile,
+  verifyOtpEmail,
+  verifyOtpMobile,
+} from "../Controllers/OtpController.js";
+import {
+  ifUserExistsEmail,
+  ifUserExistsMobile,
+} from "../middlewares/userExistance.js";
 
 import connection from "../db/connection.js";
-import { userMobileExistanceForgetPassword } from "../middlewares/User_existence_forgot_password.js";
+import {
+  userEmailExistanceForgetPassword,
+  userMobileExistanceForgetPassword,
+} from "../middlewares/User_existence_forgot_password.js";
+import fetchDb from "../utils/query.js";
+import { sendEmailOtp } from "../utils/nodemailer.js";
 let router = express.Router();
-router.post("/generateOtpMobile", ifUserExistsMobile, (req, res) => {
-  sendOtp(req, res);
+
+// mobile otp section
+//generate mobile otp
+router.post("/generateOtpMobile", ifUserExistsMobile, sendOtpMobile);
+//regenerate mobile otp
+router.post("/resendOtpMobile", ifUserExistsMobile, async (req, res) => {
+  let phone = req.body.nameValuePairs.phone;
+  try {
+    let response = await fetchDb(`delete from otpmodel where phone_email =?`, [
+      phone,
+    ]);
+  } catch (error) {}
+  sendOtpMobile(req, res);
 });
+//generate mobile otp for forget password
 router.post(
   "/ForgetPasswordGenerateOtpMobile",
   userMobileExistanceForgetPassword,
-  (req, res) => {
-    sendOtp(req, res);
-  }
+  sendOtpMobile
 );
-router.post("/resendOtpMobile", ifUserExistsMobile, async (req, res) => {
-  let phone = req.body.nameValuePairs.phone;
-  let response = await new Promise((resolve, reject) => {
-    connection.query(
-      `delete from otpmodel where phone ='${phone}'`,
-      (err, result) => {
-        if (!err) resolve(result);
-        else reject("error deleting otp");
-      }
-    );
-  });
-  sendOtp(req, res);
+// verify mobile otp
+router.post("/verifyOtpMobile", verifyOtpMobile);
+
+//emial otp section
+
+//generate email otp
+router.post("/generateOtpEmail", ifUserExistsEmail, generateOtpEmail);
+
+//resend opt email
+router.post("/resendOtpEmail", ifUserExistsEmail, async (req, res) => {
+  let email = req.body.nameValuePairs.email;
+  try {
+    let response = await fetchDb(`delete from otpmodel where phone_email =?`, [
+      email,
+    ]);
+  } catch (error) {}
+  generateOtpEmail(req, res);
 });
-router.post("/verifyOtpMobile", verifyOtp);
+
+// verify email otp
+router.post("/verifyOtpEmail", verifyOtpEmail);
+
+//generate email otp for forget password
+router.post(
+  "/ForgetPasswordGenerateOtpEmail",
+  userEmailExistanceForgetPassword,
+  generateOtpEmail
+);
 
 export default router;

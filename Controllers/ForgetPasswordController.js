@@ -17,4 +17,20 @@ async function resetPasswordMobileContorler(req, res) {
     res.SendStatus(500);
   }
 }
-export { resetPasswordMobileContorler };
+
+async function resetPasswordEmailContorler(req, res) {
+  let email = req.ObtainedData.email;
+  let password = req.body.nameValuePairs.password;
+
+  try {
+    let hashedPassword = await bcrypt.hash(password, 10);
+    let query = `update users set pass=? where email=?`;
+    let response = await fetchDb(query, [hashedPassword, email]);
+    if (response.affectedRows < 1) return res.SendStatus(500);
+    return res.json({ status: 201, msg: "password Updated" });
+  } catch (error) {
+    console.log(error);
+    res.SendStatus(500);
+  }
+}
+export { resetPasswordMobileContorler, resetPasswordEmailContorler };
