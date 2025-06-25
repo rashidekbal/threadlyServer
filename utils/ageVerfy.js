@@ -1,4 +1,4 @@
 function verifyAge(age) {
-  return true;
+    return true;
 }
 export default verifyAge;

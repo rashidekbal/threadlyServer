@@ -1,6 +1,12 @@
 import fetchDb from "../utils/query.js";
+import Response from "../constants/Response.js";
 
-// take post id userid post id in int, and post for like route for unlike route take like id
+// Controller to handle following a user
+// Takes follower's ID from the request and the ID of the user being followed
+// If a valid following ID is not provided, sends a 400 Bad Request status
+// Inserts a record into the followers table linking the follower and the user being followed
+// Returns a 201 status and a success message if the operation succeeds
+// Returns a 500 status in case of an internal server error
 let followController = async (req, res) => {
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
@@ -8,26 +14,40 @@ let followController = async (req, res) => {
   if (!followingid) return res.sendStatus(400);
   let query = "insert into followers (followerid,followingid) values (?,?)";
   try {
-    let response = await fetchDb(query, [followerid, followingid]);
-    res.json({ status: 201, msg: "followed" });
+    await fetchDb(query, [followerid, followingid]);
+    res.json(new Response(201,"success"));
   } catch (error) {
-    console.log(error);
+
     res.sendStatus(500);
   }
 };
+
+// Controller to handle unfollowing a user
+// Takes follower's ID from the request and the ID of the user being unfollowed
+// If a valid following ID is not provided, sends a 400 Bad Request status
+// Deletes the relationship between the follower and the user from the followers table
+// Returns a 200 status and a success message if the operation succeeds
+// Returns a 500 status in case of an internal server error
 let unfollowController = async (req, res) => {
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
   if (!followingid) return res.sendStatus(400);
   let query = "delete from followers where  followerid = ? and followingid=? ";
   try {
-    let response = await fetchDb(query, [followerid, followingid]);
-    res.json({ status: 200, msg: "sucess" });
+     await fetchDb(query, [followerid, followingid]);
+    res.json(new Response(201,"success"));
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
   }
 };
+
+// Controller to get the list of followers for a specific user
+// Takes the user's ID (whose followers are being fetched) from the route parameters
+// Ensures a valid user ID is provided, otherwise sends a 400 Bad Request status
+// Retrieves followers' information and checks if the requesting user follows them
+// Returns a 200 status with an array of followers' data
+// Returns a 500 status in case of an internal server error
 const getFollowersController = async (req, res) => {
   let requestingUser = req.ObtainedData;
   let userid = req.params.userid;
@@ -37,12 +57,19 @@ const getFollowersController = async (req, res) => {
 
   try {
     let response = await fetchDb(query, [requestingUser, userid]);
-    return res.json({ status: 200, data: response });
+    return res.json(new Response(200,response));
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
   }
 };
+
+// Controller to get the list of users being followed by a specific user
+// Takes the user's ID (whose followings are being fetched) from the route parameters
+// Ensures a valid user ID is provided, otherwise sends a 400 Bad Request status
+// Retrieves following users' information and checks if the requesting user follows them
+// Returns a 200 status with an array of following users' data
+// Returns a 500 status in case of an internal server error
 const getFollowingController = async (req, res) => {
   let requestingUser = req.ObtainedData;
   let userid = req.params.userid;
@@ -51,7 +78,7 @@ const getFollowingController = async (req, res) => {
 
   try {
     let response = await fetchDb(query, [requestingUser, userid]);
-    return res.json({ status: 200, data: response });
+    return res.json(new Response(200,response));
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);

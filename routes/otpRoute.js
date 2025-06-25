@@ -10,13 +10,11 @@ import {
   ifUserExistsMobile,
 } from "../middlewares/userExistance.js";
 
-import connection from "../db/connection.js";
 import {
   userEmailExistanceForgetPassword,
   userMobileExistanceForgetPassword,
 } from "../middlewares/User_existence_forgot_password.js";
 import fetchDb from "../utils/query.js";
-import { sendEmailOtp } from "../utils/nodemailer.js";
 let router = express.Router();
 
 // mobile otp section
@@ -26,7 +24,7 @@ router.post("/generateOtpMobile", ifUserExistsMobile, sendOtpMobile);
 router.post("/resendOtpMobile", ifUserExistsMobile, async (req, res) => {
   let phone = req.body.nameValuePairs.phone;
   try {
-    let response = await fetchDb(`delete from otpmodel where phone_email =?`, [
+ await fetchDb(`delete from otpmodel where phone_email =?`, [
       phone,
     ]);
   } catch (error) {}
@@ -50,11 +48,11 @@ router.post("/generateOtpEmail", ifUserExistsEmail, generateOtpEmail);
 router.post("/resendOtpEmail", ifUserExistsEmail, async (req, res) => {
   let email = req.body.nameValuePairs.email;
   try {
-    let response = await fetchDb(`delete from otpmodel where phone_email =?`, [
+    await fetchDb(`delete from otpmodel where phone_email =?`, [
       email,
     ]);
   } catch (error) {}
-  generateOtpEmail(req, res);
+  await generateOtpEmail(req, res);
 });
 
 // verify email otp

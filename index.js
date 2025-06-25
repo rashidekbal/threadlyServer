@@ -1,4 +1,4 @@
-import express, { json } from "express";
+import express from "express";
 import OptRoute from "./routes/otpRoute.js";
 import connection from "./db/connection.js";
 import registerRoute from "./routes/registerRoute.js";

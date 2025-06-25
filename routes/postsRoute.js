@@ -1,7 +1,6 @@
 import express from "express";
 import { uploadToRam, uploadtoDisk } from "../middlewares/multer.js";
 import verifyToken from "../middlewares/authorization.js";
-import fetchDb from "../utils/query.js";
 import "dotenv/config";
 import {
   addPost,
@@ -10,7 +9,7 @@ import {
   getUserPostsController,
   removePost,
 } from "../Controllers/PostsController.js";
-let ProductionMode = process.env.PRODUCTION == "true";
+let ProductionMode = process.env.PRODUCTION === 'true';
 let Router = express.Router();
 if (ProductionMode) {
   Router.route("/createPost").post(

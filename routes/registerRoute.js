@@ -5,7 +5,7 @@ import verifyAge from "../utils/ageVerfy.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import bcrypt from "bcrypt";
-import { regusterUserEmailController } from "../Controllers/authController.js";
+import { registerUserEmailController } from "../Controllers/authController.js";
 
 let route = express.Router();
 route.post("/mobile", verifyToken, async (req, res) => {
@@ -17,7 +17,7 @@ route.post("/mobile", verifyToken, async (req, res) => {
     return res.sendStatus(400);
   }
   try {
-    password = await bcrypt.hash(password, 10);
+    password = await bcrypt.hash(password, 12);
   } catch (error) {
     console.log(error);
   }
@@ -45,6 +45,6 @@ route.post("/mobile", verifyToken, async (req, res) => {
     });
   }
 });
-route.post("/email", verifyToken, regusterUserEmailController);
+route.post("/email", verifyToken, registerUserEmailController);
 
 export default route;
