@@ -15,7 +15,7 @@ let followController = async (req, res) => {
   let query = "insert into followers (followerid,followingid) values (?,?)";
   try {
     await fetchDb(query, [followerid, followingid]);
-    res.json(new Response(201,"success"));
+    res.json(new Response(201, {msg:"success"}));
   } catch (error) {
 
     res.sendStatus(500);
@@ -35,7 +35,7 @@ let unfollowController = async (req, res) => {
   let query = "delete from followers where  followerid = ? and followingid=? ";
   try {
      await fetchDb(query, [followerid, followingid]);
-    res.json(new Response(201,"success"));
+    res.json(new Response(201, {mag:"success"}));
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
