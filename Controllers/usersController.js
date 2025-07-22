@@ -104,7 +104,6 @@ async function getUserController(req, res) {
  * - Includes count of posts, followers, and following of users.
  */
 async function getMyDataController(req, res) {
-  console.log("executed");
   let userid = req.ObtainedData; // Extract user ID from the request
 
   // SQL query to retrieve the user's profile data and activity stats

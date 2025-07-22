@@ -19,7 +19,7 @@ let addComentController = async (req, res) => {
   try {
     // Execute the database query and respond with the comment ID
     let response = await fetchDb(query, [userid, Number(postid), comment]);
-    res.json({ status: 201, commnetid: response.insertId });
+    res.json(new Response(201, { commentid: response.insertId }));
   } catch (error) {
     console.log(error); // Log the error for debugging
     res.sendStatus(500); // Return 500 Internal Server Error status
@@ -43,11 +43,7 @@ let removeCommentController = async (req, res) => {
 
   try {
     // Execute the database query and respond with 201 Created status if successful
-    await fetchDb(query, [
-      userid,
-      Number(postid),
-      Number(commentid),
-    ]);
+    await fetchDb(query, [userid, Number(postid), Number(commentid)]);
     res.sendStatus(201);
   } catch (error) {
     console.log(error); // Log the error for debugging
@@ -67,7 +63,7 @@ async function getComments(req, res) {
 
   // SQL query to retrieve comments along with user details and like info
   let query = `
-select pc.*,u.username,u.profilepic,count(distinct cl.comment_like_id) as comment_likes_count, count(distinct clc.comment_like_id) as isLiked from post_comments  as pc join users as u on pc.userid=u.userid left join comment_likes as cl on pc.commentid=cl.commentid left join comment_likes as clc on pc.commentid=clc.commentid and clc.userid=? where pc.postid =? group by pc.commentid
+select pc.*,u.username,u.profilepic,count(distinct cl.comment_like_id) as comment_likes_count, count(distinct clc.comment_like_id) as isLiked from post_comments  as pc join users as u on pc.userid=u.userid left join comment_likes as cl on pc.commentid=cl.commentid left join comment_likes as clc on pc.commentid=clc.commentid and clc.userid=? where pc.postid =? group by pc.commentid order by pc.commentid desc
 `;
 
   try {

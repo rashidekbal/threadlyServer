@@ -15,7 +15,7 @@ async function registerUserEmailController(req, res) {
   if (!email || !password || !dob || !username) {
     return res.sendStatus(400); // Bad Request: Missing required fields
   }
-  
+
   try {
     // Hash the password for secure storage
     password = await bcrypt.hash(password, 12);
@@ -29,11 +29,11 @@ async function registerUserEmailController(req, res) {
     // Database query to insert the new user into the "users" table
     let db_query = `insert into users (userid,username,email,pass,dob) values (?,?,?,?,?)`;
     let data = [
-      `${userid}`,  // User ID
-      `${username}`,  // Username
-      `${email}`,  // Email
-      `${password}`,  // Hashed password
-      `${dob}`,  // Date of birth
+      `${userid}`, // User ID
+      `${username}`, // Username
+      `${email}`, // Email
+      `${password}`, // Hashed password
+      `${dob}`, // Date of birth
     ];
 
     // If the user is not an adult, send a "Forbidden" status
@@ -48,11 +48,11 @@ async function registerUserEmailController(req, res) {
 
       // Send a success response to the client
       res.json({
-        message: "success",        // Success message
-        username: username,        // Registered username
-        profile: null,             // Profile is currently null
-        userid: userid,            // Registered User ID
-        token: token,              // JWT token
+        message: "success", // Success message
+        username: username, // Registered username
+        profile: null, // Profile is currently null
+        userid: userid, // Registered User ID
+        token: token, // JWT token
       });
     }
   } catch (error) {

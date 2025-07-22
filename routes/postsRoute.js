@@ -3,25 +3,39 @@ import { uploadToRam, uploadtoDisk } from "../middlewares/multer.js";
 import verifyToken from "../middlewares/authorization.js";
 import "dotenv/config";
 import {
-  addPost,
+  addImagePost,
+  addVideoPost,
   getFeed,
   getPostinfo,
   getUserPostsController,
   removePost,
 } from "../Controllers/PostsController.js";
-let ProductionMode = process.env.PRODUCTION === 'true';
+let ProductionMode = process.env.PRODUCTION === "true";
 let Router = express.Router();
 if (ProductionMode) {
-  Router.route("/createPost").post(
+  Router.route("/addImagePost").post(
     verifyToken,
     uploadToRam.single("image"),
-    addPost
+    addImagePost
   );
 } else {
-  Router.route("/createPost").post(
+  Router.route("/addImagePost").post(
     verifyToken,
     uploadtoDisk.single("image"),
-    addPost
+    addImagePost
+  );
+}
+if (ProductionMode) {
+  Router.route("/addVideoPost").post(
+    verifyToken,
+    uploadToRam.single("video"),
+    addVideoPost
+  );
+} else {
+  Router.route("/addVideoPost").post(
+    verifyToken,
+    uploadtoDisk.single("video"),
+    addVideoPost
   );
 }
 Router.route("/removePost").post(verifyToken, removePost);

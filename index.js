@@ -10,6 +10,7 @@ import followRoute from "./routes/followRoute.js";
 import commentRoute from "./routes/commentsRoute.js";
 import usersRouter from "./routes/usersRoute.js";
 import ForgetPasswordRoute from "./routes/ForgetPasswordRoute.js";
+import profileRouter from "./routes/ProfileRouter.js";
 let app = express();
 app.use(express.json({ limit: "16kb" }));
 app.use(cors({ origin: "*" }));
@@ -28,12 +29,13 @@ app.use("/api/like", LikeRouter);
 app.use("/api/follow", followRoute);
 app.use("/api/comment", commentRoute);
 app.use("/api/users", usersRouter);
+app.use("/api/profile",profileRouter);
 connection.connect((err) => {
   if (!err) {
     console.log("connected to db");
-    app.listen(8000, (err) => {
+    app.listen(process.env.PORT, (err) => {
       if (err) console.log(err);
-      else console.log("running on port 8000");
+      else console.log("running on port " + process.env.PORT);
     });
   } else {
     console.log("error connecting to db" + err);

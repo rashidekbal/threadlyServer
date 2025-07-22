@@ -6,13 +6,13 @@ import fetchDb from "../utils/query.js";
 import "dotenv/config";
 import Response from "../constants/Response.js";
 
-async function addPost(req, res) {
+async function addImagePost(req, res) {
   let imagePath;
   let url;
   let ProductionMode = process.env.PRODUCTION === "true";
 
   let userid = req.ObtainedData;
-  let caption = req.body.caption;
+  let caption = req.body.caption.length > 0 ? req.body.caption : null;
   if (ProductionMode) {
     imagePath = req.file?.buffer;
 
@@ -20,15 +20,43 @@ async function addPost(req, res) {
     url = await uploadOnColudinaryFromRam(imagePath);
   } else {
     imagePath = req.file?.path;
-    console.log(req.file.path);
     if (!imagePath) return res.sendStatus(500);
     url = await uploadOnColudinaryviaLocalPath(imagePath);
   }
-
   try {
     if (!url) return res.sendStatus(500);
-    let query = `insert into imagepost (userid,imageurl,caption) values (?,?,?)`;
-    let data = [userid, url, caption];
+    let query = `insert into imagepost (userid,imageurl,caption,type) values (?,?,?,?)`;
+    let data = [userid, url, caption, "image"];
+    await fetchDb(query, data);
+    res.json({
+      statusCode: 201,
+      msg: "sucess",
+    });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+}
+async function addVideoPost(req, res) {
+  let VideoPath;
+  let url;
+  let ProductionMode = process.env.PRODUCTION === "true";
+
+  let userid = req.ObtainedData;
+  let caption = req.body.caption.length > 0 ? req.body.caption : null;
+  if (ProductionMode) {
+    VideoPath = req.file?.buffer;
+
+    if (!VideoPath) return res.sendStatus(500);
+    url = await uploadOnColudinaryFromRam(VideoPath);
+  } else {
+    VideoPath = req.file?.path;
+    if (!VideoPath) return res.sendStatus(500);
+    url = await uploadOnColudinaryviaLocalPath(VideoPath);
+  }
+  try {
+    if (!url) return res.sendStatus(500);
+    let query = `insert into imagepost (userid,imageurl,caption,type) values (?,?,?,?)`;
+    let data = [userid, url, caption, "video"];
     await fetchDb(query, data);
     res.json({
       statusCode: 201,
@@ -54,7 +82,21 @@ async function removePost(req, res) {
 let getPostinfo = async (req, res) => {
   let userid = req.ObtainedData;
   let postid = req.params.postid;
-  let query = `select p.*,u.username,u.profilepic, pl.userid as likedBy,count(distinct pl.likeid) as likeCount ,count(distinct post_comments.commentid) as commentCount,count(distinct ps.shareid) as shareCount ,count (distinct plp.likeid) as isLiked from imagepost as p join users as u  on p.userid=u.userid left join post_likes as pl on p.postid=pl.postid left join post_comments on p.postid=post_comments.postid left join post_shares as ps on p.postid=ps.postid left join post_likes as plp on p.postid=plp.postid and plp.userid=? where p.postid=?`;
+  let query = `select p.*,
+                      u.username,
+                      u.profilepic,
+                      pl.userid                               as likedBy,
+                      count(distinct pl.likeid)               as likeCount,
+                      count(distinct post_comments.commentid) as commentCount,
+                      count(distinct ps.shareid)              as shareCount,
+                      count(distinct plp.likeid)              as isLiked
+               from imagepost as p
+                      join users as u on p.userid = u.userid
+                      left join post_likes as pl on p.postid = pl.postid
+                      left join post_comments on p.postid = post_comments.postid
+                      left join post_shares as ps on p.postid = ps.postid
+                      left join post_likes as plp on p.postid = plp.postid and plp.userid = ?
+               where p.postid = ?`;
   try {
     let response = await fetchDb(query, [userid, postid]);
 
@@ -65,9 +107,8 @@ let getPostinfo = async (req, res) => {
   }
 };
 async function getFeed(req, res) {
-  console.log(req);
   let userid = req.ObtainedData;
-  let query = ` select p.*,u.username,u.profilepic, pl.userid as likedBy,count(distinct pl.likeid) as likeCount ,count(distinct post_comments.commentid) as commentCount,count(distinct ps.shareid) as shareCount ,count(distinct plp.likeid) as isLiked from imagepost as p join users as u  on p.userid=u.userid left join post_likes as pl on p.postid=pl.postid left join post_comments on p.postid=post_comments.postid left join post_shares as ps on p.postid=ps.postid left join post_likes as plp on p.postid=plp.postid and plp.userid=? group by p.postid limit 100
+  let query = ` select p.*,u.username,u.profilepic, pl.userid as likedBy,count(distinct pl.likeid) as likeCount ,count(distinct post_comments.commentid) as commentCount,count(distinct ps.shareid) as shareCount ,count(distinct plp.likeid) as isLiked from imagepost as p join users as u  on p.userid=u.userid left join post_likes as pl on p.postid=pl.postid left join post_comments on p.postid=post_comments.postid left join post_shares as ps on p.postid=ps.postid left join post_likes as plp on p.postid=plp.postid and plp.userid=? group by p.postid order by p.postid desc limit 100
 `;
 
   try {
@@ -81,7 +122,7 @@ async function getFeed(req, res) {
 }
 async function getUserPostsController(req, res) {
   let userid = req.params.userid;
-  let query = `select imagepost.* from imagepost join users on imagepost.userid=users.userid where users.userid=? group by imagepost.postid
+  let query = `select imagepost.* from imagepost join users on imagepost.userid=users.userid where users.userid=? group by imagepost.postid order by imagepost.postid desc 
 `;
   try {
     let response = await fetchDb(query, [userid]);
@@ -92,4 +133,11 @@ async function getUserPostsController(req, res) {
   }
 }
 
-export { addPost, removePost, getFeed, getUserPostsController, getPostinfo };
+export {
+  addImagePost,
+  addVideoPost,
+  removePost,
+  getFeed,
+  getUserPostsController,
+  getPostinfo,
+};
