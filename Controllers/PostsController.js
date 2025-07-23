@@ -106,9 +106,39 @@ let getPostinfo = async (req, res) => {
     res.sendStatus(500);
   }
 };
-async function getFeed(req, res) {
+async function getImageFeed(req, res) {
   let userid = req.ObtainedData;
-  let query = ` select p.*,u.username,u.profilepic, pl.userid as likedBy,count(distinct pl.likeid) as likeCount ,count(distinct post_comments.commentid) as commentCount,count(distinct ps.shareid) as shareCount ,count(distinct plp.likeid) as isLiked from imagepost as p join users as u  on p.userid=u.userid left join post_likes as pl on p.postid=pl.postid left join post_comments on p.postid=post_comments.postid left join post_shares as ps on p.postid=ps.postid left join post_likes as plp on p.postid=plp.postid and plp.userid=? group by p.postid order by p.postid desc limit 100
+  let query = ` select p.*,
+        u.username,
+        u.profilepic,
+        pl.userid as likedBy,
+        count(distinct pl.likeid) as likeCount ,
+        count(distinct post_comments.commentid) as commentCount
+        ,count(distinct ps.shareid) as shareCount ,
+         count(distinct plp.likeid) as isLiked 
+         from imagepost as p join users as u  on p.userid=u.userid left join post_likes as pl on p.postid=pl.postid left join post_comments on p.postid=post_comments.postid left join post_shares as ps on p.postid=ps.postid left join post_likes as plp on p.postid=plp.postid and plp.userid=?  WHERE p.type="image" group by p.postid order by p.postid desc limit 100
+`;
+
+  try {
+    let response = await fetchDb(query, [userid]);
+
+    res.json(new Response(200, response));
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+}
+async function getVideoFeed(req, res) {
+  let userid = req.ObtainedData;
+  let query = ` select p.*,
+        u.username,
+        u.profilepic,
+        pl.userid as likedBy,
+        count(distinct pl.likeid) as likeCount ,
+        count(distinct post_comments.commentid) as commentCount
+        ,count(distinct ps.shareid) as shareCount ,
+         count(distinct plp.likeid) as isLiked 
+         from imagepost as p join users as u  on p.userid=u.userid left join post_likes as pl on p.postid=pl.postid left join post_comments on p.postid=post_comments.postid left join post_shares as ps on p.postid=ps.postid left join post_likes as plp on p.postid=plp.postid and plp.userid=?  WHERE p.type="video" group by p.postid order by p.postid desc limit 100
 `;
 
   try {
@@ -137,7 +167,8 @@ export {
   addImagePost,
   addVideoPost,
   removePost,
-  getFeed,
+  getImageFeed,
+    getVideoFeed,
   getUserPostsController,
   getPostinfo,
 };

@@ -5,9 +5,10 @@ import "dotenv/config";
 import {
   addImagePost,
   addVideoPost,
-  getFeed,
+  getImageFeed,
   getPostinfo,
   getUserPostsController,
+  getVideoFeed,
   removePost,
 } from "../Controllers/PostsController.js";
 let ProductionMode = process.env.PRODUCTION === "true";
@@ -39,7 +40,8 @@ if (ProductionMode) {
   );
 }
 Router.route("/removePost").post(verifyToken, removePost);
-Router.route("/getPostsFeed").get(verifyToken, getFeed);
+Router.route("/getImagePostsFeed").get(verifyToken, getImageFeed);
+Router.route("/getVideoPostsFeed").get(verifyToken, getVideoFeed);
 Router.get("/getUserPosts/:userid", verifyToken, getUserPostsController);
 Router.route("/getPost/:postid").get(verifyToken, getPostinfo);
 
