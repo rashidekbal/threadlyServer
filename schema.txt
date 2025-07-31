@@ -75,3 +75,20 @@ CREATE TABLE otpmodel (
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   flag TINYINT(1) DEFAULT 0
 );
+
+	CREATE TABLE story (
+    id int not null auto_increment primary key,
+    userid varchar(250) not null,
+    storyUrl text not null,
+    type varchar(50) not null default 'image',
+    createdAt dateTime not null default current_timestamp,
+    foreign key(userid) references users(userid) on delete cascade
+    on update cascade  
+  );
+
+
+
+
+
+
+

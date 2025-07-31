@@ -1,3 +1,5 @@
+import http from "http";
+import { Server } from "socket.io";
 import express from "express";
 import OptRoute from "./routes/otpRoute.js";
 import connection from "./db/connection.js";
@@ -11,7 +13,24 @@ import commentRoute from "./routes/commentsRoute.js";
 import usersRouter from "./routes/usersRoute.js";
 import ForgetPasswordRoute from "./routes/ForgetPasswordRoute.js";
 import profileRouter from "./routes/ProfileRouter.js";
+import Response from "./constants/Response.js";
+import storyRouter from "./routes/StoryRoute.js";
 let app = express();
+let server = http.createServer(app);
+export let socketIo = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+  transports: ["websocket", "polling"],
+});
+socketIo.on("connection", (socket) => {
+  socket.emit("onConnect", new Response(200, "success"));
+  console.log(socket.id + " connected");
+  socket.on("disconnect", () => {
+    console.log(socket.id + " disconnected");
+  });
+});
+
 app.use(express.json({ limit: "16kb" }));
 app.use(cors({ origin: "*" }));
 app.use(express.static("public"));
@@ -29,11 +48,12 @@ app.use("/api/like", LikeRouter);
 app.use("/api/follow", followRoute);
 app.use("/api/comment", commentRoute);
 app.use("/api/users", usersRouter);
-app.use("/api/profile",profileRouter);
+app.use("/api/profile", profileRouter);
+app.use("/api/story", storyRouter);
 connection.connect((err) => {
   if (!err) {
     console.log("connected to db");
-    app.listen(process.env.PORT, (err) => {
+    server.listen(process.env.PORT, (err) => {
       if (err) console.log(err);
       else console.log("running on port " + process.env.PORT);
     });

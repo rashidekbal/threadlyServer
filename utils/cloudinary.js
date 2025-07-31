@@ -26,6 +26,7 @@ async function uploadOnColudinaryFromRam(buffer) {
       stream.end(buffer); // ⬅️ RAM buffer se upload
     });
   } catch (error) {
+    console.log(error);
     return null;
   }
 }
@@ -43,6 +44,7 @@ async function uploadOnColudinaryviaLocalPath(localpath) {
     return response.url;
   } catch (error) {
     fs.unlinkSync(localpath); //remove temp file
+    console.log(error);
     return null;
   }
 }

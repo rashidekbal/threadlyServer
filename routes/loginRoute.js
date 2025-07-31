@@ -5,6 +5,8 @@ import "dotenv/config";
 import bcrypt from "bcrypt";
 let router = express.Router();
 router.post("/mobile", async (req, res) => {
+  let Obtained = req.body.nameValuePairs;
+  if (Obtained == null) return res.sendStatus(400);
   let phone = req.body.nameValuePairs.userid;
   let password = req.body.nameValuePairs.password;
   if (!password || !phone) return res.sendStatus(400);
