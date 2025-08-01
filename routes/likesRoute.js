@@ -3,13 +3,19 @@ import verifyToken from "../middlewares/authorization.js";
 import {
   CommentLikeContorller,
   CommentUnlikeController,
+  likeStoryController,
   PostlikeController,
   PostunlikeController,
+  UnlikeStoryController,
 } from "../Controllers/likeController.js";
 let router = Router();
 //this is for like and unlike a image post
 router.route("/likePost/:postid").get(verifyToken, PostlikeController);
 router.route("/unlikePost/:postid").get(verifyToken, PostunlikeController);
+
+// route for liking and disliking story
+router.route("/likeStory/:storyid").get(verifyToken, likeStoryController);
+router.route("/unlikeStory/:storyid").get(verifyToken, UnlikeStoryController);
 
 //route for liking and disliking a comment
 router

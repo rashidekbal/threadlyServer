@@ -5,6 +5,7 @@ import {
   uploadOnColudinaryviaLocalPath,
 } from "../utils/cloudinary.js";
 import Response from "../constants/Response.js";
+
 let ProductionMode = process.env.PRODUCTION === "true";
 const addStoryController = async (req, res) => {
   let userid = req.ObtainedData;
@@ -48,11 +49,12 @@ const getStoriesAllController = async (req, res) => {
 };
 
 const getStoryOfUserController = async (req, res) => {
+  let loggedInUser = req.ObtainedData;
   let userid = req.params.userid;
-  let query = `select st.* from story as st left join users as us on st.userid=us.userid left join followers as flr on us.userid=flr.followingid where flr.followerid=? and st.createdAt >=NOW()-interval 24 hour group by st.id; 
+  let query = `select st.* ,count(distinct sl.likeid)as isLiked from story as st left join story_likes as sl on st.id=sl.storyid and sl.userid=? where st.userid=? and st.createdAt >=NOW()-interval 24 hour group by st.id; 
  `;
   try {
-    let response = await fetchDb(query, [userid]);
+    let response = await fetchDb(query, [loggedInUser, userid]);
     return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
