@@ -47,8 +47,21 @@ const getStoriesAllController = async (req, res) => {
     return res.sendStatus(500);
   }
 };
+const getMyStoriesController = async (req, res) => {
+  let userid = req.ObtainedData;
+  let query = `select st.* ,count(distinct sl.likeid)as isLiked from story as st left join story_likes as sl on st.id=sl.storyid and sl.userid=? where st.userid=? and st.createdAt >=NOW()-interval 24 hour group by st.id
+ `;
+  try {
+    let response = await fetchDb(query, [userid, userid]);
+    return res.json(new Response(200, response));
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+};
 
 const getStoryOfUserController = async (req, res) => {
+  console.log(count);
   let loggedInUser = req.ObtainedData;
   let userid = req.params.userid;
   let query = `select st.* ,count(distinct sl.likeid)as isLiked from story as st left join story_likes as sl on st.id=sl.storyid and sl.userid=? where st.userid=? and st.createdAt >=NOW()-interval 24 hour group by st.id; 
@@ -65,4 +78,5 @@ export {
   getStoriesAllController,
   addStoryController,
   getStoryOfUserController,
+  getMyStoriesController,
 };

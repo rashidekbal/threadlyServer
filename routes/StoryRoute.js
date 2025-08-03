@@ -2,6 +2,7 @@ import { Router } from "express";
 import verifyToken from "../middlewares/authorization.js";
 import {
   addStoryController,
+  getMyStoriesController,
   getStoriesAllController,
   getStoryOfUserController,
 } from "../Controllers/StoryController.js";
@@ -19,5 +20,6 @@ if (isProduction) {
     .post(verifyToken, uploadtoDisk.single("media"), addStoryController);
 }
 router.route("/getStories").get(verifyToken, getStoriesAllController);
+router.route("/getMyStories").get(verifyToken, getMyStoriesController);
 router.route("/getStories/:userid").get(verifyToken, getStoryOfUserController);
 export default router;
