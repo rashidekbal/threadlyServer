@@ -58,9 +58,9 @@ connection.connect((err) => {
         if (err2) console.log(err2);
         else console.log("running on port " + process.env.PORT);
       });
-    } else {
-      console.log("error connecting to db" + err);
     }
+  } else {
+    console.log("error connecting to db " + err);
   }
 });
 export default server;
