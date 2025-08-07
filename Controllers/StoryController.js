@@ -61,7 +61,6 @@ const getMyStoriesController = async (req, res) => {
 };
 
 const getStoryOfUserController = async (req, res) => {
-  console.log(count);
   let loggedInUser = req.ObtainedData;
   let userid = req.params.userid;
   let query = `select st.* ,count(distinct sl.likeid)as isLiked from story as st left join story_likes as sl on st.id=sl.storyid and sl.userid=? where st.userid=? and st.createdAt >=NOW()-interval 24 hour group by st.id; 
