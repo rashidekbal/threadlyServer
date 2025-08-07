@@ -61,4 +61,4 @@ connection.connect((err) => {
     console.log("error connecting to db" + err);
   }
 });
-export default app;
+export default server;
