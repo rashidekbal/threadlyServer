@@ -50,18 +50,15 @@ app.use("/api/comment", commentRoute);
 app.use("/api/users", usersRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/story", storyRouter);
-connection.connect((err) => {
-  if (!err) {
-    console.log("connected to db");
-    if (!global._serverStarted) {
-      server.listen(process.env.PORT, (err2) => {
-        if (err2) return console.log(err2);
-        else console.log("running on port " + process.env.PORT);
-        global._serverStarted = true;
-      });
-    }
+connection.connect((err, res) => {
+  if (err) {
+    console.log(err);
   } else {
-    console.log("error connecting to db " + err);
+    server.listen(port, () => {
+      console.log("connected to server ");
+      console.log(`running on server port ${port} `);
+    });
   }
 });
+
 export default server;
