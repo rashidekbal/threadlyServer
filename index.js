@@ -53,8 +53,8 @@ app.use("/api/story", storyRouter);
 connection.connect((err) => {
   if (!err) {
     console.log("connected to db");
-    server.listen(process.env.PORT, (err) => {
-      if (err) console.log(err);
+    server.listen(process.env.PORT, (err2) => {
+      if (err2) console.log(err2);
       else console.log("running on port " + process.env.PORT);
     });
   } else {
