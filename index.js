@@ -16,6 +16,7 @@ import profileRouter from "./routes/ProfileRouter.js";
 import Response from "./constants/Response.js";
 import storyRouter from "./routes/StoryRoute.js";
 let app = express();
+const port = process.env.PORT;
 let server = http.createServer(app);
 export let socketIo = new Server(server, {
   cors: {
