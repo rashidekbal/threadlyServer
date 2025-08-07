@@ -53,10 +53,11 @@ app.use("/api/story", storyRouter);
 connection.connect((err) => {
   if (!err) {
     console.log("connected to db");
-    if (!server.listening) {
+    if (!global._serverStarted) {
       server.listen(process.env.PORT, (err2) => {
-        if (err2) console.log(err2);
+        if (err2) return console.log(err2);
         else console.log("running on port " + process.env.PORT);
+        global._serverStarted = true;
       });
     }
   } else {
