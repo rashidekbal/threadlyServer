@@ -39,7 +39,7 @@ if (ProductionMode) {
     addVideoPost
   );
 }
-Router.route("/removePost").post(verifyToken, removePost);
+Router.route("/removePost/:postid").delete(verifyToken, removePost);
 Router.route("/getImagePostsFeed").get(verifyToken, getImageFeed);
 Router.route("/getVideoPostsFeed").get(verifyToken, getVideoFeed);
 Router.get("/getUserPosts/:userid", verifyToken, getUserPostsController);

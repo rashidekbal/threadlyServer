@@ -6,7 +6,7 @@ import fetchDb from "../utils/query.js"; // Helper function for database queries
  * - Excludes users that the requesting user already follows.
  * - Fetches information about each user along with their follower count.
  */
-async function getUsersController(req, res) {
+async function getSuggestUsersController(req, res) {
   let userid = req.ObtainedData; // Extract user ID from the request
   if (!userid) return res.sendStatus(400); // Return 400 Bad Request if user ID is missing
 
@@ -143,4 +143,4 @@ async function getMyDataController(req, res) {
 }
 
 // Export controllers for use in other parts of the application
-export { getUsersController, getUserController, getMyDataController };
+export { getSuggestUsersController, getUserController, getMyDataController };

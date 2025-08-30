@@ -15,9 +15,8 @@ let followController = async (req, res) => {
   let query = "insert into followers (followerid,followingid) values (?,?)";
   try {
     await fetchDb(query, [followerid, followingid]);
-    res.json(new Response(201, {msg:"success"}));
+    res.json(new Response(201, { msg: "success" }));
   } catch (error) {
-
     res.sendStatus(500);
   }
 };
@@ -34,8 +33,8 @@ let unfollowController = async (req, res) => {
   if (!followingid) return res.sendStatus(400);
   let query = "delete from followers where  followerid = ? and followingid=? ";
   try {
-     await fetchDb(query, [followerid, followingid]);
-    res.json(new Response(201, {mag:"success"}));
+    await fetchDb(query, [followerid, followingid]);
+    res.json(new Response(201, { mag: "success" }));
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
@@ -52,12 +51,12 @@ const getFollowersController = async (req, res) => {
   let requestingUser = req.ObtainedData;
   let userid = req.params.userid;
   if (!userid) return res.sendStatus(400);
-  let query = `select users.userid , users.username,users.profilepic,CASE WHEN chkIsFllowed.followid IS NOT NULL THEN 1 ELSE 0 END AS ifFollowed  from followers left join users on followers.followerid = users.userid left join followers as chkIsFllowed on users.userid=chkIsFllowed.followingid and chkIsFllowed.followerid=?  where followers.followingid=? group by users.userid
+  let query = `select users.uuid, users.userid , users.username,users.profilepic,CASE WHEN chkIsFllowed.followid IS NOT NULL THEN 1 ELSE 0 END AS ifFollowed  from followers left join users on followers.followerid = users.userid left join followers as chkIsFllowed on users.userid=chkIsFllowed.followingid and chkIsFllowed.followerid=?  where followers.followingid=? group by users.userid
 `;
 
   try {
     let response = await fetchDb(query, [requestingUser, userid]);
-    return res.json(new Response(200,response));
+    return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
@@ -74,11 +73,11 @@ const getFollowingController = async (req, res) => {
   let requestingUser = req.ObtainedData;
   let userid = req.params.userid;
   if (!userid) return res.sendStatus(400);
-  let query = `select users.userid , users.username,users.profilepic,CASE WHEN chkIsFllowed.followid IS NOT NULL THEN 1 ELSE 0 END AS ifFollowed  from followers left join users on followers.followingid = users.userid left join followers as chkIsFllowed on users.userid=chkIsFllowed.followingid and chkIsFllowed.followerid=?  where followers.followerid=? group by users.userid`;
+  let query = `select users.uuid ,users.userid , users.username,users.profilepic,CASE WHEN chkIsFllowed.followid IS NOT NULL THEN 1 ELSE 0 END AS ifFollowed  from followers left join users on followers.followingid = users.userid left join followers as chkIsFllowed on users.userid=chkIsFllowed.followingid and chkIsFllowed.followerid=?  where followers.followerid=? group by users.userid`;
 
   try {
     let response = await fetchDb(query, [requestingUser, userid]);
-    return res.json(new Response(200,response));
+    return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);

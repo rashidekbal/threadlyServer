@@ -3,11 +3,11 @@ import verifyToken from "../middlewares/authorization.js";
 import {
   getMyDataController,
   getUserController,
-  getUsersController,
+  getSuggestUsersController,
 } from "../Controllers/usersController.js";
 
 let usersRouter = Router();
-usersRouter.route("/getUsers").get(verifyToken, getUsersController);
+usersRouter.route("/getUsers").get(verifyToken, getSuggestUsersController);
 usersRouter.route("/getUser/:userid").get(verifyToken, getUserController);
 usersRouter.route("/getMyData").get(verifyToken, getMyDataController);
 

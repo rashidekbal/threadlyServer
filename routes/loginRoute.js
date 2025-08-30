@@ -6,9 +6,11 @@ import bcrypt from "bcrypt";
 let router = express.Router();
 router.post("/mobile", async (req, res) => {
   let Obtained = req.body.nameValuePairs;
+
   if (Obtained == null) return res.sendStatus(400);
   let phone = req.body.nameValuePairs.userid;
   let password = req.body.nameValuePairs.password;
+
   if (!password || !phone) return res.sendStatus(400);
   try {
     let response = await fetchUser("phone", phone);
@@ -23,6 +25,7 @@ router.post("/mobile", async (req, res) => {
           profile: userdata.profilepic,
           userid: userdata.userid,
           token: token,
+          uuid: userdata.uuid,
         });
       } else {
         res.sendStatus(403);
@@ -51,6 +54,7 @@ router.post("/email", async (req, res) => {
           profile: userdata.profilepic,
           userid: userdata.userid,
           token: token,
+          uuid: userdata.uuid,
         });
       } else {
         res.sendStatus(403);
@@ -79,6 +83,7 @@ router.post("/userid", async (req, res) => {
           profile: userdata.profilepic,
           userid: userdata.userid,
           token: token,
+          uuid: userdata.uuid,
         });
       } else {
         res.sendStatus(403);

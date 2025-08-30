@@ -2,6 +2,7 @@ import fetchDb from "../utils/query.js"; // Utility function to execute database
 import verifyAge from "../utils/ageVerfy.js"; // Utility function to verify if a user is an adult based on their date of birth.
 import bcrypt from "bcrypt"; // Library for hashing passwords.
 import jwt from "jsonwebtoken"; // Library for generating JSON Web Tokens (JWT).
+import { v4 as uuidv4 } from "uuid";
 
 // Controller to handle user registration via email
 async function registerUserEmailController(req, res) {
@@ -22,18 +23,20 @@ async function registerUserEmailController(req, res) {
 
     // Generate a unique user ID using the username and current timestamp
     let userid = username.split(" ")[0] + Date.now();
+    let uuid = uuidv4();
 
     // Verify if the user is an adult based on their date of birth
     let isAdult = verifyAge(dob);
 
     // Database query to insert the new user into the "users" table
-    let db_query = `insert into users (userid,username,email,pass,dob) values (?,?,?,?,?)`;
+    let db_query = `insert into users (userid,username,email,pass,dob,uuid) values (?,?,?,?,?,?)`;
     let data = [
       `${userid}`, // User ID
       `${username}`, // Username
       `${email}`, // Email
       `${password}`, // Hashed password
-      `${dob}`, // Date of birth
+      `${dob}`,
+      `${uuid}`, // Date of birth
     ];
 
     // If the user is not an adult, send a "Forbidden" status
@@ -51,7 +54,8 @@ async function registerUserEmailController(req, res) {
         message: "success", // Success message
         username: username, // Registered username
         profile: null, // Profile is currently null
-        userid: userid, // Registered User ID
+        userid: userid,
+        uuid: uuid, // Registered User ID
         token: token, // JWT token
       });
     }
@@ -60,5 +64,4 @@ async function registerUserEmailController(req, res) {
     res.sendStatus(500); // Internal Server Error
   }
 }
-
 export { registerUserEmailController };

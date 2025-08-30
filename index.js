@@ -13,8 +13,10 @@ import commentRoute from "./routes/commentsRoute.js";
 import usersRouter from "./routes/usersRoute.js";
 import ForgetPasswordRoute from "./routes/ForgetPasswordRoute.js";
 import profileRouter from "./routes/ProfileRouter.js";
-import Response from "./constants/Response.js";
+
 import storyRouter from "./routes/StoryRoute.js";
+import { getSocketId, removeUser } from "./socketHandlers/connectedUsers.js";
+import { setSocketFunctions } from "./socketHandlers/SocketMainHandler.js";
 let app = express();
 const port = process.env.PORT;
 let server = http.createServer(app);
@@ -25,11 +27,7 @@ export let socketIo = new Server(server, {
   transports: ["websocket", "polling"],
 });
 socketIo.on("connection", (socket) => {
-  socket.emit("onConnect", new Response(200, "success"));
-  console.log(socket.id + " connected");
-  socket.on("disconnect", () => {
-    console.log(socket.id + " disconnected");
-  });
+  setSocketFunctions(socket, socketIo);
 });
 
 app.use(express.json({ limit: "16kb" }));

@@ -73,9 +73,26 @@ const getStoryOfUserController = async (req, res) => {
     return res.sendStatus(500);
   }
 };
+async function removeStory(req, res) {
+  let userid = req.ObtainedData;
+  let storyid = req.params.storyid;
+  let query = `delete from story where userid=? and  id=?`;
+  try {
+    let response = await fetchDb(query, [userid, Number(storyid)]);
+    return res.json(
+      new Response(200, {
+        msg: "success",
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}
 export {
   getStoriesAllController,
   addStoryController,
   getStoryOfUserController,
   getMyStoriesController,
+  removeStory,
 };
