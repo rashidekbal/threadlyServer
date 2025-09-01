@@ -98,6 +98,32 @@ async function getUserController(req, res) {
   }
 }
 
+async function getUserByUUidController(req, res) {
+  let uuid = req.params.uuid; // Extract ID of the user to fetch
+  if (!uuid) return res.sendStatus(400); // Return 400 Bad Request if no user ID is provided
+  console.log("rexiueved request");
+  // SQL query to fetch detailed user data along with counts (posts, followers, following
+
+  const query = `
+    SELECT 
+      userid,
+      username,
+      profilepic from users  where 
+      uuid=?
+
+  `;
+
+  try {
+    // Execute the query with the user ID parameters
+    let response = await fetchDb(query, [uuid]);
+    console.log(response);
+    return res.json({ status: 200, data: response }); // Return query results
+  } catch (err) {
+    console.log(err); // Log any errors
+    return res.sendStatus(500); // Return 500 Internal Server Error on failure
+  }
+}
+
 /**
  * Controller to fetch data about the requesting user.
  * - Retrieves profile details and activity counts for the user.
@@ -143,4 +169,9 @@ async function getMyDataController(req, res) {
 }
 
 // Export controllers for use in other parts of the application
-export { getSuggestUsersController, getUserController, getMyDataController };
+export {
+  getSuggestUsersController,
+  getUserController,
+  getMyDataController,
+  getUserByUUidController,
+};

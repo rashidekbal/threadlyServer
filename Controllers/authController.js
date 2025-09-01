@@ -36,7 +36,7 @@ async function registerUserEmailController(req, res) {
       `${email}`, // Email
       `${password}`, // Hashed password
       `${dob}`,
-      `${uuid}`, // Date of birth
+      `${uuid}`,
     ];
 
     // If the user is not an adult, send a "Forbidden" status
