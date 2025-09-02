@@ -1,3 +1,5 @@
+import { sendMessage } from "../Fcm/FcmService.js";
+import fetchDb from "../utils/query.js";
 import { addUser, getSocketId, getuuid, removeUser } from "./connectedUsers.js";
 import { v4 as uuidv4 } from "uuid";
 function setSocketFunctions(socket, io) {
@@ -8,57 +10,68 @@ function setSocketFunctions(socket, io) {
   });
 
   //when client send message to server to send to user
-  socket.on("CToS", (data) => {
+  socket.on("CToS", async (data) => {
     //generate a ,MessageUid;
     let MsgUid = uuidv4();
-    let type = data.ReplyTOMsgUid ? data.ReplyTOMsgUid : "text";
-    let ReplyTOMsgUid = data.ReplyTOMsgUid ? data.ReplyTOMsgUid : null;
+    let type = data.ReplyTOMsgUid != null ? data.ReplyTOMsgUid : "text";
+    let ReplyTOMsgUid =
+      data.ReplyTOMsgUid != null || data.ReplyTOMsgUid != undefined
+        ? data.ReplyTOMsgUid
+        : "null";
     let date = new Date();
-    let timestamp = date.toISOString;
+    let profile =
+      data.senderProfilePic != null || data.senderProfilePic != undefined
+        ? data.senderProfilePic
+        : "null";
+    let timestamp = date.toISOString();
     //extract socket id to whom message is to be sent
-    let receiver = getSocketId(data.receiverUuid);
+    let receiverSocketID = getSocketId(data.receiverUuid);
 
     //if found send
-    if (receiver != null) {
-      socket.emit("msgUuidGenerated", {
-        msg: data.msg,
-        senderUuid: data.senderUuid,
-        receiverUuid: data.receiverUuid,
-        MsgUid,
-        ReplyTOMsgUid,
-        type,
-        timestamp,
-        deliveryStatus: 1,
-      });
-
-      console.log("sendig ...");
-      console.log(data);
-      io.to(receiver).emit("StoC", {
+    if (receiverSocketID != null) {
+      //sending msg to the recepient
+      io.to(receiverSocketID).emit("StoC", {
         msg: data.msg,
         senderUuid: data.senderUuid,
         receiverUuid: data.receiverUuid,
         username: data.senderName,
         userid: data.senderUserId,
-        profile: data.senderProfilePic,
+        profile,
         MsgUid,
         ReplyTOMsgUid,
         type,
         timestamp,
-      });
+      }); //logging the data for debugging
     } else {
       //if not found add fall back action
-      socket.emit("msgUuidGenerated", {
+
+      let query = `select fcmToken from users where uuid=?`;
+      let response = await fetchDb(query, [data.receiverUuid]);
+      const token = response[0].fcmToken;
+      console.log(token);
+      sendMessage(token, {
         msg: data.msg,
         senderUuid: data.senderUuid,
         receiverUuid: data.receiverUuid,
+        username: data.senderName,
+        userid: data.senderUserId,
+        profile,
         MsgUid,
         ReplyTOMsgUid,
         type,
         timestamp,
-        deliveryStatus: 0,
       });
-      console.log("no user found setting fallback");
     }
+    socket.emit("msgUuidGenerated", {
+      msg: data.msg,
+      senderUuid: data.senderUuid,
+      receiverUuid: data.receiverUuid,
+      MsgUid,
+      ReplyTOMsgUid,
+      type,
+      timestamp,
+      deliveryStatus: 1,
+    });
   });
   //when user gets disconnected
   socket.on("disconnect", () => {

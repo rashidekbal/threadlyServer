@@ -15,8 +15,9 @@ import ForgetPasswordRoute from "./routes/ForgetPasswordRoute.js";
 import profileRouter from "./routes/ProfileRouter.js";
 
 import storyRouter from "./routes/StoryRoute.js";
-import { getSocketId, removeUser } from "./socketHandlers/connectedUsers.js";
 import { setSocketFunctions } from "./socketHandlers/SocketMainHandler.js";
+import { sendMessage, StartServiceFcm } from "./Fcm/FcmService.js";
+import Fcmrouter from "./routes/FcmRoute.js";
 let app = express();
 const port = process.env.PORT;
 let server = http.createServer(app);
@@ -49,6 +50,7 @@ app.use("/api/comment", commentRoute);
 app.use("/api/users", usersRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/story", storyRouter);
+app.use("/api/fcm", Fcmrouter);
 connection.connect((err, res) => {
   if (err) {
     console.log(err);
@@ -56,6 +58,7 @@ connection.connect((err, res) => {
     server.listen(port, () => {
       console.log("connected to server ");
       console.log(`running on server port ${port} `);
+      StartServiceFcm();
     });
   }
 });
