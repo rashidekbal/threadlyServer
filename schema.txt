@@ -9,6 +9,7 @@ CREATE TABLE users (
   dob DATE NOT NULL,
   createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   uuid text unique ,
+  fcmToken text null,
   UNIQUE KEY email (email),
   UNIQUE KEY phone (phone)
 );
@@ -100,18 +101,16 @@ likeid int not null primary key auto_increment,
 
 create table messages (
 messageId BIGINT not null primary key auto_increment,
-conversationId TEXT not null,
 replyToMessageId BIGINT null,
-senderId varchar (250) not null, 
-recieverId varchar(250) not null,
+senderUUId varchar (250) not null, 
+recieverUUId varchar(250) not null,
 type ENUM('text','image','video','audio','file')DEFAULT 'text',
 message TEXT,
 creationTime timestamp default current_timestamp,
 deliveryStatus tinyint default 0,
 isDeleted boolean default false,
- foreign key (senderId) references users(userid) on delete cascade on update cascade,
- foreign key (recieverId) references users(userid) on delete cascade on update cascade
-
+ foreign key (senderUUId) references users(uuid) on delete cascade on update cascade,
+ foreign key (recieverUUId) references users(uuid) on delete cascade on update cascade
 );
 
 

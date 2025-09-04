@@ -101,7 +101,7 @@ async function getUserController(req, res) {
 async function getUserByUUidController(req, res) {
   let uuid = req.params.uuid; // Extract ID of the user to fetch
   if (!uuid) return res.sendStatus(400); // Return 400 Bad Request if no user ID is provided
-  console.log("rexiueved request");
+
   // SQL query to fetch detailed user data along with counts (posts, followers, following
 
   const query = `
@@ -116,7 +116,7 @@ async function getUserByUUidController(req, res) {
   try {
     // Execute the query with the user ID parameters
     let response = await fetchDb(query, [uuid]);
-    console.log(response);
+
     return res.json({ status: 200, data: response }); // Return query results
   } catch (err) {
     console.log(err); // Log any errors

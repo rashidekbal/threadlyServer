@@ -13,7 +13,7 @@ import commentRoute from "./routes/commentsRoute.js";
 import usersRouter from "./routes/usersRoute.js";
 import ForgetPasswordRoute from "./routes/ForgetPasswordRoute.js";
 import profileRouter from "./routes/ProfileRouter.js";
-
+import MessagesRouter from "./routes/MessageRoutes.js";
 import storyRouter from "./routes/StoryRoute.js";
 import { setSocketFunctions } from "./socketHandlers/SocketMainHandler.js";
 import { sendMessage, StartServiceFcm } from "./Fcm/FcmService.js";
@@ -51,6 +51,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/story", storyRouter);
 app.use("/api/fcm", Fcmrouter);
+app.use("/api/messages", MessagesRouter);
 connection.connect((err, res) => {
   if (err) {
     console.log(err);
