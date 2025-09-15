@@ -166,6 +166,29 @@ function setSocketFunctions(socket, io) {
       }
     }
   });
+  //msg seen status update call
+  socket.on("update_seen_msg_status",async data=>{
+    const senderUUid=data.senderUUid;
+    const receiverUserid=data.myUserid;
+    let receiverUUid;
+    const responseUUid=await fetchDb(`select uuid from users where userid=?`,[receiverUserid]);
+    if (responseUUid.length>0 && (responseUUid[0].uuid!=null)){
+     receiverUUid=responseUUid[0].uuid;
+      const getQuery=`select * from messages where senderUUId=? and recieverUUId=? and deliveryStatus=2`;
+      const UpdateQuery=`update messages set deliveryStatus=3 where senderUUId=? and recieverUUId=? and deliveryStatus=2`;
+      const response=await fetchDb(getQuery,[senderUUid,receiverUUid]);
+      if(response.length>0) {
+        for(let i=0;i<response.length;i++){
+
+          await notifyStatusChanged(String(senderUUid),response[i].messageUid,3,false)
+        }
+        await fetchDb(UpdateQuery,[senderUUid,receiverUUid]);
+      }
+
+    }
+
+
+  })
   //when user gets disconnected
   socket.on("disconnect", () => {
     removeUser(socket.id);
