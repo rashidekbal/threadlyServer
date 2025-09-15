@@ -9,6 +9,7 @@ import {
   getUUidFromUserId,
 } from "../utils/ReusableFunctions.js";
 import { v4 as uuidv4 } from "uuid";
+import messageRoutes from "../routes/MessageRoutes.js";
 
 const getMsgPendingHistoryController = async (req, res) => {
   const userid = req.ObtainedData;
@@ -165,9 +166,27 @@ const sendMessageController = async (req, res) => {
     }
   }
 };
+const updateMessageSeenStatusController = async (req, res) => {
+
+  const senderUUid = req.body.nameValuePairs.senderUUid;
+  const receiverUUid = req.body.nameValuePairs.receiverUUid;
+  if (senderUUid == null || receiverUUid == null) return res.sendStatus(400);
+  const getQuery=`select * from messages where senderUUId=? and recieverUUId=? and deliveryStatus=2`;
+  const UpdateQuery=`update messages set deliveryStatus=3 where senderUUId=? and recieverUUId=? and deliveryStatus=2`;
+  const response=await fetchDb(getQuery,[senderUUid,receiverUUid]);
+  if(response.length>0) {
+   for(let i=0;i<response.length;i++){
+
+     await notifyStatusChanged(String(senderUUid),response[i].messageUid,3,false)
+   }
+    await fetchDb(UpdateQuery,[senderUUid,receiverUUid]);
+  }
+  return res.json(new Response(201, { msg: "success" }));
+};
 
 export {
   getMsgPendingHistoryController,
   getpendingMessagesController,
   sendMessageController,
+  updateMessageSeenStatusController,
 };

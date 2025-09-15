@@ -27,7 +27,8 @@ const addMessageToDb = (
       ]);
       resolve(new Response(201, { msg: "success" }));
     } catch (error) {
-      reject(new Response(500, { msg: "something went wront" }));
+      console.log(error);
+      reject(error);
     }
   });
 };

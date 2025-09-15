@@ -8,10 +8,11 @@ CREATE TABLE users (
   profilepic TEXT DEFAULT NULL,
   dob DATE NOT NULL,
   createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  uuid text unique ,
+  uuid varchar(36) not null ,
   fcmToken text null,
   UNIQUE KEY email (email),
-  UNIQUE KEY phone (phone)
+  UNIQUE KEY phone (phone),
+  unique key uuid (uuid)
 );
 
 CREATE TABLE imagepost (
@@ -99,19 +100,27 @@ likeid int not null primary key auto_increment,
 );
 
 
-create table messages (
-messageId BIGINT not null primary key auto_increment,
-replyToMessageId BIGINT null,
-senderUUId varchar (250) not null, 
-recieverUUId varchar(250) not null,
-type ENUM('text','image','video','audio','file')DEFAULT 'text',
-message TEXT,
-creationTime timestamp default current_timestamp,
-deliveryStatus tinyint default 0,
-isDeleted boolean default false,
- foreign key (senderUUId) references users(uuid) on delete cascade on update cascade,
- foreign key (recieverUUId) references users(uuid) on delete cascade on update cascade
-);
+CREATE TABLE messages (
+  messageId BIGINT NOT NULL AUTO_INCREMENT,
+  
+  messageUid CHAR(36) NOT NULL,  -- unique UUID for message
+  replyToMessageId BIGINT NULL,  -- references another messageId
+  
+  senderUUId CHAR(36) NOT NULL,
+  recieverUUId CHAR(36) NOT NULL,
+  
+  type ENUM('text','image','video','audio','file') DEFAULT 'text',
+  message TEXT,
+  creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  deliveryStatus TINYINT DEFAULT 0,
+  isDeleted BOOLEAN DEFAULT FALSE,
+  
+  PRIMARY KEY (messageId),
+  UNIQUE KEY uq_messageUid (messageUid),
+  foreign key (senderUUId) references users(uuid) on delete cascade on update cascade,
+  foreign key (recieverUUId) references users(uuid) on delete cascade on update cascade
+
+)
 
 
 

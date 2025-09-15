@@ -65,7 +65,7 @@ function setSocketFunctions(socket, io) {
         );
         console.log("message added to the server with delivery code 2");
       } catch (error) {
-        console.log("error adding message to the server ");
+        console.log("error adding message to the server " + console.log(error));
       }
     } else {
       //if socket it not found add fall back action for fcm token
@@ -112,7 +112,9 @@ function setSocketFunctions(socket, io) {
             );
             console.log("msg added to db");
           } catch (error) {
-            console.log("msg not added for last fallback : " + error);
+            console.log(
+              "msg not added for last fallback : " + JSON.stringify(error)
+            );
           }
         } catch (error) {
           //when fcm token found but message not send due to app not installed
