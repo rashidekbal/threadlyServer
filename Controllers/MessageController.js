@@ -1,7 +1,7 @@
 import Response from "../constants/Response.js";
 import { sendMessage } from "../Fcm/FcmService.js";
 import { socketIo } from "../index.js";
-import { getSocketId } from "../socketHandlers/connectedUsers.js";
+import { getSocketId } from "../socketHandlers/ConnectedUsers.js";
 import { notifyStatusChanged } from "../socketHandlers/SocketMainHandler.js";
 import fetchDb from "../utils/query.js";
 import {

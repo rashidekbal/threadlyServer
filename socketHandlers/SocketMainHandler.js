@@ -5,7 +5,7 @@ import {
   addMessageToDb,
   getFcmTokenWithUUid,
 } from "../utils/ReusableFunctions.js";
-import { addUser, getSocketId, getuuid, removeUser } from "./connectedUsers.js";
+import { addUser, getSocketId, removeUser } from "./ConnectedUsers.js";
 function setSocketFunctions(socket, io) {
   // set socket id along with userid on first connect;
   socket.on("onConnect", (data) => {

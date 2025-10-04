@@ -1,5 +1,6 @@
 import fetchDb from "../utils/query.js";
 import Response from "../constants/Response.js";
+import {notify_post_unliked_via_fcm, notify_postLiked_via_fcm} from "../Fcm/FcmService.js";
 
 // Controller to handle liking a post.
 // Takes user id (from req.ObtainedData) and post id (from req.params).
@@ -14,7 +15,9 @@ let PostlikeController = async (req, res) => {
   let query = "insert into post_likes (userid,postid) values (?,?)";
 
   try {
-    await fetchDb(query, [userid, Number(postid)]); // Execute query to insert the like.
+    let response =await fetchDb(query, [userid, Number(postid)]);// Execute query to insert the like.
+
+      notifyLike(postid,userid,response.insertId);
     res.json(new Response(201, "success")); // Respond with success if the query is executed successfully.
   } catch (error) {
     console.log(error); // Log any errors for debugging purposes.
@@ -35,7 +38,8 @@ let PostunlikeController = async (req, res) => {
   let query = "delete from post_likes where  userid = ? and postid=?";
 
   try {
-    await fetchDb(query, [userid, Number(postid)]); // Execute query to delete the like.
+    await fetchDb(query, [userid, Number(postid)]);// Execute query to delete the like.
+    notify_Post_unliked(postid,userid)//send post like removed notification to post owner
     res.json(new Response(201, "success")); // Respond with success if the query is executed successfully.
   } catch (error) {
     console.log(error); // Log any errors for debugging purposes.
@@ -108,6 +112,58 @@ const UnlikeStoryController = async (req, res) => {
     return res.sendStatus(500);
   }
 };
+const notify_Post_unliked=async (postId,userId)=>{
+  const getPostDetailsQuery=`select usr.fcmToken from imagepost as imgpst left join users as usr on imgpst.userid = usr.userid where postid=? limit 1`;
+  let PostDetailsResponse=await fetchDb(getPostDetailsQuery,[postId]);
+  if(PostDetailsResponse.length>0){
+    const token=PostDetailsResponse[0].fcmToken;
+    if(token!=null){
+      try {
+        await  notify_post_unliked_via_fcm(token,userId,postId)
+
+      }catch (e){
+        console.log(e)
+      }
+
+    }else{
+      console.log("either token is null or username is null");
+    }
+  }else{
+    console.log("something went wrong postDetails not found");
+  }
+
+}
+const notifyLike=async(postId,userid,insertId)=>{
+  const getUserDetailsQuery=`select username,profilepic from users where userid=? limit 1`;
+  const getPostDetailsQuery=`select imgpst.*,usr.fcmToken from imagepost as imgpst left join users as usr on imgpst.userid = usr.userid where postid=? limit 1`;
+  let UserDetailsResponse=await fetchDb(getUserDetailsQuery,[userid]);
+  let PostDetailsResponse=await fetchDb(getPostDetailsQuery,[postId]);
+  if(PostDetailsResponse.length>0&&UserDetailsResponse.length>0){
+    const token=PostDetailsResponse[0].fcmToken;
+    const username=UserDetailsResponse[0].username;
+    const profile=UserDetailsResponse[0].profilepic;
+    const postLink=PostDetailsResponse[0].imageurl;
+    if(username!=null&&token!=null&&postLink!=null){
+      try{
+        await notify_postLiked_via_fcm(token,postId,postLink,profile,username,userid,insertId);
+
+      }catch (e){
+        console.log(e.data)
+
+      }
+
+    }else{
+      console.log("either token is null or username is null");
+    }
+
+  }else{
+    console.log("something went wrong userDetails or postDetails not found");
+  }
+
+
+
+
+}
 
 // Exporting all controllers to be used elsewhere in the application.
 export {
