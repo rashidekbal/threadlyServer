@@ -1,12 +1,15 @@
 import admin from "firebase-admin";
 import ServiceCred from "./fcmAdminKey.json" with { type: "json" };
 import Response from "../constants/Response.js"
-import postsRoute from "../routes/postsRoute.js";
+let certificate=ServiceCred;
+if(process.env.local==="false"){
+  certificate=JSON.parse(process.env.ADMIN_CERTIFICATE);
+}
 
 const StartServiceFcm = () => {
   
   admin.initializeApp({
-    credential: admin.credential.cert(ServiceCred),
+    credential: admin.credential.cert(certificate),
   });
 };
 
@@ -80,6 +83,11 @@ const notify_postLiked_via_fcm=async (token,postId,postLink,userprofile,username
     android:{
       priority:"high",
     },
+         notification:{
+            title:"New Like",
+             body:`${userid} liked your post `,
+             image:postLink
+         },
     data:{
       responseType:"postLike",
       userId:userid,
@@ -128,17 +136,23 @@ const notify_post_unliked_via_fcm=async(token,userId,postId)=>{
 
 
 }
-const notify_new_Follower_via_fcm=async(token,userid,username,profile)=>{
+const notify_new_Follower_via_fcm=async(token,userid,username,profile,isFollowed)=>{
   return new Promise(async(resolve,reject)=>{
     const message={
       token,
       android:{
         priority:"high",
       },
+        notification: {
+          title: "New Follower",
+            body: `${username} started following you`,
+            image: profile
+        },
       data:{
            responseType:"newFollower",
            username:username,
            userid:userid,
+           isFollowed:String(isFollowed),
            profile:profile
       }
     }
@@ -152,4 +166,116 @@ const notify_new_Follower_via_fcm=async(token,userid,username,profile)=>{
     }
   })
 }
-export { StartServiceFcm, sendMessage,notifyStatus_via_Fcm,notify_postLiked_via_fcm ,notify_new_Follower_via_fcm,notify_post_unliked_via_fcm};
+const notify_UnFollow_via_fcm=async(token,userId)=>{
+    return new Promise(async(resolve,reject)=>{
+        const message={
+            token,
+            android:{
+                priority:"high"
+            }
+            ,
+            data:{
+                responseType:"UnFollow",
+                userId:userId,
+
+            }
+        }
+        try{
+            await admin.messaging().send(message);
+            resolve(new Response(200,{msg:"success"}))
+
+
+        }catch (e){
+            reject(new Response(500,{msg:e}))
+
+        }
+    });
+
+
+
+}
+const notifyCommentLike_via_fcm=async(token,userid,username,profile,postid,Commentid,postLink)=>{
+  return new Promise(async (resolve,reject)=>{
+    const message={
+      token,
+      android:{
+        priority:"high"
+      },
+      data:{
+            responseType:"commentLike",
+            userId:userid,
+           username :username,
+            profile:profile,
+            postId:String(postid),
+            postLink:postLink,
+            commetnId:String(Commentid)
+        
+      }
+    }
+    try {
+      await admin.messaging().send(message);
+
+      resolve(new Response(200,{msg:"success"}));
+      
+    } catch (error) {
+      reject(new Response(500,{msg:error}));
+      
+    }
+  })
+}
+const notifyCommentUnlike_via_fcm=async(token,userid,Commentid)=>{
+  return new Promise(async (resolve,reject)=>{
+    const message={
+      token,
+      android:{
+        priority:"high"
+      },
+      data:{
+            responseType:"commentUnlike",
+            userId:userid,
+            commetnId:String(Commentid)
+        
+      }
+    }
+    try {
+      await admin.messaging().send(message);
+
+      resolve(new Response(200,{msg:"success"}));
+      
+    } catch (error) {
+      reject(new Response(500,{msg:error}));
+      
+    }
+  })
+}
+const logOutPreviousDevice=async(token,userId)=>{
+    return new Promise(async (resolve,reject)=>{
+        const message={
+            token,
+            android:{
+                priority:"high"
+            }
+            ,
+            data:{
+                responseType:"logout",
+                userId:userId,
+            }
+        }
+        try{
+            await admin.messaging().send(message);
+            resolve(new Response(200,{msg:"success"}));
+        }catch (e){
+            reject(new Response(500,{msg:e}));
+        }
+    })
+}
+export { StartServiceFcm,
+    sendMessage,
+    notifyStatus_via_Fcm,
+    notify_postLiked_via_fcm ,
+    notify_new_Follower_via_fcm,
+    notify_post_unliked_via_fcm,
+    logOutPreviousDevice,
+    notify_UnFollow_via_fcm,
+  notifyCommentLike_via_fcm,
+    notifyCommentUnlike_via_fcm};

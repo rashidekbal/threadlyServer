@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import connection from "../db/connection.js";
 import "dotenv/config";
 import bcrypt from "bcrypt";
+import fetchDb from "../utils/query.js";
+import {logOutPreviousDevice} from "../Fcm/FcmService.js";
 let router = express.Router();
 router.post("/mobile", async (req, res) => {
   let Obtained = req.body.nameValuePairs;
@@ -18,15 +20,30 @@ router.post("/mobile", async (req, res) => {
       let userdata = response[0];
       let is_match = await bcrypt.compare(password, userdata.pass);
       if (is_match) {
-        let token = jwt.sign(userdata.userid, process.env.SECRET_KEY);
-        res.json({
-          message: "sucess",
-          username: userdata.username,
-          profile: userdata.profilepic,
-          userid: userdata.userid,
-          token: token,
-          uuid: userdata.uuid,
-        });
+        let checkLoginFromOtherMobileQuery=`select fcmToken from users where phone=?`
+        let checkLoginFromOtherMobileResponse=await fetchDb(checkLoginFromOtherMobileQuery,[phone])
+        if(checkLoginFromOtherMobileResponse.length>0){
+          const token=checkLoginFromOtherMobileResponse[0].fcmToken;
+          if(token){
+            try {
+              await logOutPreviousDevice(token,userdata.userid);
+            }catch (e){
+
+            }
+
+          }
+        }
+        setTimeout(()=>{
+          let token = jwt.sign(userdata.userid, process.env.SECRET_KEY);
+          res.json({
+            message: "sucess",
+            username: userdata.username,
+            profile: userdata.profilepic,
+            userid: userdata.userid,
+            token: token,
+            uuid: userdata.uuid,
+          });
+        },1000)
       } else {
         res.sendStatus(403);
       }
@@ -47,15 +64,32 @@ router.post("/email", async (req, res) => {
       let userdata = response[0];
       let is_match = await bcrypt.compare(password, userdata.pass);
       if (is_match) {
-        let token = jwt.sign(userdata.userid, process.env.SECRET_KEY);
-        res.json({
-          message: "sucess",
-          username: userdata.username,
-          profile: userdata.profilepic,
-          userid: userdata.userid,
-          token: token,
-          uuid: userdata.uuid,
-        });
+        let checkLoginFromOtherMobileQuery=`select fcmToken from users where email=?`
+        let checkLoginFromOtherMobileResponse=await fetchDb(checkLoginFromOtherMobileQuery,[email])
+        if(checkLoginFromOtherMobileResponse.length>0){
+          const token=checkLoginFromOtherMobileResponse[0].fcmToken;
+          if(token){
+            try {
+              await logOutPreviousDevice(token,userdata.userid);
+              console.log("sent logut message")
+            }catch (e){
+              console.log(e.message);
+            }
+
+          }
+        }
+        setTimeout(()=>{
+          let token = jwt.sign(userdata.userid, process.env.SECRET_KEY);
+          res.json({
+            message: "sucess",
+            username: userdata.username,
+            profile: userdata.profilepic,
+            userid: userdata.userid,
+            token: token,
+            uuid: userdata.uuid,
+          });
+        },1000)
+
       } else {
         res.sendStatus(403);
       }
@@ -76,15 +110,30 @@ router.post("/userid", async (req, res) => {
       let userdata = response[0];
       let is_match = await bcrypt.compare(password, userdata.pass);
       if (is_match) {
-        let token = jwt.sign(userdata.userid, process.env.SECRET_KEY);
-        res.json({
-          message: "sucess",
-          username: userdata.username,
-          profile: userdata.profilepic,
-          userid: userdata.userid,
-          token: token,
-          uuid: userdata.uuid,
-        });
+        let checkLoginFromOtherMobileQuery=`select fcmToken from users where userid=?`
+        let checkLoginFromOtherMobileResponse=await fetchDb(checkLoginFromOtherMobileQuery,[userid])
+        if(checkLoginFromOtherMobileResponse.length>0){
+          const token=checkLoginFromOtherMobileResponse[0].fcmToken;
+          if(token){
+            try {
+              await logOutPreviousDevice(token,userdata.userid);
+            }catch (e){
+
+            }
+
+          }
+        }
+         setTimeout(()=>{
+          let token = jwt.sign(userdata.userid, process.env.SECRET_KEY);
+          res.json({
+            message: "sucess",
+            username: userdata.username,
+            profile: userdata.profilepic,
+            userid: userdata.userid,
+            token: token,
+            uuid: userdata.uuid,
+          });
+        },1000)
       } else {
         res.sendStatus(403);
       }

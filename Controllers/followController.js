@@ -1,5 +1,6 @@
 import fetchDb from "../utils/query.js";
 import Response from "../constants/Response.js";
+import {notify_new_Follower_via_fcm, notify_UnFollow_via_fcm} from "../Fcm/FcmService.js";
 
 // Controller to handle following a user
 // Takes follower's ID from the request and the ID of the user being followed
@@ -8,6 +9,7 @@ import Response from "../constants/Response.js";
 // Returns a 201 status and a success message if the operation succeeds
 // Returns a 500 status in case of an internal server error
 let followController = async (req, res) => {
+  console.log("follow request recieved")
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
 
@@ -15,6 +17,7 @@ let followController = async (req, res) => {
   let query = "insert into followers (followerid,followingid) values (?,?)";
   try {
     await fetchDb(query, [followerid, followingid]);
+     notifyNewFollower(followerid,followingid);
     res.json(new Response(201, { msg: "success" }));
   } catch (error) {
     res.sendStatus(500);
@@ -34,6 +37,7 @@ let unfollowController = async (req, res) => {
   let query = "delete from followers where  followerid = ? and followingid=? ";
   try {
     await fetchDb(query, [followerid, followingid]);
+    notifyUnFollow(followerid, followingid);
     res.json(new Response(201, { mag: "success" }));
   } catch (error) {
     console.log(error);
@@ -83,7 +87,38 @@ const getFollowingController = async (req, res) => {
     return res.sendStatus(500);
   }
 };
+const notifyNewFollower=async(followerId,followingId)=>{
+const getFollowerDetailsQuery="select us.userid,us.username,us.profilepic , count(distinct fl.followid) as isFollowed from users as us left join followers as fl on us.userid = fl.followingid and fl.followerid=?  where userid=? limit 1";
+const getFollowingDetailsQuery="select fcmToken from users where userid=? limit 1";
+try {
+  let follower=await fetchDb(getFollowerDetailsQuery,[followingId,followerId]);
+  let following=await fetchDb(getFollowingDetailsQuery,[followingId]);
+  if(follower.length>0&&following.length>0&&following[0].fcmToken!=null){
+    const token=following[0].fcmToken;
+    await notify_new_Follower_via_fcm(token,followerId,follower[0].username,String(follower[0].profilepic?follower[0].profilepic:"null"),Number(follower[0].isFollowed)>0);
+  }else{
+    console.log("no fcm token");
+  }
+}catch (error){
+  console.log(error);
 
+}
+}
+const notifyUnFollow=async(followerId,followingId)=>{
+  const getFollowingDetailsQuery="select fcmToken from users where userid=? limit 1";
+  try {
+    let following=await fetchDb(getFollowingDetailsQuery,[followingId]);
+    if(following.length>0&&following[0].fcmToken!=null){
+      const token=following[0].fcmToken;
+      await notify_UnFollow_via_fcm(token,followerId)
+    }else{
+      console.log("no fcm token");
+    }
+  }catch (error){
+    console.log(error);
+
+  }
+}
 export {
   followController,
   unfollowController,
