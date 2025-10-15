@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 07, 2025 at 11:48 AM
+-- Generation Time: Oct 15, 2025 at 08:01 PM
 -- Server version: 9.1.0
 -- PHP Version: 8.3.14
 
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `followers` (
   PRIMARY KEY (`followid`),
   KEY `followerid` (`followerid`),
   KEY `followingid` (`followingid`)
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `followers`
@@ -92,7 +92,11 @@ CREATE TABLE IF NOT EXISTS `followers` (
 
 INSERT INTO `followers` (`followid`, `followerid`, `followingid`, `createdAt`) VALUES
 (66, 'Mysterious_being', 'kaluadon', '2025-10-07 16:00:41'),
-(69, 'kaluadon', 'Mysterious_being', '2025-10-07 16:41:57');
+(69, 'kaluadon', 'Mysterious_being', '2025-10-07 16:41:57'),
+(71, 'samar1760556086419', 'kaluadon', '2025-10-16 00:53:41'),
+(74, 'samar1760556086419', 'Mysterious_being', '2025-10-16 00:55:11'),
+(75, 'Mysterious_being', 'samar1760556086419', '2025-10-16 00:55:14'),
+(76, 'kaluadon', 'samar1760556086419', '2025-10-16 00:55:18');
 
 -- --------------------------------------------------------
 
@@ -215,67 +219,60 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `replyToMessageId` bigint DEFAULT NULL,
   `senderUUId` char(36) COLLATE utf8mb4_general_ci NOT NULL,
   `recieverUUId` char(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `type` enum('text','image','video','audio','file') COLLATE utf8mb4_general_ci DEFAULT 'text',
+  `type` enum('text','image','video','audio','file','post','story') COLLATE utf8mb4_general_ci DEFAULT 'text',
   `message` text COLLATE utf8mb4_general_ci,
-  `creationTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `postId` int DEFAULT NULL,
+  `postLink` text COLLATE utf8mb4_general_ci,
+  `creationTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `deliveryStatus` tinyint DEFAULT '0',
   `isDeleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`messageId`),
   UNIQUE KEY `uq_messageUid` (`messageUid`),
   KEY `senderUUId` (`senderUUId`),
   KEY `recieverUUId` (`recieverUUId`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `messages`
 --
 
-INSERT INTO `messages` (`messageId`, `messageUid`, `replyToMessageId`, `senderUUId`, `recieverUUId`, `type`, `message`, `creationTime`, `deliveryStatus`, `isDeleted`) VALUES
-(1, 'c28ca980-529b-4e04-a373-c46b9eee7d3c', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', '2025-09-06 10:59:43', 3, 0),
-(2, '544604ee-bb32-4dfb-a922-dfd24caf4517', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hello', '2025-09-13 16:01:52', 3, 0),
-(3, '7ef50456-e645-497a-ae23-7b4fae54334f', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', '2025-09-15 17:24:47', 3, 0),
-(4, '737f7f50-294b-4e94-929d-9578d29d5675', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', '2025-09-15 17:24:58', 3, 0),
-(5, 'b9aa81fc-8b93-49d2-80bf-2be92021997b', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi bro', '2025-09-15 17:29:27', 3, 0),
-(6, 'faf60f2d-3068-4d43-8981-94a0ef2a85d7', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', '2025-09-15 17:40:05', 3, 0),
-(7, '0a440196-7b00-42b2-9c8a-c95c5fd789e2', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'kya ho raja hai', '2025-09-15 17:40:19', 3, 0),
-(8, '1dd68a8e-e76c-4134-99f1-5ce5299068f0', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', '2025-09-15 17:57:16', 3, 0),
-(9, 'eb1db2be-f64e-4212-81a9-b5e6385c3959', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi kaalu', '2025-09-15 17:59:10', 3, 0),
-(10, '48970fa8-6d60-4040-8ea2-373907e9f161', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hlo', '2025-09-15 18:02:22', 3, 0),
-(11, '005583a1-3674-40fe-96c8-d58316dba7fb', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'aur', '2025-09-15 18:04:43', 3, 0),
-(12, 'ef2fdf7e-d890-4e3e-9556-5a0a188292bd', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', '2025-09-15 18:09:18', 3, 0),
-(13, 'ed5a09a9-bcea-4509-baba-19f5a571896b', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', '2025-09-15 18:19:03', 3, 0),
-(14, 'b2b351e1-cb13-41b1-8daf-f9a250892857', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', '2025-09-15 18:20:43', 3, 0),
-(15, 'a235d50b-98de-46f7-8951-004846f9777c', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', '2025-09-15 18:21:59', 3, 0),
-(16, '7b146e68-4b5e-4378-900e-7d814cdebc52', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'bolo na', '2025-09-15 18:22:44', 3, 0),
-(17, 'c9e93012-d353-4284-96ee-b894fda32510', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', '2025-09-15 18:23:34', 3, 0),
-(18, '38d316cf-b3b9-45ab-9f6f-259dba936077', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'bolo kya haal hai', '2025-09-15 18:23:48', 3, 0),
-(19, '2b8b3aab-d974-41c7-b9ac-d26349cb6d2b', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'aare yaar kuch to bolo', '2025-09-15 18:24:06', 3, 0),
-(20, '8c56bafe-c1b1-46f9-a831-5f8944a7a510', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'kya bolu', '2025-09-15 18:24:10', 3, 0),
-(21, '442b07b5-f071-496b-bb57-07182e1a3f00', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'kuch bhi', '2025-09-15 18:24:25', 3, 0),
-(22, 'faf49ae0-ff7a-4299-b01e-cae8236d50b5', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'much bhi kya', '2025-09-15 18:24:28', 3, 0),
-(23, '2601b1e3-9fa4-4d39-85c5-cdee8354519c', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'mc', '2025-09-15 18:25:20', 3, 0),
-(24, '7b1e364a-a66e-495b-bfbf-07476b9649a6', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'ka ho rani', '2025-09-15 18:26:16', 3, 0),
-(25, '69a29a73-1183-4385-8b10-c13e41541d4a', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', '2025-09-15 18:28:58', 3, 0),
-(26, '093e7a38-649a-4255-b09c-6331a6d7c3e6', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hanji', '2025-09-15 18:29:54', 3, 0),
-(27, '33ca1a3c-bb81-4a4e-aa39-bde45c96e6da', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', '2025-09-15 18:30:19', 3, 0),
-(28, '07bfec09-6f2f-41f4-b82b-ac651e8dd27a', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hun', '2025-09-15 18:30:25', 3, 0),
-(29, 'f7159d0f-ca1d-487d-9bc1-6a082fdfbc7f', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'ka hota', '2025-09-15 18:30:35', 3, 0),
-(30, '5f4fc341-1d69-4d02-a6f3-9922fb5766bf', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'much na', '2025-09-15 18:30:38', 3, 0),
-(31, 'f61a65da-0e33-4edd-aca4-ec987da7a6bb', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'bolo', '2025-09-15 18:30:58', 3, 0),
-(32, '9aaae01d-5b44-4a92-9b81-f6b3519012b9', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'kya bologe', '2025-09-15 18:31:06', 3, 0),
-(33, 'a71500cf-4a79-41ed-885e-3bc7e049c7d4', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'kuch to bolo', '2025-09-15 18:31:14', 3, 0),
-(34, 'fb7f3f65-4447-47b7-aaf8-3f395d63dcfa', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'much na', '2025-09-15 18:31:19', 3, 0),
-(35, 'cd6b1341-2f79-4531-9dc2-6981e0e67b14', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'kuch na', '2025-09-15 18:31:29', 3, 0),
-(36, '3b4edd16-4f78-498a-8788-03676590eb41', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', '2025-10-04 18:11:40', 3, 0),
-(37, '30e64c20-1c8c-4020-a317-755ff02e57f7', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hello', '2025-10-04 18:12:44', 3, 0),
-(38, 'd212acbf-4fcc-456a-a95a-e447c7cd14c9', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', '2025-10-04 18:13:55', 3, 0),
-(39, '5bd0d221-5330-4532-9687-f4ba44b8c623', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'how are you', '2025-10-04 18:14:04', 3, 0),
-(40, '8fb8909c-daef-49c2-acac-bcbcab542484', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'good what about you', '2025-10-04 18:14:25', 3, 0),
-(41, '2e2ae9ed-c7f4-4bb0-909a-b22622ee6711', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', '2025-10-04 18:52:37', 3, 0),
-(42, '90889d14-6452-4cfb-8a26-c67eec36619e', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hello', '2025-10-04 18:52:45', 3, 0),
-(43, '21edfd8b-b80c-4e16-927d-477d8d9b4321', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'kya hua', '2025-10-04 18:52:53', 3, 0),
-(44, '291be09c-9b38-4eeb-96b4-cd321f40dac6', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'Kuch na just testing server', '2025-10-04 18:53:06', 3, 0),
-(45, '99b70b3d-6ea1-40ab-9dac-283983ff6649', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', '👍👍', '2025-10-04 18:53:17', 3, 0);
+INSERT INTO `messages` (`messageId`, `messageUid`, `replyToMessageId`, `senderUUId`, `recieverUUId`, `type`, `message`, `postId`, `postLink`, `creationTime`, `deliveryStatus`, `isDeleted`) VALUES
+(1, 'f70c8b58-6f9e-4067-a6d0-f74dc7b35c1a', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', NULL, NULL, '2025-10-15 16:24:01', 3, 0),
+(2, '2d08f925-7b00-44c3-ac6a-687d5524127a', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', NULL, NULL, '2025-10-15 17:48:39', 3, 0),
+(3, 'd7706e77-e4ab-4d97-a399-fc4d961a174a', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', '', NULL, NULL, '2025-10-15 18:27:49', 3, 0),
+(4, '83c74fe8-d2fe-4012-a423-ba5ca9a35d68', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 18:49:08', 3, 0),
+(5, '8531af14-7e7e-4d87-9e02-7b969196d352', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'image', '', -1, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760554179/fvx3w4x1zxb0jsbqihdw.jpg', '2025-10-15 18:49:40', 3, 0),
+(6, '7136f5df-84b8-4f51-951b-f145747de367', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'image', '', -1, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760554978/nppj3mqklbgima2b7jyw.jpg', '2025-10-15 19:03:07', 3, 0),
+(7, '79f5c72d-25f9-4b2d-9019-9e20bae7a1df', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'image', '', -1, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760555217/wsxhheywhx7tzvkde6c3.jpg', '2025-10-15 19:07:10', 3, 0),
+(8, '7aee4938-9d24-43d2-8e13-4aa32da83698', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'image', '', -1, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760555275/gzudusgrmiadaeckuwoe.jpg', '2025-10-15 19:07:57', 3, 0),
+(9, 'e5636640-1480-4826-9790-e5ff17c243f4', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 19:08:17', 3, 0),
+(10, 'c496ceaf-1609-44d7-b4b0-381f42d6bff2', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'kya hua ji', -1, 'null', '2025-10-15 19:08:27', 3, 0),
+(11, '7ff51848-2c19-4d89-9cd2-da27d569f8c7', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'kuch nahi', -1, 'null', '2025-10-15 19:08:35', 3, 0),
+(12, '3116575c-6d95-4ae1-8164-2445b159fd26', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'wow I just integrated feature of sending image', -1, 'null', '2025-10-15 19:08:52', 3, 0),
+(13, 'be56b3a7-b3db-49d0-9ca2-171f00bbc5a5', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'chalo theek hai fir', -1, 'null', '2025-10-15 19:17:14', 3, 0),
+(14, 'c3bb0611-6caa-4536-beba-42e0ed657746', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'nahi bolna to rehne do', -1, 'null', '2025-10-15 19:17:22', 3, 0),
+(15, '8c54f1cc-bea9-4001-9c3e-a3f0dde00569', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', -1, 'null', '2025-10-15 19:25:38', 3, 0),
+(16, 'dbf635cf-65e0-4ec4-af2b-4238aaca2ff7', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hi', -1, 'null', '2025-10-15 19:26:05', 3, 0),
+(17, '3ef85f39-49b0-4896-bb64-6dc9f6a389da', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hi', -1, 'null', '2025-10-15 19:27:36', 3, 0),
+(18, 'e4434369-f015-4615-996d-63f689d25e5b', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'bolo na', -1, 'null', '2025-10-15 19:27:49', 3, 0),
+(19, '3caaa9f7-fd85-4ec1-b2a6-ac5d3d8f82d7', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi again', -1, 'null', '2025-10-15 19:36:49', 3, 0),
+(20, '5f6b6ec8-39bd-44b1-b8d5-d3ce7bf3661a', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi from here too', -1, 'null', '2025-10-15 19:37:13', 3, 0),
+(21, 'f9080e3b-5067-45c5-880e-c1f51fa15898', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'and here too', -1, 'null', '2025-10-15 19:37:30', 3, 0),
+(22, '74497a9e-3f2c-4e26-8354-5b28852c1260', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 19:38:25', 3, 0),
+(23, '4d887bfe-d59d-4045-ac0c-83d53eebaad4', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 19:39:31', 3, 0),
+(24, 'bbbff6fa-c70e-4818-961a-cdf0900181a0', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'again', -1, 'null', '2025-10-15 19:39:37', 3, 0),
+(25, '95f1a1dc-01ef-48ae-80d9-e128d46221f1', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 19:46:33', 3, 0),
+(26, '3a1aea81-8deb-4bc6-a1b1-51c7c723318d', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hello', -1, 'null', '2025-10-15 19:46:37', 3, 0),
+(27, '5af17011-a216-48b1-8d00-a0b748917887', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'image', '', -1, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760557612/bphy1sfzhoo8wgy8mpe8.jpg', '2025-10-15 19:46:55', 3, 0),
+(28, '6108e931-f7ad-4e65-ad93-14dd69cf2420', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hi', -1, 'null', '2025-10-15 19:48:45', 3, 0),
+(29, '304b8fd2-3fc8-4b93-bc36-c6a49d9ff0a9', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi ji', -1, 'null', '2025-10-15 19:50:38', 3, 0),
+(30, '5f4c0698-db47-4aa6-8b3a-391f85b91499', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'kya haal hai', -1, 'null', '2025-10-15 19:50:52', 3, 0),
+(31, '72ed0059-f903-4f66-b657-46c3212f7e5a', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 19:52:02', 3, 0),
+(32, '9f49dfd0-ca98-4535-82c4-e21bb71676c3', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'aur batao', -1, 'null', '2025-10-15 19:52:40', 3, 0),
+(33, '666856b1-7511-4482-9700-16612eff3bc4', 0, '710b962e-041c-11e1-9234-5123456789ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hello hi janeman', -1, 'null', '2025-10-15 19:52:56', 3, 0),
+(34, '91703998-bfd5-432a-bb9a-5a8f64252d1f', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'ghdh', -1, 'null', '2025-10-15 19:53:06', 3, 0),
+(35, '190154b4-a33f-4505-95e6-34d43e52990e', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hi', -1, 'null', '2025-10-15 19:55:50', 3, 0),
+(36, '7db25c59-f051-48a9-a9f3-f525ea3ab157', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hello', -1, 'null', '2025-10-15 19:56:06', 3, 0);
 
 -- --------------------------------------------------------
 
@@ -1649,8 +1646,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`userid`, `username`, `email`, `phone`, `pass`, `bio`, `profilepic`, `dob`, `createdAt`, `uuid`, `fcmToken`) VALUES
-('kaluadon', 'Rani', 'rtechdevlopment123@gmail.com', NULL, '$2b$12$a9xomUz7XKvn/BYKgiXJD.1RjeKoFbEgoZNR9rUXY8c/HM1bg4zlq', '💻 Dev Vibe:\nAndroid dev ⚙️ | Java ❤️ | Building things that matter\n🎧 Soft + Poetic:\nCode in my veins, silence in my soul 🌌\n🔥 Flirty + Cool', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1754564929/exliaf9par4b8yjvdtrn.jpg', '2025-06-01', '2025-06-22 15:31:49', '710b962e-041c-11e1-9234-5123456789ab', 'c-rKySjOTfG1Z9uOD8t8Wr:APA91bGU0HqdF8YvwHv3HyZaaF-1B89hZacY2wfJrdABynWXAyiYvvSUuMpEM9U7gkEuArO_XROAW99qWl9FYpnAguauDQvlyn2mHHVHw5NnNzPVo9ljmAU'),
-('Mysterious_being', 'mysterious devil', NULL, '9123481953', '$2a$10$rKG82muePaAXJNpXstVW0.GDeX8jtn1Dfq8FGSN4F40HeRVyk3Azm', '💻 Android Dev 💥\n ☕ Java Junkie \n 🚀 Dreamin’ big, building bigger\n ⚡ Hustle > Hype\n🧠 Engineer Mode: ON', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1754564883/vziiwfxvnrj3ouhwcq42.png', '2025-05-11', '2025-05-11 23:00:44', '710b962e-041c-11e1-9234-5123456709ab', 'eXqDW4hrTEWocGRxauHxYE:APA91bEusN0if-XrorL09MeRf3YBgPzLbY-M4fEBOJpg3eSaigAcgtUXjNEOy2FCkOfcVilFBZ8ze-N2L9TqJ4qowKTDw9PZ0ozdz93VBDHUiz_GFD9mmrw');
+('kaluadon', 'Rani', 'rtechdevlopment123@gmail.com', NULL, '$2b$12$a9xomUz7XKvn/BYKgiXJD.1RjeKoFbEgoZNR9rUXY8c/HM1bg4zlq', '💻 Dev Vibe:\nAndroid dev ⚙️ | Java ❤️ | Building things that matter\n🎧 Soft + Poetic:\nCode in my veins, silence in my soul 🌌\n🔥 Flirty + Cool', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1754564929/exliaf9par4b8yjvdtrn.jpg', '2025-06-01', '2025-06-22 15:31:49', '710b962e-041c-11e1-9234-5123456789ab', 'fC_NiqdBSyWJGf1_lQhZJL:APA91bG-2H4-L-gjKem4ucVWrEUY6EVZ9oDYuxgbLOBelq-zcYj4oJYliMOYOyMUZD6PxnyDe-T_t1wNbj1ZYonWXJkcNXqnCS20QMj9HrzlpMEPRi1MK24'),
+('Mysterious_being', 'mysterious devil', NULL, '9123481953', '$2a$10$rKG82muePaAXJNpXstVW0.GDeX8jtn1Dfq8FGSN4F40HeRVyk3Azm', '💻 Android Dev 💥\n ☕ Java Junkie \n 🚀 Dreamin’ big, building bigger\n ⚡ Hustle > Hype\n🧠 Engineer Mode: ON', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1754564883/vziiwfxvnrj3ouhwcq42.png', '2025-05-11', '2025-05-11 23:00:44', '710b962e-041c-11e1-9234-5123456709ab', 'ftRYBe4JTm-Xad3MSMEyR_:APA91bEYtlZmxhg0Fuz4GLoF4jy0vMY6Ox-SNqbFP1CSSMjGxjORCmoB0tfdGdB31-VR0pMrzURz-0_r-GlcCpt0ZfeXRjh7aIA0rlcgi1z-KuzSzCpRE3A'),
+('samar1760556086419', 'samar', 'rasidekbal29@gmail.com', NULL, '$2b$12$x3Weyi59oPHdRkMD9my5hOwaEVRl1NqrF9IBE8UqjqMTcRSsfdQg6', NULL, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760556422/wvdtxdsarluj9ce6kqpk.jpg', '2025-10-16', '2025-10-16 00:51:26', 'eab65880-3341-4ba3-8fbc-640359df7752', 'eBHxL4mUS0q5ZK2DOMdN4O:APA91bFbqxP1m1COrPWVrmicbcy_2BZf-MWGlXjn3SWKzZt1XKfBjIUTKCG5rFssqr5NNPYXCRvesLhls1lRQU9EzUObX0ufoR4P6ABDeq1KrG_eIwDu3Lg');
 
 --
 -- Constraints for dumped tables
@@ -1675,13 +1673,6 @@ ALTER TABLE `followers`
 --
 ALTER TABLE `imagepost`
   ADD CONSTRAINT `imagepost_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `messages`
---
-ALTER TABLE `messages`
-  ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`senderUUId`) REFERENCES `users` (`uuid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`recieverUUId`) REFERENCES `users` (`uuid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `post_comments`
