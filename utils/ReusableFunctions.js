@@ -7,12 +7,14 @@ const addMessageToDb = (
   recieverUUId,
   type,
   message,
+  postid,
+  postLink,
   creationTime,
   deliveryStatus,
   isDeleted
 ) => {
   return new Promise(async (resolve, reject) => {
-    const query = `insert into messages (messageUid,replyToMessageId,senderUUId,recieverUUId,type,message,creationTime,deliveryStatus,isDeleted) values (?,?,?,?,?,?,?,?,?)`;
+    const query = `insert into messages (messageUid,replyToMessageId,senderUUId,recieverUUId,type,message,postid,postLink,creationTime,deliveryStatus,isDeleted) values (?,?,?,?,?,?,?,?,?,?,?)`;
     try {
       await fetchDb(query, [
         messageUid,
@@ -21,6 +23,8 @@ const addMessageToDb = (
         recieverUUId,
         type,
         message,
+        postid,
+        postLink,
         creationTime,
         deliveryStatus,
         isDeleted,

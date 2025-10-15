@@ -5,7 +5,9 @@ import {
   getpendingMessagesController,
   sendMessageController,
   updateMessageSeenStatusController,
+  uploadMessageMedia,
 } from "../Controllers/MessageController.js";
+import { uploadtoDisk, uploadToRam } from "../middlewares/multer.js";
 
 const router = Router();
 
@@ -19,5 +21,11 @@ router.route("/sendMessage").post(verifyToken, sendMessageController);
 router
   .route("/updateMessageDeliveryStatus")
   .post(verifyToken, updateMessageSeenStatusController);
+  if(process.env.PRODUCTION==="true"){
+router.route("/uploadMedia").post(verifyToken,uploadToRam.single("media"),uploadMessageMedia);
+  }else{
+    router.route("/uploadMedia").post(verifyToken,uploadtoDisk.single("media"),uploadMessageMedia);
+  }
+  
 
 export default router;

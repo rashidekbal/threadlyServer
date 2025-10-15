@@ -15,9 +15,10 @@ function setSocketFunctions(socket, io) {
 
   //when client send message to server to send to user
   socket.on("CToS", async (data) => {
+    console.log(data);
     //generate a ,MessageUid;
     let MsgUid = data.MsgUid;
-    let type = data.ReplyTOMsgUid != null ? data.ReplyTOMsgUid : "text";
+    let type = data.type != null ? data.type : "text";
     let ReplyTOMsgUid =
       data.ReplyTOMsgUid != null || data.ReplyTOMsgUid != undefined
         ? data.ReplyTOMsgUid
@@ -44,6 +45,8 @@ function setSocketFunctions(socket, io) {
         MsgUid,
         ReplyTOMsgUid,
         type,
+        link:data.link,
+        postId:data.postId,
         timestamp,
       }); //logging the data for debugging
       //add msg to server
@@ -59,6 +62,8 @@ function setSocketFunctions(socket, io) {
           data.receiverUuid,
           type,
           data.msg,
+          data.postId,
+          data.link,
           timestamp,
           2,
           false
@@ -89,6 +94,8 @@ function setSocketFunctions(socket, io) {
             MsgUid,
             ReplyTOMsgUid,
             type,
+            postId:String(data.postId),
+            link:data.link,
             timestamp,
             deliveryStatus: "-1",
             isDeleted: "false",
@@ -106,6 +113,8 @@ function setSocketFunctions(socket, io) {
               data.receiverUuid,
               type,
               data.msg,
+              data.postId,
+              data.link,
               timestamp,
               2,
               false
@@ -132,6 +141,8 @@ function setSocketFunctions(socket, io) {
               data.receiverUuid,
               type,
               data.msg,
+              data.postId,
+              data.link,
               timestamp,
               1,
               false
@@ -156,6 +167,8 @@ function setSocketFunctions(socket, io) {
             data.receiverUuid,
             type,
             data.msg,
+            data.postId,
+            data.link,
             timestamp,
             1,
             false

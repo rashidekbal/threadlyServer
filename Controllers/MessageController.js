@@ -10,6 +10,7 @@ import {
 } from "../utils/ReusableFunctions.js";
 import { v4 as uuidv4 } from "uuid";
 import messageRoutes from "../routes/MessageRoutes.js";
+import { uploadOnColudinaryFromRam, uploadOnColudinaryviaLocalPath } from "../utils/cloudinary.js";
 
 const getMsgPendingHistoryController = async (req, res) => {
   const userid = req.ObtainedData;
@@ -183,10 +184,35 @@ const updateMessageSeenStatusController = async (req, res) => {
   }
   return res.json(new Response(201, { msg: "success" }));
 };
+const uploadMessageMedia=async(req,res )=>{
+  let mediaPath;
+  let url;
+  try {
+    if (process.env.PRODUCTION==="true") {
+      mediaPath = req.file?.buffer;
+      if (!mediaPath) {
+        return res.sendStatus(500);}
+      url = await uploadOnColudinaryFromRam(mediaPath);
+    } else {
+      mediaPath = req.file?.path;
+      if (!mediaPath) return res.sendStatus(500);
+      url = await uploadOnColudinaryviaLocalPath(mediaPath);
+    }
+
+    if (!url) return res.sendStatus(500);
+    return res.json(new Response(201,{link:url}));
+
+  }catch(err){
+    console.log(err);
+    res.sendStatus(500);
+
+    }
+}
 
 export {
   getMsgPendingHistoryController,
   getpendingMessagesController,
   sendMessageController,
   updateMessageSeenStatusController,
+  uploadMessageMedia
 };

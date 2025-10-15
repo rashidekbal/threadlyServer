@@ -1,6 +1,7 @@
 import admin from "firebase-admin";
 import ServiceCred from "./fcmAdminKey.json" with { type: "json" };
 import Response from "../constants/Response.js"
+
 let certificate=ServiceCred;
 if(process.env.local==="false"){
   certificate=JSON.parse(process.env.ADMIN_CERTIFICATE);
@@ -30,6 +31,8 @@ const sendMessage = (token,Message) => {
       profile:Message.profile,
       MsgUid:Message.MsgUid,
       type:Message.type,
+      postId:Message.postId,
+      link:Message.link,
       timestamp:Message.timestamp,
        ReplyTOMsgUid:Message.ReplyTOMsgUid,
        deliveryStatus:Message.deliveryStatus,
@@ -208,7 +211,7 @@ const notifyCommentLike_via_fcm=async(token,userid,username,profile,postid,Comme
             profile:profile,
             postId:String(postid),
             postLink:postLink,
-            commetnId:String(Commentid)
+            commentId:String(Commentid)
         
       }
     }
@@ -233,7 +236,7 @@ const notifyCommentUnlike_via_fcm=async(token,userid,Commentid)=>{
       data:{
             responseType:"commentUnlike",
             userId:userid,
-            commetnId:String(Commentid)
+            commentId:String(Commentid)
         
       }
     }
