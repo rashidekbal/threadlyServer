@@ -16,6 +16,7 @@ function setSocketFunctions(socket, io) {
   //when client send message to server to send to user
   socket.on("CToS", async (data) => {
     console.log(data);
+  
     //generate a ,MessageUid;
     let MsgUid = data.MsgUid;
     let type = data.type != null ? data.type : "text";
@@ -99,13 +100,16 @@ function setSocketFunctions(socket, io) {
             timestamp,
             deliveryStatus: "-1",
             isDeleted: "false",
+            notificationText:data.notificationText
           });
-          //add message to db
+          console.log("msg sent via fcm")
+         
           socket.emit("MsgStatusUpdate", {
             MsgUid,
-            deliveryStatus: 2,
+            deliveryStatus: 1,
           });
           try {
+             //add message to db
             await addMessageToDb(
               MsgUid,
               ReplyTOMsgUid,
@@ -116,7 +120,7 @@ function setSocketFunctions(socket, io) {
               data.postId,
               data.link,
               timestamp,
-              2,
+              1,
               false
             );
             console.log("msg added to db");
@@ -185,7 +189,8 @@ function setSocketFunctions(socket, io) {
     const receiverUserid=data.myUserid;
     let receiverUUid;
     const responseUUid=await fetchDb(`select uuid from users where userid=?`,[receiverUserid]);
-    if (responseUUid.length>0 && (responseUUid[0].uuid!=null)){
+    try {
+       if (responseUUid.length>0 && (responseUUid[0].uuid!=null)){
      receiverUUid=responseUUid[0].uuid;
       const getQuery=`select * from messages where senderUUId=? and recieverUUId=? and deliveryStatus=2`;
       const UpdateQuery=`update messages set deliveryStatus=3 where senderUUId=? and recieverUUId=? and deliveryStatus=2`;
@@ -199,8 +204,19 @@ function setSocketFunctions(socket, io) {
       }
 
     }
+    } catch (error) {
+      console.log(error)
+    }
+   
 
 
+  })
+  //update sent status when msg received through fcm
+  socket.on("notifyReceivedToSender",async (data)=>{
+
+    const senderUUid=data.senderUUid;
+    const msgUid=data.msgUid;
+    notifyStatusChanged(senderUUid,msgUid,2,false);
   })
   //when user gets disconnected
   socket.on("disconnect", () => {
@@ -223,7 +239,13 @@ async function notifyStatusChanged(uuid, messageUid, status, isDeleted) {
     return socketIo.to(socket_id).emit("msg_status_changed_event", object);
   }
   // try with fcm
-  let fcmToken = await getFcmTokenWithUUid(uuid);
+  let fcmToken;
+  try {
+       fcmToken= await getFcmTokenWithUUid(uuid);
+  } catch (error) {
+    console.log("error in getting fcm "+error)
+  }
+
   if (fcmToken != null) {
     console.log("notifying via fcm");
     try {

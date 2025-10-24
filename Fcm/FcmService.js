@@ -16,7 +16,7 @@ const StartServiceFcm = () => {
 
 const sendMessage = (token,Message) => {
   return new Promise(async(resolve,reject)=>{
-     console.log(Message)
+
   const message = {
     token,
     android:{
@@ -37,7 +37,8 @@ const sendMessage = (token,Message) => {
        ReplyTOMsgUid:Message.ReplyTOMsgUid,
        deliveryStatus:Message.deliveryStatus,
        isDeleted:Message.isDeleted,
-       responseType:"chat"
+       responseType:"chat",
+       notificationText:Message.notificationText
    
     } 
   };

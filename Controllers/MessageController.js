@@ -9,15 +9,17 @@ import {
   getUUidFromUserId,
 } from "../utils/ReusableFunctions.js";
 import { v4 as uuidv4 } from "uuid";
-import messageRoutes from "../routes/MessageRoutes.js";
 import { uploadOnColudinaryFromRam, uploadOnColudinaryviaLocalPath } from "../utils/cloudinary.js";
 
 const getMsgPendingHistoryController = async (req, res) => {
+ 
   const userid = req.ObtainedData;
+
   try {
     let uuid = await getUUidFromUserId(userid);
     const query = `SELECT count(distinct msg.messageId)as messagesPending,msg.senderUUId as senderUUid,usr.userid,usr.username,usr.profilepic FROM MESSAGES as msg left join users as usr on usr.uuid =msg.senderUUid WHERE msg.recieverUUId=? and 
     msg.deliveryStatus=1 group by msg.senderUUId`;
+    console.log("query created ")
     let response = await fetchDb(query, [uuid]);
     return res.json(new Response(200, response));
   } catch (error) {
@@ -29,7 +31,7 @@ const getpendingMessagesController = async (req, res) => {
   const userid = req.ObtainedData;
   const senderUuid = req.body.nameValuePairs.senderUuid;
   let receiverUuid;
-  if (senderUuid == null || senderUuid == undefined) return res.sendStatus(400);
+  if (!senderUuid ) return res.sendStatus(400);
   try {
     receiverUuid = await getUUidFromUserId(userid);
     const query = `select * from messages where senderUUId=? and recieverUUId=? and deliveryStatus=1 order by creationTime asc`;

@@ -1,10 +1,12 @@
-import express from "express";
+import express, { response } from "express";
 import jwt from "jsonwebtoken";
 import connection from "../db/connection.js";
 import "dotenv/config";
 import bcrypt from "bcrypt";
 import fetchDb from "../utils/query.js";
 import {logOutPreviousDevice} from "../Fcm/FcmService.js";
+import Response from "../constants/Response.js";
+import verifyToken from "../middlewares/authorization.js";
 let router = express.Router();
 router.post("/mobile", async (req, res) => {
   let Obtained = req.body.nameValuePairs;
@@ -144,6 +146,19 @@ router.post("/userid", async (req, res) => {
     res.sendStatus(403);
   }
 });
+router.get("/logout",verifyToken,async(req,res)=>{
+   const userid = req.ObtainedData;
+   console.log("logoutrequest")
+ const query=`update users set fcmToken="null" where userid=?`
+ try{let resposne=await fetchDb(query,[userid]);
+  res.json(new Response(200,{msg:"ok"}));
+ }catch(err){
+  console.log(err);
+  response.sendStatus(500);
+
+ }
+
+});
 
 function fetchUser(column, data) {
   let query = `select * from users where ${column} = ?`;
@@ -154,5 +169,6 @@ function fetchUser(column, data) {
     });
   });
 }
+
 
 export default router;

@@ -29,12 +29,13 @@ async function registerUserEmailController(req, res) {
     let isAdult = verifyAge(dob);
 
     // Database query to insert the new user into the "users" table
-    let db_query = `insert into users (userid,username,email,pass,dob,uuid) values (?,?,?,?,?,?)`;
+    let db_query = `insert into users (userid,username,email,pass,bio,dob,uuid) values (?,?,?,?,?,?,?)`;
     let data = [
       `${userid}`, // User ID
       `${username}`, // Username
       `${email}`, // Email
       `${password}`, // Hashed password
+      "",
       `${dob}`,
       `${uuid}`,
     ];
