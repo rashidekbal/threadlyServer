@@ -2,7 +2,7 @@ import Response from "../constants/Response.js";
 import fetchDb from "../utils/query.js";
 const updateToken = async (req, res) => {
   const userid = req.ObtainedData;
-  const token = req.body.nameValuePairs.token;
+  const token = req.body.nameValuePairs.token;``
   if (!token) return res.senStatus(400);
   const query = `update users set fcmToken=? where userid=?`;
   try {

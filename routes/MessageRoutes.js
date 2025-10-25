@@ -1,6 +1,7 @@
 import { Router } from "express";
 import verifyToken from "../middlewares/authorization.js";
-import {
+import {deleteMessageForRoleController,
+  getAllChatsController,
   getMsgPendingHistoryController,
   getpendingMessagesController,
   sendMessageController,
@@ -26,6 +27,8 @@ router.route("/uploadMedia").post(verifyToken,uploadToRam.single("media"),upload
   }else{
     router.route("/uploadMedia").post(verifyToken,uploadtoDisk.single("media"),uploadMessageMedia);
   }
+  router.route("/getAllChats").get(verifyToken,getAllChatsController);
+  router.route("/deleteMessageForMe").patch(verifyToken,deleteMessageForRoleController);
   
 
 export default router;

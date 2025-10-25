@@ -13,8 +13,10 @@ const addMessageToDb = (
   deliveryStatus,
   isDeleted
 ) => {
+  // is deleted field is not set when me=sg is created due to some desing problem the is deleted filed is passed from
+  // every calling place
   return new Promise(async (resolve, reject) => {
-    const query = `insert into messages (messageUid,replyToMessageId,senderUUId,recieverUUId,type,message,postid,postLink,creationTime,deliveryStatus,isDeleted) values (?,?,?,?,?,?,?,?,?,?,?)`;
+    const query = `insert into messages (messageUid,replyToMessageId,senderUUId,recieverUUId,type,message,postid,postLink,creationTime,deliveryStatus) values (?,?,?,?,?,?,?,?,?,?)`;
     try {
       await fetchDb(query, [
         messageUid,
@@ -27,7 +29,6 @@ const addMessageToDb = (
         postLink,
         creationTime,
         deliveryStatus,
-        isDeleted,
       ]);
       resolve(new Response(201, { msg: "success" }));
     } catch (error) {

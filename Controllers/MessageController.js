@@ -8,8 +8,9 @@ import {
   addMessageToDb,
   getUUidFromUserId,
 } from "../utils/ReusableFunctions.js";
-import { v4 as uuidv4 } from "uuid";
 import { uploadOnColudinaryFromRam, uploadOnColudinaryviaLocalPath } from "../utils/cloudinary.js";
+
+
 
 const getMsgPendingHistoryController = async (req, res) => {
  
@@ -19,7 +20,6 @@ const getMsgPendingHistoryController = async (req, res) => {
     let uuid = await getUUidFromUserId(userid);
     const query = `SELECT count(distinct msg.messageId)as messagesPending,msg.senderUUId as senderUUid,usr.userid,usr.username,usr.profilepic FROM MESSAGES as msg left join users as usr on usr.uuid =msg.senderUUid WHERE msg.recieverUUId=? and 
     msg.deliveryStatus=1 group by msg.senderUUId`;
-    console.log("query created ")
     let response = await fetchDb(query, [uuid]);
     return res.json(new Response(200, response));
   } catch (error) {
@@ -36,14 +36,17 @@ const getpendingMessagesController = async (req, res) => {
     receiverUuid = await getUUidFromUserId(userid);
     const query = `select * from messages where senderUUId=? and recieverUUId=? and deliveryStatus=1 order by creationTime asc`;
     let response = await fetchDb(query, [senderUuid, receiverUuid]);
-    //on database set messages to delivered
-    await fetchDb(
-      "update messages set deliveryStatus=2 where senderUUID=? and recieverUUID=?",
-      [senderUuid, receiverUuid]
-    );
+    console.log(response.length+" length of pending to receive messages")
+   
     for (let i = 0; i < response.length; i++) {
       console.log("starting to notify");
+       //on database set messages to delivered
+    await fetchDb(
+      "update messages set deliveryStatus=2 where senderUUID=? and recieverUUID=? and messageUid=? ",
+      [senderUuid, receiverUuid,response[i].messageUid],
+    );
       notifyStatusChanged(senderUuid, response[i].messageUid, 2, false);
+      console.log("notified");
     }
     return res.json(new Response(200, response));
   } catch (error) {
@@ -210,11 +213,60 @@ const uploadMessageMedia=async(req,res )=>{
 
     }
 }
+const getAllChatsController=async(req,res)=>{
+  const userid = req.ObtainedData;
+  if(!userid)return res.sendStatus(400);
+  const query=`select * from messages where senderUUid=? or recieverUUid=? and isDeletedBoth=false and not deliveryStatus='null'`;
+  try {
+     let uuid = await getUUidFromUserId(userid);
+     if(!uuid)return res.sendStatus(400);
+     let response=await fetchDb(query,[uuid,uuid]);
+    return  res.json(new Response(200,response))
+
+  } catch (error) {
+    console.log("error getting all chats :"+error);
+    return res.sendStatus(500);
+    
+  }
+}
+
+const deleteMessageForRoleController=async(req,res)=>{
+    const userid = req.ObtainedData;
+      let MsgUid = req.body.nameValuePairs.MsgUid;
+      const role=req.body.nameValuePairs.Role;
+      const queryForSenderRole=`update messages set isDeletedBySender=true where senderUUId=? and messageUid=?`;
+      const queryForReceiverRole=`update messages set isDeletedByReceiver=true where recieverUUId=? and messageUid=?`;
+    if(!userid||!MsgUid||!role)return res.sendStatus(400);
+  
+    try {
+     let uuid = await getUUidFromUserId(userid);
+     if(!uuid)return res.sendStatus(400);
+     if(role==="sender"){
+
+
+     }
+     if(role==="receiver"){
+
+     }
+     res.send("ok") 
+
+  } catch (error) {
+    console.log("error getting all chats :"+error);
+    return res.sendStatus(500);
+    
+  }
+
+
+
+
+}
 
 export {
   getMsgPendingHistoryController,
   getpendingMessagesController,
   sendMessageController,
   updateMessageSeenStatusController,
-  uploadMessageMedia
+  uploadMessageMedia,
+  getAllChatsController,
+  deleteMessageForRoleController
 };

@@ -3,7 +3,7 @@ import { socketIo } from "../index.js";
 import fetchDb from "../utils/query.js";
 import {
   addMessageToDb,
-  getFcmTokenWithUUid,
+  getFcmTokenWithUUid, getUUidFromUserId,
 } from "../utils/ReusableFunctions.js";
 import { addUser, getSocketId, removeUser } from "./ConnectedUsers.js";
 function setSocketFunctions(socket, io) {
@@ -15,8 +15,7 @@ function setSocketFunctions(socket, io) {
 
   //when client send message to server to send to user
   socket.on("CToS", async (data) => {
-    console.log(data);
-  
+     console.log(data);
     //generate a ,MessageUid;
     let MsgUid = data.MsgUid;
     let type = data.type != null ? data.type : "text";
@@ -69,7 +68,6 @@ function setSocketFunctions(socket, io) {
           2,
           false
         );
-        console.log("message added to the server with delivery code 2");
       } catch (error) {
         console.log("error adding message to the server " + console.log(error));
       }
@@ -185,22 +183,31 @@ function setSocketFunctions(socket, io) {
   });
   //msg seen status update call
   socket.on("update_seen_msg_status",async data=>{
+    console.log("into the bug")
     const senderUUid=data.senderUUid;
     const receiverUserid=data.myUserid;
-    let receiverUUid;
-    const responseUUid=await fetchDb(`select uuid from users where userid=?`,[receiverUserid]);
+    let receiverUUid=await getUUidFromUserId(receiverUserid);
     try {
-       if (responseUUid.length>0 && (responseUUid[0].uuid!=null)){
-     receiverUUid=responseUUid[0].uuid;
+       if (receiverUUid != null){
       const getQuery=`select * from messages where senderUUId=? and recieverUUId=? and deliveryStatus=2`;
       const UpdateQuery=`update messages set deliveryStatus=3 where senderUUId=? and recieverUUId=? and deliveryStatus=2`;
       const response=await fetchDb(getQuery,[senderUUid,receiverUUid]);
+      for(let i=0 ;i<response.length;i++){
+ console.log(" this un seen message which is to be notified"+response[i].deliveryStatus+response[i].messageUid)
+      }
+     
       if(response.length>0) {
         for(let i=0;i<response.length;i++){
-
+          console.log("notifying for seen status")
           await notifyStatusChanged(String(senderUUid),response[i].messageUid,3,false)
         }
-        await fetchDb(UpdateQuery,[senderUUid,receiverUUid]);
+        try {
+          await fetchDb(UpdateQuery,[senderUUid,receiverUUid]);
+        } catch (error) {
+          console.log("error updating  to code 3")
+          
+        }
+        
       }
 
     }

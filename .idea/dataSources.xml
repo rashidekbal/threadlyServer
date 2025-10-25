@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="gpgram@localhost" uuid="147a456f-999d-4d84-9cae-791c2f470710">
+    <data-source source="LOCAL" name="threadly@localhost" uuid="78e586d6-e662-4587-8ff1-516deaaee174">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/gpgram</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3306/threadly</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
