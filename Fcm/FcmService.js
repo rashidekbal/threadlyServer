@@ -80,6 +80,31 @@ const notifyStatus_via_Fcm = (token,messageuid,status,isDeleted) => {
  
 
 };
+const notifyUnsendMessageViaFcm=(token,messageUid)=>{
+  return new Promise(async(resolve,reject)=>{
+  const message = {
+    token,
+    android:{
+      priority:"high"
+    },
+    data:{
+       MsgUid:messageUid,
+       responseType:"msgUnsendEvent"
+   
+    } 
+  };
+ try {
+  console.log(message.data);
+  await admin.messaging().send(message);
+  resolve(new Response(200,{msg:"success"}));
+  
+ } catch (error) {
+ 
+    reject(new Response(500,{msg:error}));
+ }
+  })
+
+}
 const notify_postLiked_via_fcm=async (token,postId,postLink,userprofile,username,userid,insertId)=>{
   return new Promise(async(resolve,reject)=>{
      const message={
@@ -282,4 +307,4 @@ export { StartServiceFcm,
     logOutPreviousDevice,
     notify_UnFollow_via_fcm,
   notifyCommentLike_via_fcm,
-    notifyCommentUnlike_via_fcm};
+    notifyCommentUnlike_via_fcm,notifyUnsendMessageViaFcm};

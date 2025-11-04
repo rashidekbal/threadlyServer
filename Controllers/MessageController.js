@@ -2,7 +2,7 @@ import Response from "../constants/Response.js";
 import { sendMessage } from "../Fcm/FcmService.js";
 import { socketIo } from "../index.js";
 import { getSocketId } from "../socketHandlers/ConnectedUsers.js";
-import { notifyStatusChanged } from "../socketHandlers/SocketMainHandler.js";
+import { notifyStatusChanged, notifyUnSendMessage } from "../socketHandlers/SocketMainHandler.js";
 import fetchDb from "../utils/query.js";
 import {
   addMessageToDb,
@@ -42,7 +42,7 @@ const getpendingMessagesController = async (req, res) => {
       console.log("starting to notify");
        //on database set messages to delivered
     await fetchDb(
-      "update messages set deliveryStatus=2 where senderUUID=? and recieverUUID=? and messageUid=? ",
+      "update messages set deliveryStatus=2 where senderUUID=? and recieverUUID=? and messageUid=? and deliveryStatus=1 ",
       [senderUuid, receiverUuid,response[i].messageUid],
     );
       notifyStatusChanged(senderUuid, response[i].messageUid, 2, false);
@@ -216,7 +216,7 @@ const uploadMessageMedia=async(req,res )=>{
 const getAllChatsController=async(req,res)=>{
   const userid = req.ObtainedData;
   if(!userid)return res.sendStatus(400);
-  const query=`select * from messages where senderUUid=? or recieverUUid=? and isDeletedBoth=false and not deliveryStatus='null'`;
+  const query=`select * from messages where (senderUUid=? or recieverUUid=?) and isDeletedBoth=false and not deliveryStatus='null'`;
   try {
      let uuid = await getUUidFromUserId(userid);
      if(!uuid)return res.sendStatus(400);
@@ -242,13 +242,12 @@ const deleteMessageForRoleController=async(req,res)=>{
      let uuid = await getUUidFromUserId(userid);
      if(!uuid)return res.sendStatus(400);
      if(role==="sender"){
-
-
+        await fetchDb(queryForSenderRole,[uuid,MsgUid]);
+     }else{
+      
+        await fetchDb(queryForReceiverRole,[uuid,MsgUid]);
      }
-     if(role==="receiver"){
-
-     }
-     res.send("ok") 
+      return  res.json(new Response(200,{Msg:"ok"}));
 
   } catch (error) {
     console.log("error getting all chats :"+error);
@@ -260,6 +259,27 @@ const deleteMessageForRoleController=async(req,res)=>{
 
 
 }
+const UnsendMessageController=async(req,res)=>{
+  console.log("unsend Request received")
+  const userid = req.ObtainedData;
+    let MsgUid = req.body.nameValuePairs.MsgUid;
+    const receiverUUid=req.body.nameValuePairs.receiverUUid;
+    if(!userid||!MsgUid||!receiverUUid)return res.sendStatus(400);
+    try {
+       let uuid = await getUUidFromUserId(userid);
+       if(!uuid)return res.sendStatus(400);
+       const query=`update messages set isDeletedBoth=true where senderUUId=? and messageUid=?`;
+      await fetchDb(query,[uuid,MsgUid]);
+      notifyUnSendMessage(receiverUUid,MsgUid);
+     return  res.json(new Response(200,{msg:"ok"}));
+      
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(500);
+      
+    }
+
+}
 
 export {
   getMsgPendingHistoryController,
@@ -268,5 +288,6 @@ export {
   updateMessageSeenStatusController,
   uploadMessageMedia,
   getAllChatsController,
-  deleteMessageForRoleController
+  deleteMessageForRoleController,
+  UnsendMessageController
 };

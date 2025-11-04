@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 15, 2025 at 08:01 PM
+-- Generation Time: Nov 04, 2025 at 06:32 PM
 -- Server version: 9.1.0
 -- PHP Version: 8.3.14
 
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `comment_likes` (
   PRIMARY KEY (`comment_like_id`),
   KEY `userid` (`userid`),
   KEY `commentid` (`commentid`)
-) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `comment_likes`
@@ -84,19 +84,19 @@ CREATE TABLE IF NOT EXISTS `followers` (
   PRIMARY KEY (`followid`),
   KEY `followerid` (`followerid`),
   KEY `followingid` (`followingid`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `followers`
 --
 
 INSERT INTO `followers` (`followid`, `followerid`, `followingid`, `createdAt`) VALUES
-(66, 'Mysterious_being', 'kaluadon', '2025-10-07 16:00:41'),
-(69, 'kaluadon', 'Mysterious_being', '2025-10-07 16:41:57'),
-(71, 'samar1760556086419', 'kaluadon', '2025-10-16 00:53:41'),
-(74, 'samar1760556086419', 'Mysterious_being', '2025-10-16 00:55:11'),
-(75, 'Mysterious_being', 'samar1760556086419', '2025-10-16 00:55:14'),
-(76, 'kaluadon', 'samar1760556086419', '2025-10-16 00:55:18');
+(71, 'smrzz_16', 'kaluadon', '2025-10-16 00:53:41'),
+(74, 'smrzz_16', 'Mysterious_being', '2025-10-16 00:55:11'),
+(75, 'Mysterious_being', 'smrzz_16', '2025-10-16 00:55:14'),
+(76, 'kaluadon', 'smrzz_16', '2025-10-16 00:55:18'),
+(78, 'Mysterious_being', 'kaluadon', '2025-10-26 17:48:44'),
+(79, 'kaluadon', 'Mysterious_being', '2025-10-26 17:48:55');
 
 -- --------------------------------------------------------
 
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `imagepost` (
   `type` tinytext COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`postid`),
   KEY `userid` (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=134 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `imagepost`
@@ -204,7 +204,10 @@ INSERT INTO `imagepost` (`postid`, `userid`, `imageurl`, `caption`, `created_at`
 (121, 'Mysterious_being', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1754564143/netsuwyjfooacmztbeop.jpg', 'party ho Rahi khatarnak', '2025-08-07 16:25:46', 'image'),
 (122, 'Mysterious_being', 'https://res.cloudinary.com/dphwlcyhg/video/upload/v1755869573/zoobitqzoydr2ftko3dx.mp4', '♥️♥️♥️♥️', '2025-08-22 19:02:56', 'video'),
 (125, 'Mysterious_being', 'https://res.cloudinary.com/dphwlcyhg/video/upload/v1756719755/ywqtuejjdqjiuodtyylu.mp4', '🥺', '2025-09-01 15:12:36', 'video'),
-(128, 'Mysterious_being', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1759601410/lr8macwakf1asjzgvlvi.jpg', 'media upload test', '2025-10-04 23:40:13', 'image');
+(128, 'Mysterious_being', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1759601410/lr8macwakf1asjzgvlvi.jpg', 'media upload test', '2025-10-04 23:40:13', 'image'),
+(131, 'smrzz_16', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1761998649/cuzy9cepcdhnriyn02rf.jpg', 'me', '2025-11-01 17:34:11', 'image'),
+(132, 'Mysterious_being', 'https://res.cloudinary.com/dphwlcyhg/video/upload/v1761999260/tthmegs9pxxcg3xhow3j.mp4', 'Desi gor', '2025-11-01 17:44:22', 'video'),
+(133, 'Mysterious_being', 'https://res.cloudinary.com/dphwlcyhg/video/upload/v1761999274/cx2ilfdcjauxaxsfr38b.mp4', 'kaale hone ka fayda', '2025-11-01 17:44:36', 'video');
 
 -- --------------------------------------------------------
 
@@ -216,7 +219,7 @@ DROP TABLE IF EXISTS `messages`;
 CREATE TABLE IF NOT EXISTS `messages` (
   `messageId` bigint NOT NULL AUTO_INCREMENT,
   `messageUid` char(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `replyToMessageId` bigint DEFAULT NULL,
+  `replyToMessageId` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `senderUUId` char(36) COLLATE utf8mb4_general_ci NOT NULL,
   `recieverUUId` char(36) COLLATE utf8mb4_general_ci NOT NULL,
   `type` enum('text','image','video','audio','file','post','story') COLLATE utf8mb4_general_ci DEFAULT 'text',
@@ -225,54 +228,60 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `postLink` text COLLATE utf8mb4_general_ci,
   `creationTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `deliveryStatus` tinyint DEFAULT '0',
-  `isDeleted` tinyint(1) DEFAULT '0',
+  `isDeletedByReceiver` tinyint(1) DEFAULT '0',
+  `isDeletedBySender` tinyint(1) DEFAULT '0',
+  `isDeletedBoth` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`messageId`),
-  UNIQUE KEY `uq_messageUid` (`messageUid`),
   KEY `senderUUId` (`senderUUId`),
   KEY `recieverUUId` (`recieverUUId`)
-) ENGINE=MyISAM AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=152 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `messages`
 --
 
-INSERT INTO `messages` (`messageId`, `messageUid`, `replyToMessageId`, `senderUUId`, `recieverUUId`, `type`, `message`, `postId`, `postLink`, `creationTime`, `deliveryStatus`, `isDeleted`) VALUES
-(1, 'f70c8b58-6f9e-4067-a6d0-f74dc7b35c1a', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', NULL, NULL, '2025-10-15 16:24:01', 3, 0),
-(2, '2d08f925-7b00-44c3-ac6a-687d5524127a', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', NULL, NULL, '2025-10-15 17:48:39', 3, 0),
-(3, 'd7706e77-e4ab-4d97-a399-fc4d961a174a', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', '', NULL, NULL, '2025-10-15 18:27:49', 3, 0),
-(4, '83c74fe8-d2fe-4012-a423-ba5ca9a35d68', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 18:49:08', 3, 0),
-(5, '8531af14-7e7e-4d87-9e02-7b969196d352', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'image', '', -1, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760554179/fvx3w4x1zxb0jsbqihdw.jpg', '2025-10-15 18:49:40', 3, 0),
-(6, '7136f5df-84b8-4f51-951b-f145747de367', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'image', '', -1, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760554978/nppj3mqklbgima2b7jyw.jpg', '2025-10-15 19:03:07', 3, 0),
-(7, '79f5c72d-25f9-4b2d-9019-9e20bae7a1df', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'image', '', -1, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760555217/wsxhheywhx7tzvkde6c3.jpg', '2025-10-15 19:07:10', 3, 0),
-(8, '7aee4938-9d24-43d2-8e13-4aa32da83698', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'image', '', -1, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760555275/gzudusgrmiadaeckuwoe.jpg', '2025-10-15 19:07:57', 3, 0),
-(9, 'e5636640-1480-4826-9790-e5ff17c243f4', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 19:08:17', 3, 0),
-(10, 'c496ceaf-1609-44d7-b4b0-381f42d6bff2', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'kya hua ji', -1, 'null', '2025-10-15 19:08:27', 3, 0),
-(11, '7ff51848-2c19-4d89-9cd2-da27d569f8c7', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'kuch nahi', -1, 'null', '2025-10-15 19:08:35', 3, 0),
-(12, '3116575c-6d95-4ae1-8164-2445b159fd26', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'wow I just integrated feature of sending image', -1, 'null', '2025-10-15 19:08:52', 3, 0),
-(13, 'be56b3a7-b3db-49d0-9ca2-171f00bbc5a5', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'chalo theek hai fir', -1, 'null', '2025-10-15 19:17:14', 3, 0),
-(14, 'c3bb0611-6caa-4536-beba-42e0ed657746', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'nahi bolna to rehne do', -1, 'null', '2025-10-15 19:17:22', 3, 0),
-(15, '8c54f1cc-bea9-4001-9c3e-a3f0dde00569', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', -1, 'null', '2025-10-15 19:25:38', 3, 0),
-(16, 'dbf635cf-65e0-4ec4-af2b-4238aaca2ff7', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hi', -1, 'null', '2025-10-15 19:26:05', 3, 0),
-(17, '3ef85f39-49b0-4896-bb64-6dc9f6a389da', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hi', -1, 'null', '2025-10-15 19:27:36', 3, 0),
-(18, 'e4434369-f015-4615-996d-63f689d25e5b', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'bolo na', -1, 'null', '2025-10-15 19:27:49', 3, 0),
-(19, '3caaa9f7-fd85-4ec1-b2a6-ac5d3d8f82d7', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi again', -1, 'null', '2025-10-15 19:36:49', 3, 0),
-(20, '5f6b6ec8-39bd-44b1-b8d5-d3ce7bf3661a', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi from here too', -1, 'null', '2025-10-15 19:37:13', 3, 0),
-(21, 'f9080e3b-5067-45c5-880e-c1f51fa15898', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'and here too', -1, 'null', '2025-10-15 19:37:30', 3, 0),
-(22, '74497a9e-3f2c-4e26-8354-5b28852c1260', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 19:38:25', 3, 0),
-(23, '4d887bfe-d59d-4045-ac0c-83d53eebaad4', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 19:39:31', 3, 0),
-(24, 'bbbff6fa-c70e-4818-961a-cdf0900181a0', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'again', -1, 'null', '2025-10-15 19:39:37', 3, 0),
-(25, '95f1a1dc-01ef-48ae-80d9-e128d46221f1', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 19:46:33', 3, 0),
-(26, '3a1aea81-8deb-4bc6-a1b1-51c7c723318d', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hello', -1, 'null', '2025-10-15 19:46:37', 3, 0),
-(27, '5af17011-a216-48b1-8d00-a0b748917887', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'image', '', -1, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760557612/bphy1sfzhoo8wgy8mpe8.jpg', '2025-10-15 19:46:55', 3, 0),
-(28, '6108e931-f7ad-4e65-ad93-14dd69cf2420', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hi', -1, 'null', '2025-10-15 19:48:45', 3, 0),
-(29, '304b8fd2-3fc8-4b93-bc36-c6a49d9ff0a9', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi ji', -1, 'null', '2025-10-15 19:50:38', 3, 0),
-(30, '5f4c0698-db47-4aa6-8b3a-391f85b91499', 0, '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'kya haal hai', -1, 'null', '2025-10-15 19:50:52', 3, 0),
-(31, '72ed0059-f903-4f66-b657-46c3212f7e5a', 0, 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-15 19:52:02', 3, 0),
-(32, '9f49dfd0-ca98-4535-82c4-e21bb71676c3', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'aur batao', -1, 'null', '2025-10-15 19:52:40', 3, 0),
-(33, '666856b1-7511-4482-9700-16612eff3bc4', 0, '710b962e-041c-11e1-9234-5123456789ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hello hi janeman', -1, 'null', '2025-10-15 19:52:56', 3, 0),
-(34, '91703998-bfd5-432a-bb9a-5a8f64252d1f', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'ghdh', -1, 'null', '2025-10-15 19:53:06', 3, 0),
-(35, '190154b4-a33f-4505-95e6-34d43e52990e', 0, '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hi', -1, 'null', '2025-10-15 19:55:50', 3, 0),
-(36, '7db25c59-f051-48a9-a9f3-f525ea3ab157', 0, '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hello', -1, 'null', '2025-10-15 19:56:06', 3, 0);
+INSERT INTO `messages` (`messageId`, `messageUid`, `replyToMessageId`, `senderUUId`, `recieverUUId`, `type`, `message`, `postId`, `postLink`, `creationTime`, `deliveryStatus`, `isDeletedByReceiver`, `isDeletedBySender`, `isDeletedBoth`) VALUES
+(111, 'e70e1aab-0546-4c62-b7aa-13df29272fe3', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', -1, 'null', '2025-10-26 11:59:19', 3, 0, 0, 0),
+(112, '9b1e4367-5d45-44a7-bca2-1b111a4d3584', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hello', -1, 'null', '2025-10-26 11:59:49', 3, 0, 0, 1),
+(113, '56bf507a-d264-48fa-9bac-24e1b93811af', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'helo', -1, 'null', '2025-10-26 12:00:05', 3, 0, 1, 0),
+(114, '5e306d13-743b-43b7-9d2b-ccb7df9c5eb7', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', -1, 'null', '2025-10-26 12:00:54', 3, 1, 1, 0),
+(115, '70b4639d-431c-432d-a22a-8d21014fda77', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'post', '', 76, 'https://res.cloudinary.com/dphwlcyhg/video/upload/v1753346772/k96nifdlilpu6psgtaor.mp4', '2025-10-26 12:03:28', 3, 0, 0, 0),
+(116, 'ae5aac19-f125-4693-90bd-9788b3e1bdd2', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'post', '', 114, 'https://res.cloudinary.com/dphwlcyhg/video/upload/v1753349012/xlewvmuhjcwwlz8duwur.mp4', '2025-10-31 13:05:02', 3, 0, 0, 0),
+(117, '3443cb43-ffd7-452d-b168-aa3ac1e1dbef', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', -1, 'null', '2025-10-31 13:51:49', 3, 0, 0, 0),
+(118, '0888544a-9766-4069-b02d-a662d6408766', 'null', '710b962e-041c-11e1-9234-5123456789ab', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi', -1, 'null', '2025-10-31 13:52:20', 3, 0, 0, 0),
+(119, 'ed46b0cf-b234-4796-bc76-b4131b53dbb1', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', -1, 'null', '2025-10-31 13:55:33', 3, 0, 0, 0),
+(120, 'c8a5ffbf-45c6-40d1-9acb-3ea623528284', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'post', '', 46, 'https://res.cloudinary.com/dphwlcyhg/video/upload/v1753259286/qlehliesjjseopeuiqoj.mp4', '2025-10-31 13:55:49', 3, 0, 0, 0),
+(121, 'd081f8d8-0ab4-4a00-bad2-39189b035354', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hi janua', -1, 'null', '2025-11-01 11:56:48', 3, 0, 0, 0),
+(122, '71d8f67e-4bea-45ae-9855-1345fb692dc2', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'ka ho kareja', -1, 'null', '2025-11-01 11:57:04', 3, 0, 0, 0),
+(123, '5e773ca2-aab7-4148-8aa3-f5205fd8a5c5', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'ka haal ba', -1, 'null', '2025-11-01 11:57:12', 3, 0, 0, 0),
+(124, 'c80080e5-98f8-4677-ba4b-5e203812f145', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'saab theek apan batao', -1, 'null', '2025-11-01 11:57:20', 3, 0, 0, 0),
+(125, 'fcd1fb5f-9140-4fde-9c57-c0978557affc', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'hamro theek ba , call college aana hai', -1, 'null', '2025-11-01 11:57:38', 3, 0, 0, 0),
+(126, '120bbde6-36b8-4fed-b740-290bea3c6f30', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'ha , tum aaogi to jarur aaunga', -1, 'null', '2025-11-01 11:57:49', 3, 0, 0, 0),
+(127, 'd0a2c85d-2dde-4430-90e9-ef5ee9819c54', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'ok to aa jana', -1, 'null', '2025-11-01 11:57:57', 3, 0, 0, 0),
+(128, 'cebe7b6e-cff4-41d8-9a3e-f38b496795c2', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'itw a assignment bana hai', -1, 'null', '2025-11-01 11:58:11', 3, 0, 0, 0),
+(129, '86350178-cdf7-40e9-9afb-0c892271b779', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'ha', -1, 'null', '2025-11-01 11:58:18', 3, 0, 0, 0),
+(130, 'a4d0da38-f053-4ef9-ac40-20d8097c924f', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'to bhej do yaar', -1, 'null', '2025-11-01 11:58:22', 3, 0, 0, 0),
+(131, 'a5b900df-2f16-4c97-9275-475dc82fa4a1', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'tum jab dekho tab mangte rehte ho yaar kya aadmi ho chutiye', -1, 'null', '2025-11-01 11:58:42', 3, 0, 0, 0),
+(132, '2e4cb8ad-eafc-4109-91c9-0340140e77ac', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'accha , sorry about se nahi mangunga bas ek baar bhej do please 🥺', -1, 'null', '2025-11-01 11:58:58', 3, 0, 0, 0),
+(133, '354c7981-e854-4096-9e1f-9d1afdce0bad', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'ok dekhti hun', -1, 'null', '2025-11-01 11:59:09', 3, 0, 0, 0),
+(134, '90a8384d-4de5-493a-a817-1dfa4db9c9c8', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'video', 'phele ye dekh', -1, 'https://res.cloudinary.com/dphwlcyhg/video/upload/v1761998402/hxdmfhteqeluukhmflyw.mp4', '2025-11-01 12:00:05', 3, 0, 0, 0),
+(135, '72638c09-e900-40c9-8888-db6d25f669db', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'aabe ye kya hai', -1, 'null', '2025-11-01 12:00:58', 3, 0, 0, 0),
+(136, '2159693f-0326-4e91-97ac-3383f3164a65', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', '😅😅', -1, 'null', '2025-11-01 12:01:03', 3, 0, 0, 0),
+(137, '5fd72260-9d3b-46c4-a918-aa5c9ceba9b2', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'post', '', 90, 'https://res.cloudinary.com/dphwlcyhg/video/upload/v1753348835/gfafxwgfx6ylxtibooe7.mp4', '2025-11-01 12:01:34', 3, 0, 0, 0),
+(138, 'f46247c5-5f88-4d9a-aad5-c8959be61bd1', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'post', '', 131, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1761998649/cuzy9cepcdhnriyn02rf.jpg', '2025-11-01 12:05:23', 3, 0, 0, 0),
+(139, '98a724e3-8e8b-409c-abac-2bc6202a0446', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'post', '', 131, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1761998649/cuzy9cepcdhnriyn02rf.jpg', '2025-11-01 12:05:31', 3, 0, 0, 0),
+(140, '612e32ad-f42d-45dc-b04d-00dd8e31362c', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'ye tum ho kya', -1, 'null', '2025-11-01 12:05:38', 3, 0, 0, 0),
+(141, 'a0328a60-481e-4674-9d53-f656fa0e5a1c', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'or nahi to kya', -1, 'null', '2025-11-01 12:06:00', 3, 0, 0, 0),
+(142, 'eadcfe4e-20b7-4d4f-b0e6-9546d58a3439', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'maine socha ai hai', -1, 'null', '2025-11-01 12:06:04', 3, 0, 0, 0),
+(143, '85d99f54-4c74-4e0f-b019-150dd8c13104', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'text', 'chutiya ho tum', -1, 'null', '2025-11-01 12:06:28', 3, 0, 0, 0),
+(144, '9e600502-0643-4162-b694-53052cd4ac59', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'tumbhi', -1, 'null', '2025-11-01 12:06:33', 3, 0, 0, 0),
+(145, '5c35c95a-6b7b-4d17-956a-77c50c2e0c41', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'badi wali', -1, 'null', '2025-11-01 12:06:37', 3, 0, 0, 0),
+(146, '4dad7325-9bc9-46d1-8052-81b1aa0ded1a', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'bolo kya hua kuch to bolo', -1, 'null', '2025-11-01 12:06:58', 3, 0, 0, 0),
+(147, 'dc3c5fa1-83c0-409f-8b45-2213a58c29d3', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'post', '', 131, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1761998649/cuzy9cepcdhnriyn02rf.jpg', '2025-11-01 12:16:42', 3, 0, 0, 0),
+(148, '3765ea3c-035f-40c3-be6b-ee3a0ebc964a', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'post', '', 131, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1761998649/cuzy9cepcdhnriyn02rf.jpg', '2025-11-01 12:16:42', 3, 0, 0, 0),
+(149, 'b0b337cb-b583-46ec-8893-25929d9c4dd2', 'null', '710b962e-041c-11e1-9234-5123456709ab', 'eab65880-3341-4ba3-8fbc-640359df7752', 'text', 'hello', -1, 'null', '2025-11-01 12:25:55', 3, 0, 0, 0),
+(150, 'd892bff9-85c1-4d21-a923-ae1fd2224e9e', 'null', '710b962e-041c-11e1-9234-5123456709ab', '710b962e-041c-11e1-9234-5123456789ab', 'text', 'hi', -1, 'null', '2025-11-01 13:21:29', 2, 0, 0, 0),
+(151, 'f8bb9f4f-051c-498e-ad03-277ea3cc103c', 'null', 'eab65880-3341-4ba3-8fbc-640359df7752', '710b962e-041c-11e1-9234-5123456709ab', 'post', '', 98, 'https://res.cloudinary.com/dphwlcyhg/video/upload/v1753348918/bzimarnpfetmq4j7oyuw.mp4', '2025-11-01 14:04:43', 3, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -314,7 +323,12 @@ INSERT INTO `otpmodel` (`phone_email`, `otp`, `createdAt`, `flag`) VALUES
 ('9123481953', 203435, '2025-07-14 20:41:21', 0),
 ('9123481953', 726852, '2025-07-14 20:42:01', 0),
 ('9123481953', 659736, '2025-07-14 20:43:31', 0),
-('9123481953', 825053, '2025-07-14 20:45:18', 0);
+('9123481953', 825053, '2025-07-14 20:45:18', 0),
+('rasidekbal29@gmail.com', 328315, '2025-10-26 03:53:23', 0),
+('rasidekbal29@gmail.com', 548366, '2025-10-26 03:54:02', 0),
+('rasidekbal29@gmail.com', 102078, '2025-10-26 03:57:01', 0),
+('rasidekbal29@gmail.com', 547069, '2025-10-26 04:00:37', 0),
+('rasidekbal29@gmail.com', 194180, '2025-10-26 04:01:28', 0);
 
 -- --------------------------------------------------------
 
@@ -332,7 +346,7 @@ CREATE TABLE IF NOT EXISTS `post_comments` (
   PRIMARY KEY (`commentid`),
   KEY `userid` (`userid`),
   KEY `postid` (`postid`)
-) ENGINE=InnoDB AUTO_INCREMENT=1541 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1544 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `post_comments`
@@ -1405,7 +1419,9 @@ INSERT INTO `post_comments` (`commentid`, `userid`, `postid`, `comment_text`, `c
 (1536, 'kaluadon', 47, 'Tu toh artist nikla 💥', '2025-07-26 08:08:17'),
 (1537, 'kaluadon', 47, 'Insaan nahi, content machine hai tu 😄', '2025-07-26 08:08:17'),
 (1538, 'kaluadon', 59, 'new comment', '2025-07-26 08:45:32'),
-(1540, 'Mysterious_being', 128, 'my post', '2025-10-07 16:38:07');
+(1540, 'Mysterious_being', 128, 'my post', '2025-10-07 16:38:07'),
+(1542, 'kaluadon', 54, 'hi', '2025-10-31 18:33:27'),
+(1543, 'Mysterious_being', 131, 'nice picture', '2025-11-01 17:35:08');
 
 -- --------------------------------------------------------
 
@@ -1422,7 +1438,7 @@ CREATE TABLE IF NOT EXISTS `post_likes` (
   PRIMARY KEY (`likeid`),
   KEY `userid` (`userid`),
   KEY `postid` (`postid`)
-) ENGINE=InnoDB AUTO_INCREMENT=242 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=256 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `post_likes`
@@ -1438,7 +1454,6 @@ INSERT INTO `post_likes` (`likeid`, `userid`, `postid`, `createdAt`) VALUES
 (118, 'kaluadon', 45, '2025-07-23 13:49:37'),
 (119, 'kaluadon', 47, '2025-07-23 14:01:40'),
 (120, 'kaluadon', 49, '2025-07-23 14:06:52'),
-(121, 'kaluadon', 50, '2025-07-23 14:06:54'),
 (123, 'kaluadon', 52, '2025-07-23 14:15:22'),
 (124, 'kaluadon', 46, '2025-07-23 23:47:39'),
 (125, 'kaluadon', 40, '2025-07-23 23:47:45'),
@@ -1479,10 +1494,6 @@ INSERT INTO `post_likes` (`likeid`, `userid`, `postid`, `createdAt`) VALUES
 (166, 'kaluadon', 117, '2025-07-24 14:58:24'),
 (168, 'Mysterious_being', 113, '2025-07-24 14:59:02'),
 (169, 'Mysterious_being', 112, '2025-07-24 14:59:24'),
-(170, 'Mysterious_being', 111, '2025-07-24 14:59:57'),
-(171, 'Mysterious_being', 110, '2025-07-24 14:59:59'),
-(172, 'Mysterious_being', 109, '2025-07-24 15:00:18'),
-(173, 'Mysterious_being', 108, '2025-07-24 15:00:29'),
 (174, 'Mysterious_being', 107, '2025-07-24 15:01:59'),
 (175, 'Mysterious_being', 106, '2025-07-24 15:02:02'),
 (176, 'Mysterious_being', 105, '2025-07-24 15:02:14'),
@@ -1526,7 +1537,14 @@ INSERT INTO `post_likes` (`likeid`, `userid`, `postid`, `createdAt`) VALUES
 (236, 'Mysterious_being', 36, '2025-10-05 17:50:31'),
 (239, 'kaluadon', 121, '2025-10-07 15:33:58'),
 (240, 'kaluadon', 114, '2025-10-07 16:07:19'),
-(241, 'kaluadon', 128, '2025-10-07 16:37:19');
+(241, 'kaluadon', 128, '2025-10-07 16:37:19'),
+(248, 'kaluadon', 50, '2025-10-31 18:33:46'),
+(250, 'Mysterious_being', 111, '2025-10-31 19:02:27'),
+(251, 'Mysterious_being', 131, '2025-11-01 17:34:38'),
+(252, 'smrzz_16', 131, '2025-11-01 17:34:56'),
+(253, 'Mysterious_being', 132, '2025-11-01 17:44:55'),
+(254, 'Mysterious_being', 108, '2025-11-01 17:52:45'),
+(255, 'Mysterious_being', 40, '2025-11-01 18:00:02');
 
 -- --------------------------------------------------------
 
@@ -1646,9 +1664,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`userid`, `username`, `email`, `phone`, `pass`, `bio`, `profilepic`, `dob`, `createdAt`, `uuid`, `fcmToken`) VALUES
-('kaluadon', 'Rani', 'rtechdevlopment123@gmail.com', NULL, '$2b$12$a9xomUz7XKvn/BYKgiXJD.1RjeKoFbEgoZNR9rUXY8c/HM1bg4zlq', '💻 Dev Vibe:\nAndroid dev ⚙️ | Java ❤️ | Building things that matter\n🎧 Soft + Poetic:\nCode in my veins, silence in my soul 🌌\n🔥 Flirty + Cool', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1754564929/exliaf9par4b8yjvdtrn.jpg', '2025-06-01', '2025-06-22 15:31:49', '710b962e-041c-11e1-9234-5123456789ab', 'fC_NiqdBSyWJGf1_lQhZJL:APA91bG-2H4-L-gjKem4ucVWrEUY6EVZ9oDYuxgbLOBelq-zcYj4oJYliMOYOyMUZD6PxnyDe-T_t1wNbj1ZYonWXJkcNXqnCS20QMj9HrzlpMEPRi1MK24'),
-('Mysterious_being', 'mysterious devil', NULL, '9123481953', '$2a$10$rKG82muePaAXJNpXstVW0.GDeX8jtn1Dfq8FGSN4F40HeRVyk3Azm', '💻 Android Dev 💥\n ☕ Java Junkie \n 🚀 Dreamin’ big, building bigger\n ⚡ Hustle > Hype\n🧠 Engineer Mode: ON', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1754564883/vziiwfxvnrj3ouhwcq42.png', '2025-05-11', '2025-05-11 23:00:44', '710b962e-041c-11e1-9234-5123456709ab', 'ftRYBe4JTm-Xad3MSMEyR_:APA91bEYtlZmxhg0Fuz4GLoF4jy0vMY6Ox-SNqbFP1CSSMjGxjORCmoB0tfdGdB31-VR0pMrzURz-0_r-GlcCpt0ZfeXRjh7aIA0rlcgi1z-KuzSzCpRE3A'),
-('samar1760556086419', 'samar', 'rasidekbal29@gmail.com', NULL, '$2b$12$x3Weyi59oPHdRkMD9my5hOwaEVRl1NqrF9IBE8UqjqMTcRSsfdQg6', NULL, 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1760556422/wvdtxdsarluj9ce6kqpk.jpg', '2025-10-16', '2025-10-16 00:51:26', 'eab65880-3341-4ba3-8fbc-640359df7752', 'eBHxL4mUS0q5ZK2DOMdN4O:APA91bFbqxP1m1COrPWVrmicbcy_2BZf-MWGlXjn3SWKzZt1XKfBjIUTKCG5rFssqr5NNPYXCRvesLhls1lRQU9EzUObX0ufoR4P6ABDeq1KrG_eIwDu3Lg');
+('kaluadon', 'Rani', 'rtechdevlopment123@gmail.com', NULL, '$2b$12$a9xomUz7XKvn/BYKgiXJD.1RjeKoFbEgoZNR9rUXY8c/HM1bg4zlq', '💻 Dev Vibe:\nAndroid dev ⚙️ | Java ❤️ | Building things that matter\n🎧 Soft + Poetic:\nCode in my veins, silence in my soul 🌌\n🔥 Flirty + Cool', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1754564929/exliaf9par4b8yjvdtrn.jpg', '2025-06-01', '2025-06-22 15:31:49', '710b962e-041c-11e1-9234-5123456789ab', 'ecbngV-eQl2noI7wprRRhr:APA91bFSRb1BgzDXE6qvAQ5UudVzmQWDS1cedUQR1Plf4yA9DN_INKJSOWEzTeSlVpqybdAsILPyfBIjW0PoXsKiOKluwNzHdkw3i_IlSHNclsUhvJ9WP0c'),
+('Mysterious_being', 'mysterious devil', NULL, '9123481953', '$2a$10$rKG82muePaAXJNpXstVW0.GDeX8jtn1Dfq8FGSN4F40HeRVyk3Azm', '💻 Android Dev 💥\n ☕ Java Junkie \n 🚀 Dreamin’ big, building bigger\n ⚡ Hustle > Hype\n🧠 Engineer Mode: ON', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1754564883/vziiwfxvnrj3ouhwcq42.png', '2025-05-11', '2025-05-11 23:00:44', '710b962e-041c-11e1-9234-5123456709ab', 'ecbngV-eQl2noI7wprRRhr:APA91bFSRb1BgzDXE6qvAQ5UudVzmQWDS1cedUQR1Plf4yA9DN_INKJSOWEzTeSlVpqybdAsILPyfBIjW0PoXsKiOKluwNzHdkw3i_IlSHNclsUhvJ9WP0c'),
+('smrzz_16', 'samar', 'rasidekbal29@gmail.com', NULL, '$2b$12$Et4QB5PLHfPGonKo86BT/.Su5HqOc6VNnuUmbiE9qwNGllpApdeei', 'samar ~', 'https://res.cloudinary.com/dphwlcyhg/image/upload/v1761998664/hm38vencn9uhlj3q0mfg.jpg', '2025-10-16', '2025-10-16 00:51:26', 'eab65880-3341-4ba3-8fbc-640359df7752', 'e-ZxGk4NSpGrikboezR41-:APA91bGt7XNu1B_WSE-zg4faJd-VeTb8LiaKHKGDHXMM5g_xriwL6ye8L6hmgiI-i0ZKXsAGYrzAryNZJpYlAUZvH8qOScTTb9S6vMhy6rklHyp0Q1oz3-Q');
 
 --
 -- Constraints for dumped tables

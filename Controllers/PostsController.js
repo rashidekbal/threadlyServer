@@ -164,10 +164,30 @@ async function getVideoFeed(req, res) {
 }
 async function getUserPostsController(req, res) {
   let userid = req.params.userid;
-  let query = `select imagepost.* from imagepost join users on imagepost.userid=users.userid where users.userid=? group by imagepost.postid order by imagepost.postid desc 
+
+let query = `
+SELECT 
+    p.*, u.username, u.profilepic,
+    pl.userid AS likedBy,
+    COUNT(DISTINCT pl.likeid) AS likeCount,
+    COUNT(DISTINCT post_comments.commentid) AS commentCount,
+    COUNT(DISTINCT ps.shareid) AS shareCount,
+    COUNT(DISTINCT plp.likeid) AS isLiked,
+    COUNT(DISTINCT flw.followid) AS isFollowed
+FROM imagepost AS p
+JOIN users AS u ON p.userid = u.userid
+LEFT JOIN post_likes AS pl ON p.postid = pl.postid
+LEFT JOIN post_comments ON p.postid = post_comments.postid
+LEFT JOIN post_shares AS ps ON p.postid = ps.postid
+LEFT JOIN post_likes AS plp ON p.postid = plp.postid AND plp.userid = ?
+LEFT JOIN followers AS flw ON p.userid = flw.followingid AND flw.followerid = ?
+WHERE p.userid = ?
+GROUP BY p.postid
+ORDER BY p.created_at DESC
 `;
+
   try {
-    let response = await fetchDb(query, [userid]);
+  let  response = await fetchDb(query,[userid,userid,userid]);
     return res.json({ status: 200, data: response });
   } catch (error) {
     console.log(error);

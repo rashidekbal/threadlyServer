@@ -1,4 +1,4 @@
-import { notifyStatus_via_Fcm, sendMessage } from "../Fcm/FcmService.js";
+import { notifyStatus_via_Fcm, notifyUnsendMessageViaFcm, sendMessage } from "../Fcm/FcmService.js";
 import { socketIo } from "../index.js";
 import fetchDb from "../utils/query.js";
 import {
@@ -224,6 +224,8 @@ function setSocketFunctions(socket, io) {
     const senderUUid=data.senderUUid;
     const msgUid=data.msgUid;
     notifyStatusChanged(senderUUid,msgUid,2,false);
+    await fetchDb(`update messages set deliveryStatus=2 where senderUUId=? and messageUid=? and deliveryStatus=1`,[senderUUid,msgUid]).catch(err=>{console.log(err)});
+    
   })
   //when user gets disconnected
   socket.on("disconnect", () => {
@@ -236,7 +238,7 @@ async function notifyStatusChanged(uuid, messageUid, status, isDeleted) {
   let object = {
     MsgUid: messageUid,
     deliveryStatus: status,
-    isDeleted,
+    isDeleted:isDeleted,
   };
   let socket_id = getSocketId(uuid);
 
@@ -263,4 +265,33 @@ async function notifyStatusChanged(uuid, messageUid, status, isDeleted) {
   }
 }
 
-export { setSocketFunctions, notifyStatusChanged };
+async function notifyUnSendMessage(ReceiverUuid, messageUid) {
+  let object = {
+    MsgUid: messageUid,
+  };
+  let socket_id = getSocketId(ReceiverUuid);
+
+  if (socket_id != null) {
+    console.log("notifying unsend via socket");
+    //when sender socket uid is found
+    return socketIo.to(socket_id).emit("msg_unSend_event", object);
+  }
+  // try with fcm
+  let fcmToken;
+  try {
+       fcmToken= await getFcmTokenWithUUid(ReceiverUuid);
+  } catch (error) {
+    console.log("error in getting fcm "+error)
+  }
+
+  if (fcmToken != null) {
+    console.log("notifying msg unsend via fcm");
+    try {
+      await notifyUnsendMessageViaFcm(fcmToken, messageUid);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+
+export { setSocketFunctions, notifyStatusChanged ,notifyUnSendMessage};

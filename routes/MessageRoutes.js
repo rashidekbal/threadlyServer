@@ -5,6 +5,7 @@ import {deleteMessageForRoleController,
   getMsgPendingHistoryController,
   getpendingMessagesController,
   sendMessageController,
+  UnsendMessageController,
   updateMessageSeenStatusController,
   uploadMessageMedia,
 } from "../Controllers/MessageController.js";
@@ -29,6 +30,7 @@ router.route("/uploadMedia").post(verifyToken,uploadToRam.single("media"),upload
   }
   router.route("/getAllChats").get(verifyToken,getAllChatsController);
   router.route("/deleteMessageForMe").patch(verifyToken,deleteMessageForRoleController);
+  router.route("/unSendMessage").patch(verifyToken,UnsendMessageController);
   
 
 export default router;

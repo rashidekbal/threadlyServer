@@ -30,9 +30,11 @@ CREATE TABLE post_comments (
   userid VARCHAR(250) NOT NULL,
   postid INT NOT NULL,
   comment_text TEXT NOT NULL,
+  replyToCommentId int null,
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (userid) REFERENCES users(userid) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (postid) REFERENCES imagepost(postid) ON DELETE CASCADE ON UPDATE CASCADE
+  foreign key (replyToCommentId) references post_comments(commentid) on delte cascade on update cascade
 );
 
 CREATE TABLE post_likes (
