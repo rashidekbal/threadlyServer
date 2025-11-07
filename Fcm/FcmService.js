@@ -114,11 +114,7 @@ const notify_postLiked_via_fcm=async (token,postId,postLink,userprofile,username
     android:{
       priority:"high",
     },
-         notification:{
-            title:"New Like",
-             body:`${userid} liked your post `,
-             image:postLink
-         },
+
     data:{
       responseType:"postLike",
       userId:userid,
@@ -176,16 +172,12 @@ const notify_new_Follower_via_fcm=async(token,userid,username,profile,isFollowed
       android:{
         priority:"high",
       },
-        notification: {
-          title: "New Follower",
-            body: `${username} started following you`,
-            image: profile
-        },
+      
       data:{
            responseType:"newFollower",
            username:username,
            userid:userid,
-          ReceiverUserId:ReceiverUserId,
+           ReceiverUserId:ReceiverUserId,
            isFollowed:String(isFollowed),
            profile:profile
       }
