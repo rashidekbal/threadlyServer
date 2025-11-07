@@ -74,95 +74,43 @@ function setSocketFunctions(socket, io) {
     } else {
       //if socket it not found add fall back action for fcm token
 
-      let query = `select fcmToken from users where uuid=?`;
-      let response = await fetchDb(query, [data.receiverUuid]);
-      if (
-        response.length > 0 &&
-        (response[0].fcmToken != null || response[0].fcmToken != undefined)
-      ) {
-        const token = response[0].fcmToken;
-        //if fcm token found
+      console.log("socket not found going to find fcm" );
         try {
-          await sendMessage(token, {
-            msg: data.msg,
-            senderUuid: data.senderUuid,
-            receiverUuid: data.receiverUuid,
-            username: data.senderName,
-            userid: data.senderUserId,
-            profile,
-            MsgUid,
-            ReplyTOMsgUid,
-            type,
-            postId:String(data.postId),
-            link:data.link,
-            timestamp,
-            deliveryStatus: "-1",
-            isDeleted: "false",
-            notificationText:data.notificationText
-          });
-          console.log("msg sent via fcm")
-         
-          socket.emit("MsgStatusUpdate", {
-            MsgUid,
-            deliveryStatus: 1,
-          });
-          try {
-             //add message to db
-            await addMessageToDb(
-              MsgUid,
-              ReplyTOMsgUid,
-              data.senderUuid,
-              data.receiverUuid,
-              type,
-              data.msg,
-              data.postId,
-              data.link,
-              timestamp,
-              1,
-              false
-            );
-            console.log("msg added to db");
-          } catch (error) {
-            console.log(
-              "msg not added for last fallback : " + JSON.stringify(error)
-            );
-          }
-        } catch (error) {
-          //when fcm token found but message not send due to app not installed
-          console.log("APP DELETED BY USERS");
-          socket.emit("MsgStatusUpdate", {
-            MsgUid,
-            deliveryStatus: 1,
-          });
+          console.log("fething response")
+          let response = await getBasicUserDetailsFromUUid(data.receiverUuid)
+          console.log(response);
+          if (response[0].fcmToken != null) {
+    const token = response[0].fcmToken;
+    const receiverUserid=response[0].userid
+    //if fcm token found
+    try {
+      await sendMessage(token, {
+        msg: data.msg,
+        senderUuid: data.senderUuid,
+        receiverUuid: data.receiverUuid,
+        receiverUserId:receiverUserid,
+        username: data.senderName,
+        userid: data.senderUserId,
+        profile,
+        MsgUid,
+        ReplyTOMsgUid,
+        type,
+        postId:String(data.postId),
+        link:data.link,
+        timestamp,
+        deliveryStatus: "-1",
+        isDeleted: "false",
+        notificationText:data.notificationText
+      });
+      console.log("msg sent via fcm")
 
-          try {
-            await addMessageToDb(
-              MsgUid,
-              ReplyTOMsgUid,
-              data.senderUuid,
-              data.receiverUuid,
-              type,
-              data.msg,
-              data.postId,
-              data.link,
-              timestamp,
-              1,
-              false
-            );
-            console.log("msg added to db");
-          } catch (error) {
-            console.log("msg not added for last fallback : " + error);
-          }
-        }
-      } else {
-        //when fcm token is not found
-        console.log("user token not found adding another fallback");
-        socket.emit("MsgStatusUpdate", {
-          MsgUid,
-          deliveryStatus: 1,
-        });
-        try {
-          await addMessageToDb(
+      socket.emit("MsgStatusUpdate", {
+        MsgUid,
+        deliveryStatus: 1,
+      });
+      try {
+        //add message to db
+        await addMessageToDb(
             MsgUid,
             ReplyTOMsgUid,
             data.senderUuid,
@@ -174,11 +122,70 @@ function setSocketFunctions(socket, io) {
             timestamp,
             1,
             false
-          );
-        } catch (error) {
-          console.log("msg not added for last fallback : " + error);
-        }
+        );
+        console.log("msg added to db");
+      } catch (error) {
+        console.log(
+            "msg not added for last fallback : " + JSON.stringify(error)
+        );
       }
+    } catch (error) {
+      //when fcm token found but message not send due to app not installed
+      console.log("APP DELETED BY USERS");
+      socket.emit("MsgStatusUpdate", {
+        MsgUid,
+        deliveryStatus: 1,
+      });
+
+      try {
+        await addMessageToDb(
+            MsgUid,
+            ReplyTOMsgUid,
+            data.senderUuid,
+            data.receiverUuid,
+            type,
+            data.msg,
+            data.postId,
+            data.link,
+            timestamp,
+            1,
+            false
+        );
+        console.log("msg added to db");
+      } catch (error) {
+        console.log("msg not added for last fallback : " + error);
+      }
+    }
+  }
+          else {
+    //when fcm token is not found
+    console.log("user token not found adding another fallback");
+    socket.emit("MsgStatusUpdate", {
+      MsgUid,
+      deliveryStatus: 1,
+    });
+    try {
+      await addMessageToDb(
+          MsgUid,
+          ReplyTOMsgUid,
+          data.senderUuid,
+          data.receiverUuid,
+          type,
+          data.msg,
+          data.postId,
+          data.link,
+          timestamp,
+          1,
+          false
+      );
+    } catch (error) {
+      console.log("msg not added for last fallback : " + error);
+    }
+  }
+}catch (e){
+
+}
+
     }
   });
   //msg seen status update call

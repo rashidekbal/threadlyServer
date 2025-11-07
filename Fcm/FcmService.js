@@ -16,7 +16,7 @@ const StartServiceFcm = () => {
 
 const sendMessage = (token,Message) => {
   return new Promise(async(resolve,reject)=>{
-
+console.log('sending .. inside sendMessage fcm service')
   const message = {
     token,
     android:{
@@ -25,7 +25,7 @@ const sendMessage = (token,Message) => {
     data:{
       msg: Message.msg,
       senderUuid:Message.senderUuid,
-      receiverUuid: Message.receiverUuid,
+      receiverUuid: Message.receiverUuid, receiverUserId: Message.receiverUserId,
       username:Message.username,
       userid: Message.userid,
       profile:Message.profile,

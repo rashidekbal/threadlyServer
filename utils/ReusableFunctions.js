@@ -75,13 +75,14 @@ const getFcmTokenWithUUid = (uuid) => {
   });
 };
 async function getBasicUserDetailsFromUUid(uuid){
- return  new Promise((resolve,reject)=>{
-    const query=`select userid,username,profilepic ,fcmToken from users where uuid=?`;
+ return  new Promise(async (resolve,reject)=>{
+    const query=`select userid,username,profilepic,fcmToken from users where uuid=?`;
     try{
-      let response=fetchDb(query,[uuid]);
+      let response=await fetchDb(query,[uuid]);
       if(!response.length>0){
         reject(null);
       }
+      console.log(response)
       resolve(response);
 
     }catch (e){
