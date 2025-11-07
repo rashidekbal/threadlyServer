@@ -143,8 +143,8 @@ async function getMyDataController(req, res) {
       u.createdAt,
       u.dob,
       COUNT(DISTINCT imp.postid) AS PostsCount, 
-      COUNT(DISTINCT follows.followid) AS followersCount,
-      COUNT(DISTINCT following.followid) AS followingCount
+      COUNT(DISTINCT follows.followerid) AS followersCount,
+      COUNT(DISTINCT following.followingid) AS followingCount
     FROM 
       users AS u
     LEFT JOIN 
