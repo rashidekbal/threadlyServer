@@ -23,7 +23,7 @@ const sendMessage = (token,Message) => {
       priority:"high"
     },
     data:{
-     msg: Message.msg,
+      msg: Message.msg,
       senderUuid:Message.senderUuid,
       receiverUuid: Message.receiverUuid,
       username:Message.username,
@@ -53,7 +53,7 @@ const sendMessage = (token,Message) => {
  
 
 };
-const notifyStatus_via_Fcm = (token,messageuid,status,isDeleted) => {
+const notifyStatus_via_Fcm = (token,messageuid,status,isDeleted,receiverUserId) => {
   return new Promise(async(resolve,reject)=>{
   const message = {
     token,
@@ -61,10 +61,11 @@ const notifyStatus_via_Fcm = (token,messageuid,status,isDeleted) => {
       priority:"high"
     },
     data:{
-     MsgUid:messageuid,
+       MsgUid:messageuid,
        deliveryStatus:String(status),
        isDeleted:String(isDeleted),
-       responseType:"statusUpdate"
+       responseType:"statusUpdate",
+        receiverUserId:receiverUserId,
    
     } 
   };

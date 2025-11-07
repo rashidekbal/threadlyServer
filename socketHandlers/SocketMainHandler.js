@@ -2,7 +2,7 @@ import { notifyStatus_via_Fcm, notifyUnsendMessageViaFcm, sendMessage } from "..
 import { socketIo } from "../index.js";
 import fetchDb from "../utils/query.js";
 import {
-  addMessageToDb,
+  addMessageToDb, getBasicUserDetailsFromUUid,
   getFcmTokenWithUUid, getUUidFromUserId,
 } from "../utils/ReusableFunctions.js";
 import { addUser, getSocketId, removeUser } from "./ConnectedUsers.js";
@@ -233,8 +233,9 @@ function setSocketFunctions(socket, io) {
     console.log(socket.id + " disconnected");
   });
 }
-
-async function notifyStatusChanged(uuid, messageUid, status, isDeleted) {
+//this function is to notify the sender of the message that message is delivered
+//so here the sender is actually the receiver of the status
+async function notifyStatusChanged(uuid, messageUid, status, isDeleted,receiverUserid) {
   let object = {
     MsgUid: messageUid,
     deliveryStatus: status,
@@ -248,21 +249,24 @@ async function notifyStatusChanged(uuid, messageUid, status, isDeleted) {
     return socketIo.to(socket_id).emit("msg_status_changed_event", object);
   }
   // try with fcm
-  let fcmToken;
+  let response
   try {
-       fcmToken= await getFcmTokenWithUUid(uuid);
+    response= await getBasicUserDetailsFromUUid(uuid);
+    let fcmToken=response[0].fcmToken;
+    let userId=response[0].userid;
+    if (fcmToken == null) {
+      return;
+    }
+      console.log("notifying via fcm");
+      //here the uuid
+      await notifyStatus_via_Fcm(fcmToken, messageUid, status, isDeleted,userId);
+
+
   } catch (error) {
     console.log("error in getting fcm "+error)
   }
 
-  if (fcmToken != null) {
-    console.log("notifying via fcm");
-    try {
-      await notifyStatus_via_Fcm(fcmToken, messageUid, status, isDeleted);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
 }
 
 async function notifyUnSendMessage(ReceiverUuid, messageUid) {

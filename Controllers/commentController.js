@@ -63,7 +63,16 @@ async function getComments(req, res) {
 
   // SQL query to retrieve comments along with user details and like info
   let query = `
-select pc.*,u.username,u.profilepic,count(distinct cl.comment_like_id) as comment_likes_count, count(distinct clc.comment_like_id) as isLiked from post_comments  as pc join users as u on pc.userid=u.userid left join comment_likes as cl on pc.commentid=cl.commentid left join comment_likes as clc on pc.commentid=clc.commentid and clc.userid=? where pc.postid =? group by pc.commentid order by pc.commentid desc
+select pc.*,
+u.username,
+u.profilepic,
+count(distinct cl.comment_like_id) as comment_likes_count,
+ count(distinct clc.comment_like_id) as isLiked,
+ count(distinct rply.commentid) as replyCount
+  from post_comments  as pc join users as u on pc.userid=u.userid left join comment_likes as cl on pc.commentid=cl.commentid 
+  left join comment_likes as clc on pc.commentid=clc.commentid and clc.userid=?
+  left join post_comments as rply on pc.commentid=rply.replyToCommentId 
+  where pc.postid =? group by pc.commentid order by pc.commentid desc
 `;
 
   try {
@@ -74,5 +83,10 @@ select pc.*,u.username,u.profilepic,count(distinct cl.comment_like_id) as commen
     res.sendStatus(500); // Return 500 Internal Server Error status on failure
   }
 }
+const replyToCommentController=async (req,res)=>{
+  let ReplyToCommentId=req.params.commentId;
+  if(!ReplyToCommentId)return res.sendStatus(400);
+  res.json(new Response(200,{msg:"created"}));
+}
 
-export { removeCommentController, addComentController, getComments };
+export { removeCommentController, addComentController, getComments ,replyToCommentController};

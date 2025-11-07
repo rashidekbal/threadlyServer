@@ -60,12 +60,11 @@ const getFcmTokenWithUUid = (uuid) => {
   console.log("here to find fcm for "+uuid);
   return new Promise(async (resolve, reject) => {
     try {
-      let response = await fetchDb(`select fcmToken from users where uuid =?`, [
+      let response = await fetchDb(`select fcmToken ,userid from users where uuid =?`, [
         uuid,
       ]);
-      if (response.length > 0 && response[0].fcmToken != null) {
-        const fcmToken = response[0].fcmToken;
-        resolve(fcmToken);
+      if (response.length > 0) {
+        resolve(response);
       } else {
         reject(null);
       }
@@ -75,5 +74,21 @@ const getFcmTokenWithUUid = (uuid) => {
     }
   });
 };
+async function getBasicUserDetailsFromUUid(uuid){
+ return  new Promise((resolve,reject)=>{
+    const query=`select userid,username,profilepic ,fcmToken from users where uuid=?`;
+    try{
+      let response=fetchDb(query,[uuid]);
+      if(!response.length>0){
+        reject(null);
+      }
+      resolve(response);
 
-export { addMessageToDb, getUUidFromUserId, getFcmTokenWithUUid };
+    }catch (e){
+      reject(e);
+    }
+
+  })
+}
+
+export { addMessageToDb, getUUidFromUserId, getFcmTokenWithUUid,getBasicUserDetailsFromUUid };

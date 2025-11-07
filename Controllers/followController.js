@@ -77,7 +77,14 @@ const getFollowingController = async (req, res) => {
   let requestingUser = req.ObtainedData;
   let userid = req.params.userid;
   if (!userid) return res.sendStatus(400);
-  let query = `select users.uuid ,users.userid , users.username,users.profilepic,CASE WHEN chkIsFllowed.followid IS NOT NULL THEN 1 ELSE 0 END AS ifFollowed  from followers left join users on followers.followingid = users.userid left join followers as chkIsFllowed on users.userid=chkIsFllowed.followingid and chkIsFllowed.followerid=?  where followers.followerid=? group by users.userid`;
+  let query = `select users.uuid ,
+  users.userid ,
+   users.username,
+   users.profilepic,
+   CASE WHEN chkIsFllowed.followid IS NOT NULL THEN 1 ELSE 0 END AS ifFollowed  from followers 
+   left join users on followers.followingid = users.userid
+    left join followers as chkIsFllowed on users.userid=chkIsFllowed.followingid and chkIsFllowed.followerid=? 
+     where followers.followerid=? group by users.userid`;
 
   try {
     let response = await fetchDb(query, [requestingUser, userid]);

@@ -29,6 +29,7 @@ router.post("/mobile", async (req, res) => {
           if(token){
             try {
               await logOutPreviousDevice(token,userdata.userid);
+              await fetchDb(`update users set fcmToken=null where phone=?`[phone]);
             }catch (e){
 
             }
@@ -73,6 +74,7 @@ router.post("/email", async (req, res) => {
           if(token){
             try {
               await logOutPreviousDevice(token,userdata.userid);
+              await fetchDb(`update users set fcmToken=null where email=?`[email]);
               console.log("sent logut message")
             }catch (e){
               console.log(e.message);
@@ -119,6 +121,7 @@ router.post("/userid", async (req, res) => {
           if(token){
             try {
               await logOutPreviousDevice(token,userdata.userid);
+              await fetchDb(`update users set fcmToken=null where userid=?`[userid]);
             }catch (e){
 
             }
@@ -149,7 +152,7 @@ router.post("/userid", async (req, res) => {
 router.get("/logout",verifyToken,async(req,res)=>{
    const userid = req.ObtainedData;
    console.log("logoutrequest")
- const query=`update users set fcmToken="null" where userid=?`
+ const query=`update users set fcmToken=null where userid=?`
  try{let resposne=await fetchDb(query,[userid]);
   res.json(new Response(200,{msg:"ok"}));
  }catch(err){
