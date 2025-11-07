@@ -125,7 +125,9 @@ async function getImageFeed(req, res) {
 `;
 
   try {
+    
     let response = await fetchDb(query, [userid, userid]);
+
 
     res.json(new Response(200, response));
   } catch (error) {
@@ -163,6 +165,7 @@ async function getVideoFeed(req, res) {
   }
 }
 async function getUserPostsController(req, res) {
+  let reqMakerUserId=req.ObtainedData;
   let userid = req.params.userid;
 
 let query = `
@@ -187,7 +190,7 @@ ORDER BY p.created_at DESC
 `;
 
   try {
-  let  response = await fetchDb(query,[userid,userid,userid]);
+  let  response = await fetchDb(query,[userid,reqMakerUserId,userid]);
     return res.json({ status: 200, data: response });
   } catch (error) {
     console.log(error);

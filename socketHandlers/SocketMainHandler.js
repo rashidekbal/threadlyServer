@@ -265,7 +265,7 @@ async function notifyStatusChanged(uuid, messageUid, status, isDeleted,receiverU
       return;
     }
       console.log("notifying via fcm");
-      //here the uuid
+
       await notifyStatus_via_Fcm(fcmToken, messageUid, status, isDeleted,userId);
 
 
@@ -298,7 +298,7 @@ async function notifyUnSendMessage(ReceiverUuid, messageUid) {
   if (fcmToken != null) {
     console.log("notifying msg unsend via fcm");
     try {
-      await notifyUnsendMessageViaFcm(fcmToken, messageUid);
+      await notifyUnsendMessageViaFcm(fcmToken, messageUid,ReceiverUuid);
     } catch (error) {
       console.log(error);
     }

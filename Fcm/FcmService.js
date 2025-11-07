@@ -81,7 +81,7 @@ const notifyStatus_via_Fcm = (token,messageuid,status,isDeleted,receiverUserId) 
  
 
 };
-const notifyUnsendMessageViaFcm=(token,messageUid)=>{
+const notifyUnsendMessageViaFcm=(token,messageUid,ReceiverUUId)=>{
   return new Promise(async(resolve,reject)=>{
   const message = {
     token,
@@ -90,6 +90,7 @@ const notifyUnsendMessageViaFcm=(token,messageUid)=>{
     },
     data:{
        MsgUid:messageUid,
+        ReceiverUUId:ReceiverUUId,
        responseType:"msgUnsendEvent"
    
     } 
@@ -106,7 +107,7 @@ const notifyUnsendMessageViaFcm=(token,messageUid)=>{
   })
 
 }
-const notify_postLiked_via_fcm=async (token,postId,postLink,userprofile,username,userid,insertId)=>{
+const notify_postLiked_via_fcm=async (token,postId,postLink,userprofile,username,userid,insertId,ReceiverUserId)=>{
   return new Promise(async(resolve,reject)=>{
      const message={
     token,
@@ -122,6 +123,7 @@ const notify_postLiked_via_fcm=async (token,postId,postLink,userprofile,username
       responseType:"postLike",
       userId:userid,
       username:username,
+        ReceiverUserId:ReceiverUserId,
       postId:String(postId), postLink:postLink,
       userprofile:userprofile, insertId:String(insertId)
     }
@@ -138,7 +140,7 @@ const notify_postLiked_via_fcm=async (token,postId,postLink,userprofile,username
   })
  
 };
-const notify_post_unliked_via_fcm=async(token,userId,postId)=>{
+const notify_post_unliked_via_fcm=async(token,userId,postId,ReceiverUserId)=>{
     return new Promise(async(resolve,reject)=>{
         const message={
             token,
@@ -149,6 +151,7 @@ const notify_post_unliked_via_fcm=async(token,userId,postId)=>{
             data:{
                 responseType:"postUnLike",
                 userId:userId,
+                ReceiverUserId:ReceiverUserId,
                 postId:String(postId)
             }
         }
@@ -166,7 +169,7 @@ const notify_post_unliked_via_fcm=async(token,userId,postId)=>{
 
 
 }
-const notify_new_Follower_via_fcm=async(token,userid,username,profile,isFollowed)=>{
+const notify_new_Follower_via_fcm=async(token,userid,username,profile,isFollowed,ReceiverUserId)=>{
   return new Promise(async(resolve,reject)=>{
     const message={
       token,
@@ -182,6 +185,7 @@ const notify_new_Follower_via_fcm=async(token,userid,username,profile,isFollowed
            responseType:"newFollower",
            username:username,
            userid:userid,
+          ReceiverUserId:ReceiverUserId,
            isFollowed:String(isFollowed),
            profile:profile
       }
@@ -196,7 +200,7 @@ const notify_new_Follower_via_fcm=async(token,userid,username,profile,isFollowed
     }
   })
 }
-const notify_UnFollow_via_fcm=async(token,userId)=>{
+const notify_UnFollow_via_fcm=async(token,userId,ReceiverUserId)=>{
     return new Promise(async(resolve,reject)=>{
         const message={
             token,
@@ -206,6 +210,7 @@ const notify_UnFollow_via_fcm=async(token,userId)=>{
             ,
             data:{
                 responseType:"UnFollow",
+                ReceiverUserId:ReceiverUserId,
                 userId:userId,
 
             }
@@ -224,7 +229,7 @@ const notify_UnFollow_via_fcm=async(token,userId)=>{
 
 
 }
-const notifyCommentLike_via_fcm=async(token,userid,username,profile,postid,Commentid,postLink)=>{
+const notifyCommentLike_via_fcm=async(token,userid,username,profile,postid,Commentid,postLink,ReceiverUserId)=>{
   return new Promise(async (resolve,reject)=>{
     const message={
       token,
@@ -233,6 +238,7 @@ const notifyCommentLike_via_fcm=async(token,userid,username,profile,postid,Comme
       },
       data:{
             responseType:"commentLike",
+          ReceiverUserId:ReceiverUserId,
             userId:userid,
            username :username,
             profile:profile,
@@ -253,7 +259,7 @@ const notifyCommentLike_via_fcm=async(token,userid,username,profile,postid,Comme
     }
   })
 }
-const notifyCommentUnlike_via_fcm=async(token,userid,Commentid)=>{
+const notifyCommentUnlike_via_fcm=async(token,userid,Commentid,ReceiverUserId)=>{
   return new Promise(async (resolve,reject)=>{
     const message={
       token,
@@ -263,6 +269,7 @@ const notifyCommentUnlike_via_fcm=async(token,userid,Commentid)=>{
       data:{
             responseType:"commentUnlike",
             userId:userid,
+          ReceiverUserId:ReceiverUserId,
             commentId:String(Commentid)
         
       }

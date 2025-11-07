@@ -60,11 +60,12 @@ const getFcmTokenWithUUid = (uuid) => {
   console.log("here to find fcm for "+uuid);
   return new Promise(async (resolve, reject) => {
     try {
-      let response = await fetchDb(`select fcmToken ,userid from users where uuid =?`, [
+      let response = await fetchDb(`select fcmToken from users where uuid =?`, [
         uuid,
       ]);
-      if (response.length > 0) {
-        resolve(response);
+      if (response.length > 0 && response[0].fcmToken != null) {
+        const fcmToken = response[0].fcmToken;
+        resolve(fcmToken);
       } else {
         reject(null);
       }

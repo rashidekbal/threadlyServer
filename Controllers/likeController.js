@@ -132,7 +132,7 @@ const notify_Post_unliked=async (postId,userId)=>{
     const token=PostDetailsResponse[0].fcmToken;
     if(token!=null&&userId!=PostDetailsResponse[0].userid){
       try {
-        await  notify_post_unliked_via_fcm(token,userId,postId)
+        await  notify_post_unliked_via_fcm(token,userId,postId,PostDetailsResponse[0].userid)
 
       }catch (e){
         console.log(e)
@@ -155,10 +155,11 @@ const notifyPostLike=async(postId,userid,insertId)=>{
     const token=PostDetailsResponse[0].fcmToken;
     const username=UserDetailsResponse[0].username;
     const profile=UserDetailsResponse[0].profilepic;
+    const ReceiverUserId=PostDetailsResponse[0].userid;
     const postLink=PostDetailsResponse[0].imageurl;
-    if(username!=null&&token!=null&&postLink!=null&&PostDetailsResponse[0].userid!=userid){
+    if(username!=null&&token!=null&&postLink!=null&&ReceiverUserId!==userid){
       try{
-        await notify_postLiked_via_fcm(token,postId,postLink,String(profile?profile:"null"),username,userid,insertId);
+        await notify_postLiked_via_fcm(token,postId,postLink,String(profile?profile:"null"),username,userid,insertId,ReceiverUserId);
 
       }catch (e){
         console.log(e.data)
@@ -184,13 +185,14 @@ const notifyCommentLike=async(commentId,userid)=>{
   let PostDetailsResponse=await fetchDb(getPostDetailsQuery,[commentId]);
   if(PostDetailsResponse.length>0&&UserDetailsResponse.length>0){
     const token=PostDetailsResponse[0].fcmToken;
+    const ReceiverUserId=PostDetailsResponse[0].userid;
     const username=UserDetailsResponse[0].username;
     const profile=UserDetailsResponse[0].profilepic;
     const postLink=PostDetailsResponse[0].imageurl;
     if(username!=null&&token!=null&&PostDetailsResponse[0].userid!=userid){
     
       try{
-        await notifyCommentLike_via_fcm(token,userid,username,String(profile?profile:"null"),PostDetailsResponse[0].postid,commentId,postLink)
+        await notifyCommentLike_via_fcm(token,userid,username,String(profile?profile:"null"),PostDetailsResponse[0].postid,commentId,postLink,ReceiverUserId)
 
       }catch (e){
         console.log(e.data)
@@ -211,13 +213,14 @@ const notifyCommentLike=async(commentId,userid)=>{
 }
 
 const notifyCommentUnLike=async(commentId,userid)=>{
-  const getPostDetailsQuery=`select usr.fcmToken from post_comments as cmt left join users as usr on cmt.userid=usr.userid where commentid=? limit 1`;
+  const getPostDetailsQuery=`select usr.fcmToken ,usr.userid from post_comments as cmt left join users as usr on cmt.userid=usr.userid where commentid=? limit 1`;
   let PostDetailsResponse=await fetchDb(getPostDetailsQuery,[commentId]);
   if(PostDetailsResponse.length>0){
     const token=PostDetailsResponse[0].fcmToken;
+    const ReceiverUserId=PostDetailsResponse[0].userid;
     if(token!=null&&PostDetailsResponse[0].userid!=userid){
       try{
-        await notifyCommentUnlike_via_fcm(token,userid,String(commentId))
+        await notifyCommentUnlike_via_fcm(token,userid,String(commentId),ReceiverUserId)
 
       }catch (e){
         console.log(e.data)
