@@ -1,0 +1,7 @@
+node_modules
+.github
+.idea
+db_backups_for_local_machine
+schema.txt
+schemaFixed.txt
+vercel.json

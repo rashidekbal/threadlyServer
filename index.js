@@ -56,7 +56,7 @@ connection.connect((err, res) => {
   if (err) {
     console.log(err);
   } else {
-    server.listen(port, () => {
+    server.listen(port,"0.0.0.0", () => {
       console.log("connected to database ");
       console.log(`running on server port ${port} `);
       StartServiceFcm();
