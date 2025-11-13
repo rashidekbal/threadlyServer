@@ -55,7 +55,6 @@ async function addVideoPost(req, res) {
     backgroundUpload(VideoPath, userid, caption, "video");
   } else {
     VideoPath = req.file?.path;
-    console.log(VideoPath)
     if (!VideoPath) return res.sendStatus(500);
     backgroundUpload(VideoPath, userid, caption, "video");
   }
@@ -90,7 +89,7 @@ let getPostinfo = async (req, res) => {
                       u.username,
                       u.profilepic,
                       pl.userid                               as likedBy,
-                      count(distinct pl.likeid)               as likeCount,
+                      count(distinct pl.userid)               as likeCount,
                       count(distinct post_comments.commentid) as commentCount,
                       count(distinct ps.shareid)              as shareCount,
                       count(distinct plp.likeid)              as isLiked,
@@ -118,7 +117,7 @@ async function getImageFeed(req, res) {
         u.username,
         u.profilepic,
         pl.userid as likedBy,
-        count(distinct pl.likeid) as likeCount ,
+        count(distinct pl.userid) as likeCount ,
         count(distinct post_comments.commentid) as commentCount
         ,count(distinct ps.shareid) as shareCount ,
          count(distinct plp.likeid) as isLiked ,
@@ -129,8 +128,6 @@ async function getImageFeed(req, res) {
   try {
     
     let response = await fetchDb(query, [userid, userid]);
-
-
     res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
@@ -144,7 +141,7 @@ async function getVideoFeed(req, res) {
         u.username,
         u.profilepic,
         pl.userid as likedBy,
-        count(distinct pl.likeid) as likeCount ,
+        count(distinct pl.userid) as likeCount ,
         count(distinct post_comments.commentid) as commentCount
         ,count(distinct ps.shareid) as shareCount ,
          count(distinct plp.likeid) as isLiked ,
@@ -174,7 +171,7 @@ let query = `
 SELECT 
     p.*, u.username, u.profilepic,
     pl.userid AS likedBy,
-    COUNT(DISTINCT pl.likeid) AS likeCount,
+    COUNT(DISTINCT pl.userid) AS likeCount,
     COUNT(DISTINCT post_comments.commentid) AS commentCount,
     COUNT(DISTINCT ps.shareid) AS shareCount,
     COUNT(DISTINCT plp.likeid) AS isLiked,

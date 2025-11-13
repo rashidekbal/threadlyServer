@@ -66,7 +66,7 @@ async function getComments(req, res) {
 select pc.*,
 u.username,
 u.profilepic,
-count(distinct cl.comment_like_id) as comment_likes_count,
+count(distinct cl.userid) as comment_likes_count,
  count(distinct clc.comment_like_id) as isLiked,
  count(distinct rply.commentid) as replyCount
   from post_comments  as pc join users as u on pc.userid=u.userid left join comment_likes as cl on pc.commentid=cl.commentid 
@@ -115,7 +115,7 @@ async function getReplyOfCommentController(req,res){
 select pc.*,
 u.username,
 u.profilepic,
-count(distinct cl.comment_like_id) as comment_likes_count,
+count(distinct cl.userid) as comment_likes_count,
  count(distinct clc.comment_like_id) as isLiked 
   from post_comments  as pc join users as u on pc.userid=u.userid left join comment_likes as cl on pc.commentid=cl.commentid 
   left join comment_likes as clc on pc.commentid=clc.commentid and clc.userid=?

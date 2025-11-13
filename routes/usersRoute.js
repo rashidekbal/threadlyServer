@@ -6,6 +6,7 @@ import {
   getSuggestUsersController,
   getUserByUUidController,
 } from "../Controllers/usersController.js";
+import accessCheckLayer from "../middlewares/AccountPrivacyMiddleware.js";
 
 let usersRouter = Router();
 usersRouter.route("/getUsers").get(verifyToken, getSuggestUsersController);

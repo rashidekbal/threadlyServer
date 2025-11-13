@@ -11,6 +11,7 @@ import {
   getVideoFeed,
   removePost,
 } from "../Controllers/PostsController.js";
+import accessCheckLayer from "../middlewares/AccountPrivacyMiddleware.js";
 let ProductionMode = process.env.PRODUCTION === "true";
 let Router = express.Router();
 if (ProductionMode) {
@@ -42,7 +43,7 @@ if (ProductionMode) {
 Router.route("/removePost/:postid").delete(verifyToken, removePost);
 Router.route("/getImagePostsFeed").get(verifyToken, getImageFeed);
 Router.route("/getVideoPostsFeed").get(verifyToken, getVideoFeed);
-Router.get("/getUserPosts/:userid", verifyToken, getUserPostsController);
+Router.get("/getUserPosts/:userid", verifyToken,accessCheckLayer ,getUserPostsController);
 Router.route("/getPost/:postid").get(verifyToken, getPostinfo);
 
 export default Router;

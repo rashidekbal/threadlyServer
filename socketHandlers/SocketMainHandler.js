@@ -84,7 +84,7 @@ function setSocketFunctions(socket, io) {
     const receiverUserid=response[0].userid
     //if fcm token found
     try {
-      await sendMessage(token, {
+      const message={
         msg: data.msg,
         senderUuid: data.senderUuid,
         receiverUuid: data.receiverUuid,
@@ -100,8 +100,10 @@ function setSocketFunctions(socket, io) {
         timestamp,
         deliveryStatus: "-1",
         isDeleted: "false",
-        notificationText:data.notificationText
-      });
+        notificationText:data.notificationText?data.notificationText:" "
+      }
+      console.log("check the message ",message);
+      await sendMessage(token,message );
       console.log("msg sent via fcm")
 
       socket.emit("MsgStatusUpdate", {
@@ -131,7 +133,8 @@ function setSocketFunctions(socket, io) {
       }
     } catch (error) {
       //when fcm token found but message not send due to app not installed
-      console.log("APP DELETED BY USERS");
+
+      console.log("APP DELETED BY USERS or :"+error.data.msg);
       socket.emit("MsgStatusUpdate", {
         MsgUid,
         deliveryStatus: 1,

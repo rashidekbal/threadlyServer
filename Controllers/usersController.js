@@ -64,25 +64,28 @@ async function getUserController(req, res) {
       users.username,
       users.profilepic,
       users.bio,
+      users.isPrivate,
       COUNT(DISTINCT imgpsts.postid) AS Posts,
       COUNT(DISTINCT following.followid) AS Following,
       COUNT(DISTINCT followersCount.followid) AS Followers,
-      COUNT(DISTINCT isFollowedByUser.followid) AS isFollowedByUser,
+      COUNT(DISTINCT isFollowedByUser.followerid) AS isFollowedByUser,
+      coalesce(isFollowedByUser.isApproved,-1) as isApproved
+      ,
       COUNT(DISTINCT isFollowingUser.followid) AS isFollowingUser
     FROM 
       users
     LEFT JOIN 
       imagepost AS imgpsts ON users.userid=imgpsts.userid
     LEFT JOIN 
-      followers AS following ON following.followerid=users.userid
+      followers AS following ON following.followerid=users.userid and following.isApproved=true
     LEFT JOIN 
-      followers AS followersCount ON users.userid=followersCount.followingid
+      followers AS followersCount ON users.userid=followersCount.followingid and followersCount.isApproved=true
     LEFT JOIN 
       followers AS isFollowedByUser ON users.userid=isFollowedByUser.followingid 
-      AND isFollowedByUser.followerid=?
+      AND isFollowedByUser.followerid=? and ( isFollowedByUser.isApproved=false or isFollowedByUser.isApproved=true)
     LEFT JOIN 
       followers AS isFollowingUser ON users.userid=isFollowingUser.followerid 
-      AND isFollowingUser.followingid=?
+      AND isFollowingUser.followingid=? AND isFollowingUser.isApproved=true
     WHERE 
       users.userid=?
     GROUP BY 
@@ -91,8 +94,11 @@ async function getUserController(req, res) {
 
   try {
     // Execute the query with the user ID parameters
+    console.log(userid)
     let response = await fetchDb(query, [userid, userid, useridtofetch]);
+      console.log(response)
     return res.json({ status: 200, data: response }); // Return query results
+  
   } catch (err) {
     console.log(err); // Log any errors
     return res.sendStatus(500); // Return 500 Internal Server Error on failure
