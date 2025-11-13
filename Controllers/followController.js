@@ -3,12 +3,8 @@ import Response from "../constants/Response.js";
 import {notify_new_Follower_via_fcm, notify_UnFollow_via_fcm} from "../Fcm/FcmService.js";
 import { isUserPrivate } from "../utils/PrivacyHelpers.js";
 
-// Controller to handle following a user
-// Takes follower's ID from the request and the ID of the user being followed
-// If a valid following ID is not provided, sends a 400 Bad Request status
-// Inserts a record into the followers table linking the follower and the user being followed
-// Returns a 201 status and a success message if the operation succeeds
-// Returns a 500 status in case of an internal server error
+
+
 let followController = async (req, res) => {
   console.log("follow request recieved")
   let followerid = req.ObtainedData;
@@ -62,13 +58,24 @@ return res.sendStatus(500);
     
   } 
 }
+const ApproveFollowRequestController=async(req,res)=>{
+    console.log("Approve followRequest received")
+  let followingid = req.ObtainedData;
+  let followerid = req.body.nameValuePairs.followerid;
+  if (!followerid) return res.sendStatus(400);
+  try {
+    const query=`update followers set isApproved=true where followerid=? and  followingid=?`;
+    await fetchDb(query,[followerid,followingid]);
+    notifyFollowRequestApproved(followerid);
+   return res.json(new Response(200,{msg:"success"}))
+  } catch (error) {
+return res.sendStatus(500);
+  
+  } 
+}
 
-// Controller to handle unfollowing a user
-// Takes follower's ID from the request and the ID of the user being unfollowed
-// If a valid following ID is not provided, sends a 400 Bad Request status
-// Deletes the relationship between the follower and the user from the followers table
-// Returns a 200 status and a success message if the operation succeeds
-// Returns a 500 status in case of an internal server error
+
+
 let unfollowController = async (req, res) => {
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
@@ -84,12 +91,8 @@ let unfollowController = async (req, res) => {
   }
 };
 
-// Controller to get the list of followers for a specific user
-// Takes the user's ID (whose followers are being fetched) from the route parameters
-// Ensures a valid user ID is provided, otherwise sends a 400 Bad Request status
-// Retrieves followers' information and checks if the requesting user follows them
-// Returns a 200 status with an array of followers' data
-// Returns a 500 status in case of an internal server error
+
+
 const getFollowersController = async (req, res) => {
   let requestingUser = req.ObtainedData;
   let userid = req.params.userid;
@@ -106,12 +109,9 @@ const getFollowersController = async (req, res) => {
   }
 };
 
-// Controller to get the list of users being followed by a specific user
-// Takes the user's ID (whose followings are being fetched) from the route parameters
-// Ensures a valid user ID is provided, otherwise sends a 400 Bad Request status
-// Retrieves following users' information and checks if the requesting user follows them
-// Returns a 200 status with an array of following users' data
-// Returns a 500 status in case of an internal server error
+
+
+
 const getFollowingController = async (req, res) => {
   let requestingUser = req.ObtainedData;
   let userid = req.params.userid;
@@ -160,6 +160,9 @@ const notifyFollowRequestCancelled=async(followingid)=>{
   console.log("notifying to delete request")
 
 }
+const notifyFollowRequestApproved=async(userid)=>{
+console.log("notifying follow accepted to user")
+}
 
 const notifyUnFollow=async(followerId,followingId)=>{
   const getFollowingDetailsQuery="select fcmToken ,userid from users where userid=? limit 1";
@@ -182,5 +185,6 @@ export {
   getFollowersController,
   getFollowingController,
   followControllerV2,
-  cancelFollowRequestController
+  cancelFollowRequestController,
+  ApproveFollowRequestController
 };
