@@ -37,7 +37,20 @@ const addStoryController = async (req, res) => {
 };
 const getStoriesAllController = async (req, res) => {
   let userid = req.ObtainedData;
-  let query = `select count(distinct st.id) as storiesCount ,us.userid,us.profilepic from story as st right join users as us on st.userid=us.userid left join followers as flr on us.userid=flr.followingid where flr.followerid=? and st.createdAt >=NOW()-interval 24 hour group by us.userid; 
+  let query = `SELECT 
+    us.userid,
+    us.profilepic,
+    COUNT(DISTINCT st.id) AS storiesCount
+FROM followers AS flr
+JOIN users AS us 
+       ON flr.followingid = us.userid
+JOIN story AS st 
+       ON st.userid = us.userid
+       AND st.createdAt >= NOW() - INTERVAL 24 HOUR
+WHERE 
+    flr.followerid = ?
+    AND flr.isApproved = TRUE
+GROUP BY us.userid;
  `;
   try {
     let response = await fetchDb(query, [userid]);

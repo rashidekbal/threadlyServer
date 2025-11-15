@@ -95,9 +95,7 @@ async function getUserController(req, res) {
 
   try {
     // Execute the query with the user ID parameters
-    console.log(userid)
     let response = await fetchDb(query, [userid, userid, useridtofetch]);
-      console.log(response)
     return res.json({ status: 200, data: response }); // Return query results
   
   } catch (err) {
@@ -170,7 +168,7 @@ async function getMyDataController(req, res) {
   try {
     // Execute the query with the user ID as a parameter
     let response = await fetchDb(query, [userid]);
-    console.log(response)
+
     return res.json({ status: 200, data: response }); // Return query results
   } catch (err) {
     console.log(err); // Log any errors

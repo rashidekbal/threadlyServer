@@ -97,11 +97,21 @@ const getFollowersController = async (req, res) => {
   let requestingUser = req.ObtainedData;
   let userid = req.params.userid;
   if (!userid) return res.sendStatus(400);
-  let query = `select users.uuid, users.userid , users.username,users.profilepic,CASE WHEN chkIsFllowed.followid IS NOT NULL THEN 1 ELSE 0 END AS ifFollowed  from followers left join users on followers.followerid = users.userid left join followers as chkIsFllowed on users.userid=chkIsFllowed.followingid and chkIsFllowed.followerid=?  where followers.followingid=? and   followers.isApproved= true group by users.userid
+  let query = `select users.uuid,
+    users.userid,
+    users.isPrivate,
+    users.username,
+    users.profilepic,
+    count(distinct chkIsFllowed.followerid) AS ifFollowed,
+    coalesce(chkIsFllowed.isApproved,-1) as isApproved
+    from followers left join users on followers.followerid = users.userid 
+    left join followers as chkIsFllowed on users.userid=chkIsFllowed.followingid and chkIsFllowed.followerid=?  
+    where followers.followingid=? and   followers.isApproved=true group by users.userid
 `;
 
   try {
     let response = await fetchDb(query, [requestingUser, userid]);
+    console.log(response)
     return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
@@ -118,9 +128,12 @@ const getFollowingController = async (req, res) => {
   if (!userid) return res.sendStatus(400);
   let query = `select users.uuid ,
   users.userid ,
+  users.isPrivate
+  ,
    users.username,
    users.profilepic,
-   CASE WHEN chkIsFllowed.followid IS NOT NULL THEN 1 ELSE 0 END AS ifFollowed  from followers 
+   CASE WHEN chkIsFllowed.followid IS NOT NULL THEN 1 ELSE 0 END AS ifFollowed,
+   coalesce(chkIsFllowed.isApproved,-1) as isApproved  from followers 
    left join users on followers.followingid = users.userid
     left join followers as chkIsFllowed on users.userid=chkIsFllowed.followingid and chkIsFllowed.followerid=? 
      where followers.followerid=? and followers.isApproved=true group by users.userid`;
