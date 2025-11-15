@@ -192,6 +192,102 @@ const notify_new_Follower_via_fcm = async (token, userid, username, profile, isF
     }
   })
 }
+
+const notify_Follow_request_accepted_fcm = async (token, userid, username, profile, isFollowed, ReceiverUserId) => {
+  return new Promise(async (resolve, reject) => {
+    const message = {
+      token,
+      android: {
+        priority: "high",
+      },
+
+      data: {
+        responseType: "followAccepted",
+        username: username,
+        userid: userid,
+        ReceiverUserId: ReceiverUserId,
+        isFollowed: String(isFollowed),
+        profile: profile
+      }
+    }
+    try {
+      await admin.messaging().send(message);
+      resolve(new Response(200, { msg: "success" }))
+
+    } catch (error) {
+      reject(new Response(500, { msg: error }))
+
+    }
+  })
+}
+
+
+const notify_new_Follower_request_fcm=async (token, userid, username, profile, isFollowed, ReceiverUserId) => {
+  return new Promise(async (resolve, reject) => {
+     console.log(ReceiverUserId);
+    const message = {
+      token,
+      android: {
+        priority: "high",
+      },
+     
+
+      data: {
+        responseType: "newFollowRequest",
+        username: username,
+        userid: userid,
+        ReceiverUserId: ReceiverUserId,
+        isFollowed: String(isFollowed),
+        profile: profile
+      }
+    }
+    try {
+      await admin.messaging().send(message);
+      resolve(new Response(200, { msg: "success" }))
+
+    } catch (error) {
+      reject(new Response(500, { msg: error }))
+
+    }
+  })
+}
+
+
+
+const notify_followRequestCancel_via_fcm= async (token, userId, ReceiverUserId) => {
+  return new Promise(async (resolve, reject) => {
+    const message = {
+      token,
+      android: {
+        priority: "high"
+      }
+      ,
+      data: {
+        responseType: "followRequestCancel",
+        ReceiverUserId: ReceiverUserId,
+        userId: userId,
+
+      }
+    }
+    try {
+      await admin.messaging().send(message);
+      resolve(new Response(200, { msg: "success" }))
+
+
+    } catch (e) {
+      reject(new Response(500, { msg: e }))
+
+    }
+  });
+
+
+
+}
+
+
+
+
+
 const notify_UnFollow_via_fcm = async (token, userId, ReceiverUserId) => {
   return new Promise(async (resolve, reject) => {
     const message = {
@@ -308,5 +404,8 @@ export {
   logOutPreviousDevice,
   notify_UnFollow_via_fcm,
   notifyCommentLike_via_fcm,
-  notifyCommentUnlike_via_fcm, notifyUnsendMessageViaFcm
+  notifyCommentUnlike_via_fcm, notifyUnsendMessageViaFcm,
+  notify_new_Follower_request_fcm,
+  notify_followRequestCancel_via_fcm,
+  notify_Follow_request_accepted_fcm
 };

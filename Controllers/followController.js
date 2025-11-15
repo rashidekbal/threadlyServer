@@ -1,6 +1,6 @@
 import fetchDb from "../utils/query.js";
 import Response from "../constants/Response.js";
-import {notify_new_Follower_via_fcm, notify_UnFollow_via_fcm} from "../Fcm/FcmService.js";
+import {notify_Follow_request_accepted_fcm, notify_followRequestCancel_via_fcm, notify_new_Follower_request_fcm, notify_new_Follower_via_fcm, notify_UnFollow_via_fcm} from "../Fcm/FcmService.js";
 import { isUserPrivate } from "../utils/PrivacyHelpers.js";
 
 
@@ -32,7 +32,7 @@ let followControllerV2 = async (req, res) => {
     if(isPrivateAccount){
       //send follow request and notify the other party
       await fetchDb(query,[followerid,followingid,false]);
-      notifyFollowRequest(followingid)
+      notifyFollowRequest(followerid,followingid)
       return res.json(new Response(201,{status:"PENDING"}));
     }
     await fetchDb(query, [followerid, followingid,true]);
@@ -51,7 +51,7 @@ const cancelFollowRequestController=async(req,res)=>{
   try {
     const query=`delete from followers where followerid=? and  followingid=? and isApproved=false`;
     await fetchDb(query,[followerid,followingid]);
-    notifyFollowRequestCancelled(followingid);
+    notifyFollowRequestCancelled(followerid, followingid);
    return res.json(new Response(200,{msg:"success"}))
   } catch (error) {
 return res.sendStatus(500);
@@ -61,12 +61,12 @@ return res.sendStatus(500);
 const ApproveFollowRequestController=async(req,res)=>{
     console.log("Approve followRequest received")
   let followingid = req.ObtainedData;
-  let followerid = req.body.nameValuePairs.followerid;
+  let followerid = req.body.nameValuePairs.followerId;
   if (!followerid) return res.sendStatus(400);
   try {
     const query=`update followers set isApproved=true where followerid=? and  followingid=?`;
     await fetchDb(query,[followerid,followingid]);
-    notifyFollowRequestApproved(followerid);
+    notifyFollowRequestApproved(followerid,followingid)
    return res.json(new Response(200,{msg:"success"}))
   } catch (error) {
 return res.sendStatus(500);
@@ -134,14 +134,14 @@ const getFollowingController = async (req, res) => {
   }
 };
 const notifyNewFollower=async(followerId,followingId)=>{
-const getFollowerDetailsQuery="select us.userid,us.username,us.profilepic , count(distinct fl.followid) as isFollowed from users as us left join followers as fl on us.userid = fl.followingid and fl.followerid=?  where userid=? limit 1";
+const getFollowerDetailsQuery="select us.userid,us.username,us.profilepic , count(distinct fl.followerid) as isFollowed from users as us left join followers as fl on us.userid = fl.followingid and fl.followerid=? and fl.isApproved=true where userid=? limit 1";
 const getFollowingDetailsQuery="select fcmToken ,userid from users where userid=? limit 1";
 try {
   let follower=await fetchDb(getFollowerDetailsQuery,[followingId,followerId]);
   let following=await fetchDb(getFollowingDetailsQuery,[followingId]);
   if(follower.length>0&&following.length>0&&following[0].fcmToken!=null){
     const token=following[0].fcmToken;
-    const ReceiverUserId=follower[0].userid;
+    const ReceiverUserId=following[0].userid;
     await notify_new_Follower_via_fcm(token,followerId,follower[0].username,String(follower[0].profilepic?follower[0].profilepic:"null"),Number(follower[0].isFollowed)>0,ReceiverUserId);
   }else{
     console.log("no fcm token");
@@ -152,16 +152,68 @@ try {
 }
 }
 
-const notifyFollowRequest=async(userid)=>{
-  console.log("notifying to "+userid)
+
+
+const notifyFollowRequest=async(followerId,followingId)=>{
+const getFollowerDetailsQuery="select us.userid,us.username,us.profilepic , count(distinct fl.followerid) as isFollowed from users as us left join followers as fl on us.userid = fl.followingid and fl.followerid=? and fl.isApproved=true where userid=? limit 1";
+const getFollowingDetailsQuery="select fcmToken ,userid from users where userid=? limit 1";
+try {
+  let follower=await fetchDb(getFollowerDetailsQuery,[followingId,followerId]);
+  let following=await fetchDb(getFollowingDetailsQuery,[followingId]);
+  if(follower.length>0&&following.length>0&&following[0].fcmToken!=null){
+    const token=following[0].fcmToken;
+    const ReceiverUserId=following[0].userid;
+    await notify_new_Follower_request_fcm(token,followerId,follower[0].username,String(follower[0].profilepic?follower[0].profilepic:"null"),Number(follower[0].isFollowed)>0,ReceiverUserId);
+  }else{
+    console.log("no fcm token");
+  }
+}catch (error){
+  console.log(error);
 
 }
-const notifyFollowRequestCancelled=async(followingid)=>{
+
+}
+
+
+
+
+
+
+const notifyFollowRequestCancelled=async(followerId,followingId)=>{
   console.log("notifying to delete request")
+  const getFollowingDetailsQuery="select fcmToken ,userid from users where userid=? limit 1";
+  try {
+    let following=await fetchDb(getFollowingDetailsQuery,[followingId]);
+    if(following.length>0&&following[0].fcmToken!=null){
+      const token=following[0].fcmToken;
+      await notify_followRequestCancel_via_fcm(token,followerId,following[0].userid);
+    }else{
+      console.log("no fcm token");
+    }
+  }catch (error){
+    console.log(error);
+
+  }
 
 }
-const notifyFollowRequestApproved=async(userid)=>{
-console.log("notifying follow accepted to user")
+const notifyFollowRequestApproved=async(followerId,followingId)=>{
+  const getFollowingDetailsQuery="select us.userid,us.username,us.profilepic , count(distinct fl.followerid) as isFollowed from users as us left join followers as fl on us.userid = fl.followingid and fl.followerid=? and fl.isApproved=true where userid=? limit 1";
+const getFollowerDetailsQuery="select fcmToken ,userid from users where userid=? limit 1";
+try {
+  let follower=await fetchDb(getFollowerDetailsQuery,[followerId]);
+  let following=await fetchDb(getFollowingDetailsQuery,[followerId,followingId]);
+  if(following.length>0&&follower.length>0&&follower[0].fcmToken!=null){
+    const token=follower[0].fcmToken;
+    const ReceiverUserId=follower[0].userid;
+    await notify_Follow_request_accepted_fcm(token,followingId,following[0].username,String(following[0].profilepic?following[0].profilepic:"null"),Number(following[0].isFollowed)>0,ReceiverUserId);
+  }else{
+    console.log("no fcm token");
+  }
+}catch (error){
+  console.log(error);
+
+}
+
 }
 
 const notifyUnFollow=async(followerId,followingId)=>{

@@ -16,6 +16,7 @@ async function getSuggestUsersController(req, res) {
       u.userid, 
       u.username, 
       u.profilepic, 
+      u.isPrivate,
       COUNT(fl.followid) AS isfollowedBy 
     FROM 
       users AS u 
@@ -148,6 +149,7 @@ async function getMyDataController(req, res) {
       u.profilepic,
       u.createdAt,
       u.dob,
+      u.isPrivate,
       COUNT(DISTINCT imp.postid) AS PostsCount, 
       COUNT(DISTINCT follows.followerid) AS followersCount,
       COUNT(DISTINCT following.followingid) AS followingCount
@@ -168,6 +170,7 @@ async function getMyDataController(req, res) {
   try {
     // Execute the query with the user ID as a parameter
     let response = await fetchDb(query, [userid]);
+    console.log(response)
     return res.json({ status: 200, data: response }); // Return query results
   } catch (err) {
     console.log(err); // Log any errors

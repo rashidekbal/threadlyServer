@@ -9,6 +9,7 @@ import {
 } from "../Controllers/StoryController.js";
 import "dotenv/config";
 import { uploadtoDisk, uploadToRam } from "../middlewares/multer.js";
+import accessCheckLayer from "../middlewares/AccountPrivacyMiddleware.js";
 
 const router = Router();
 const isProduction = process.env.PRODUCTION == "true";
@@ -24,5 +25,5 @@ if (isProduction) {
 router.route("/removeStory/:storyid").delete(verifyToken, removeStory);
 router.route("/getStories").get(verifyToken, getStoriesAllController);
 router.route("/getMyStories").get(verifyToken, getMyStoriesController);
-router.route("/getStories/:userid").get(verifyToken, getStoryOfUserController);
+router.route("/getStories/:userid").get(verifyToken,accessCheckLayer ,getStoryOfUserController);
 export default router;

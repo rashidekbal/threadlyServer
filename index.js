@@ -18,6 +18,7 @@ import storyRouter from "./routes/StoryRoute.js";
 import { setSocketFunctions } from "./socketHandlers/SocketMainHandler.js";
 import { sendMessage, StartServiceFcm } from "./Fcm/FcmService.js";
 import Fcmrouter from "./routes/FcmRoute.js";
+import PrivacyRouter from "./routes/PrivacyRoute.js";
 let app = express();
 const port = process.env.PORT;
 let server = http.createServer(app);
@@ -52,6 +53,7 @@ app.use("/api/profile", profileRouter);
 app.use("/api/story", storyRouter);
 app.use("/api/fcm", Fcmrouter);
 app.use("/api/messages", MessagesRouter);
+app.use("/api/privacy",PrivacyRouter)
 connection.connect((err, res) => {
   if (err) {
     console.log(err);

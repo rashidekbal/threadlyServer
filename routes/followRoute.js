@@ -9,12 +9,13 @@ import {
   getFollowingController,
   unfollowController,
 } from "../Controllers/followController.js";
+import accessCheckLayer from "../middlewares/AccountPrivacyMiddleware.js";
 let router = Router();
 router.route("/follow").post(verifyToken, followController);
 router.route("/follow/V2").post(verifyToken, followControllerV2);
 router.route("/cancelFollowRequest").post(verifyToken,cancelFollowRequestController)
-router.route("/approveFollowRequest").post(verifyToken,ApproveFollowRequestController)
+router.route("/acceptFollowRequest").post(verifyToken,ApproveFollowRequestController)
 router.route("/unfollow").post(verifyToken, unfollowController);
-router.route("/getFollowers/:userid").get(verifyToken, getFollowersController);
-router.route("/getFollowings/:userid").get(verifyToken, getFollowingController);
+router.route("/getFollowers/:userid").get(verifyToken,accessCheckLayer, getFollowersController);
+router.route("/getFollowings/:userid").get(verifyToken, accessCheckLayer,getFollowingController);
 export default router;

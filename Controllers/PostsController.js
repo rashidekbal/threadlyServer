@@ -156,7 +156,7 @@ async function getVideoFeed(req, res) {
     } else {
       response = await fetchDb(query, [userid, userid]);
     }
-
+     
     res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
