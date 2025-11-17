@@ -113,9 +113,8 @@ WHERE
 GROUP BY p.postid;
 `;
   try {
+     let response = await fetchDb(query, [userid, userid, postid]);
     if(response.length===0) return res.sendStatus(404);
-    let response = await fetchDb(query, [userid, userid, postid]);
-
     res.json({ status: 200, data: response });
   } catch (error) {
     console.log(error);
