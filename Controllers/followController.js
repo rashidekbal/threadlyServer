@@ -64,7 +64,7 @@ const ApproveFollowRequestController=async(req,res)=>{
   let followerid = req.body.nameValuePairs.followerId;
   if (!followerid) return res.sendStatus(400);
   try {
-    const query=`update followers set isApproved=true where followerid=? and  followingid=?`;
+    const query=`update followers set isApproved=true where followerid=? and  followingid=? and isApproved=false`;
     await fetchDb(query,[followerid,followingid]);
     notifyFollowRequestApproved(followerid,followingid)
    return res.json(new Response(200,{msg:"success"}))
@@ -80,7 +80,7 @@ let unfollowController = async (req, res) => {
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
   if (!followingid) return res.sendStatus(400);
-  let query = "delete from followers where  followerid = ? and followingid=? ";
+  let query = "delete from followers where  followerid = ? and followingid=? and isApproved=true ";
   try {
     await fetchDb(query, [followerid, followingid]);
     notifyUnFollow(followerid, followingid);
@@ -251,5 +251,6 @@ export {
   getFollowingController,
   followControllerV2,
   cancelFollowRequestController,
-  ApproveFollowRequestController
+  ApproveFollowRequestController,
+  notifyFollowRequestApproved
 };
