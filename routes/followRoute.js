@@ -5,8 +5,10 @@ import {
   cancelFollowRequestController,
   followController,
   followControllerV2,
+  getAllFollowRequestsController,
   getFollowersController,
   getFollowingController,
+  rejectFollowRequest,
   unfollowController,
 } from "../Controllers/followController.js";
 import accessCheckLayer from "../middlewares/AccountPrivacyMiddleware.js";
@@ -19,4 +21,6 @@ router.route("/acceptFollowRequest").post(verifyToken,ApproveFollowRequestContro
 router.route("/unfollow").post(verifyToken, unfollowController);
 router.route("/getFollowers/:userid").get(verifyToken,accessCheckLayer, getFollowersController);
 router.route("/getFollowings/:userid").get(verifyToken, accessCheckLayer,getFollowingController);
+router.route("/getAllFollowRequests").get(verifyToken,getAllFollowRequestsController);
+router.route("/rejectFollowRequest/:followerId").delete(verifyToken,rejectFollowRequest);
 export default router;

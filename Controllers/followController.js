@@ -42,7 +42,26 @@ let followControllerV2 = async (req, res) => {
     res.sendStatus(500);
   }
 };
-//cancel follow request controller
+const rejectFollowRequest=async(req,res)=>{
+  console.log("reject request received")
+  const userid=req.ObtainedData;
+  const followerId=req.params.followerId;
+  console.log(followerId+" is follower ")
+  if(!followerId) return res.sendStatus(400);
+  const query=`delete from followers where followerid=? and followingid=? and isApproved=false`;
+  try {
+    await fetchDb(query,[followerId,userid]);
+         console.log("reject request resolved")
+       return res.json(new Response(200,{msg:"success"}))
+
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+    
+  }
+
+}
+//cancel follow request from the follower end controller
 const cancelFollowRequestController=async(req,res)=>{
     console.log("cancel followRequest received")
   let followerid = req.ObtainedData;
@@ -165,6 +184,27 @@ try {
 }
 }
 
+const getAllFollowRequestsController=async(req,res)=>{
+  console.log("request received")
+  const userid=req.ObtainedData;
+  const query=`
+
+select us.userid,
+us.username,
+us.profilepic from followers as flws left join users as us on flws.followerid=us.userid 
+where flws.followingid=? and isApproved=false
+`
+try {
+  let response=await fetchDb(query,[userid]);
+  console.log(response)
+  return res.json(new Response(200,response));
+} catch (error) {
+console.log(error)
+return req.sendStatus(500);
+}
+
+}
+
 
 
 const notifyFollowRequest=async(followerId,followingId)=>{
@@ -252,5 +292,7 @@ export {
   followControllerV2,
   cancelFollowRequestController,
   ApproveFollowRequestController,
-  notifyFollowRequestApproved
+  notifyFollowRequestApproved,
+  getAllFollowRequestsController,
+  rejectFollowRequest
 };

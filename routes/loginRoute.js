@@ -45,6 +45,7 @@ router.post("/mobile", async (req, res) => {
             userid: userdata.userid,
             token: token,
             uuid: userdata.uuid,
+            isPrivate:userdata.isPrivate
           });
         },1000)
       } else {
@@ -91,6 +92,7 @@ router.post("/email", async (req, res) => {
             userid: userdata.userid,
             token: token,
             uuid: userdata.uuid,
+           isPrivate:userdata.isPrivate
           });
         },1000)
 
@@ -137,6 +139,7 @@ router.post("/userid", async (req, res) => {
             userid: userdata.userid,
             token: token,
             uuid: userdata.uuid,
+            isPrivate:userdata.isPrivate
           });
         },1000)
       } else {
