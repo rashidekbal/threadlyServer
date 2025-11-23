@@ -44,6 +44,7 @@ Router.route("/removePost/:postid").delete(verifyToken, removePost);
 Router.route("/getImagePostsFeed").get(verifyToken, getImageFeed);
 Router.route("/getVideoPostsFeed").get(verifyToken, getVideoFeed);
 Router.get("/getUserPosts/:userid", verifyToken,accessCheckLayer ,getUserPostsController);
-Router.route("/getPost/:postid").get(verifyToken, getPostinfo);
+Router.route("/getPost/:postid").get(verifyToken,getPostinfo);
+
 
 export default Router;

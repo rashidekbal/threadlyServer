@@ -55,6 +55,7 @@ const getpendingMessagesController = async (req, res) => {
   }
 };
 const sendMessageController = async (req, res) => {
+  console.log("message received")
   let object = req.body.nameValuePairs;
   if ((object == null) | (object == undefined)) return res.sendStatus(400);
   let messageUid = object.MsgUid;
@@ -69,7 +70,7 @@ const sendMessageController = async (req, res) => {
   let type = object.type ? object.type : "text";
   let message = object.msg;
   let timestamp = object.timestamp;
-  if (!senderUuid || !receiverUuid || !message || !timestamp || !messageUid) {
+  if (!senderUuid || !receiverUuid || !timestamp || !messageUid) {
     return res.sendStatus(400);
   }
 
@@ -118,7 +119,7 @@ const sendMessageController = async (req, res) => {
 
     try {
       await sendMessage(token, {
-        msg: message,
+        msg: message?message:" ",
         senderUuid,
         receiverUuid,
         username: senderUsername,
@@ -151,6 +152,7 @@ const sendMessageController = async (req, res) => {
         })
       );
     } catch (error) {
+      console.log(error)
       //when fcm token found but message not send due to app not installed
       await addMessageToDb(
         messageUid,
