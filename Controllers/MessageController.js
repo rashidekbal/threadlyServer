@@ -55,21 +55,22 @@ const getpendingMessagesController = async (req, res) => {
   }
 };
 const sendMessageController = async (req, res) => {
-  console.log("message received")
-  let object = req.body.nameValuePairs;
-  if ((object == null) | (object == undefined)) return res.sendStatus(400);
-  let messageUid = object.MsgUid;
-  let replyToMessageId = object.replyToMessageId
-    ? object.replyToMessageId
+  let data = req.body.nameValuePairs;
+  if ((data == null) | (data == undefined)) return res.sendStatus(400);
+  let messageUid = data.MsgUid;
+  let replyToMessageId = data.replyToMessageId
+    ? data.replyToMessageId
     : "null";
-  let senderProfile = object.senderProfilePic;
-  let senderUsername = object.senderName;
-  let senderUserid = object.senderUserId;
-  let senderUuid = object.senderUuid;
-  let receiverUuid = object.receiverUuid;
-  let type = object.type ? object.type : "text";
-  let message = object.msg;
-  let timestamp = object.timestamp;
+  let senderProfile = data.senderProfilePic;
+  let senderUsername = data.senderName;
+  let senderUserid = data.senderUserId;
+  let senderUuid = data.senderUuid;
+  let receiverUuid = data.receiverUuid;
+  let type = data.type ? data.type : "text";
+  let message = data.msg;
+  let timestamp = data.timestamp;
+  let link=data.postLink?data.postLink:" "
+  let postId=data.postId;
   if (!senderUuid || !receiverUuid || !timestamp || !messageUid) {
     return res.sendStatus(400);
   }
@@ -77,19 +78,21 @@ const sendMessageController = async (req, res) => {
   //approach 1 is user on socket
   let socketid = getSocketId(receiverUuid);
   if (socketid != null) {
-    socketIo.to(socketid).emit("StoC", {
-      msg: message,
-      senderUuid,
-      receiverUuid,
-      username: senderUsername,
-      userid: senderUserid,
-      profile: senderProfile,
-      MsgUid: messageUid,
-      ReplyTOMsgUid: replyToMessageId,
-      type,
-      timestamp,
-    });
-    //add Message to db
+     socketIo.to(socketid).emit("StoC", {
+        msg: message,
+        senderUuid,
+        receiverUuid,
+        username:senderUsername,
+        userid: senderUserid,
+        profile:senderProfile,
+        MsgUid:messageUid,
+        ReplyTOMsgUid:replyToMessageId,
+        type,
+        link,
+        postId,
+        timestamp,
+      });
+  
     await addMessageToDb(
       messageUid,
       replyToMessageId,
@@ -97,6 +100,8 @@ const sendMessageController = async (req, res) => {
       receiverUuid,
       type,
       message,
+      postId,
+      link,
       timestamp,
       2,
       false
@@ -118,22 +123,29 @@ const sendMessageController = async (req, res) => {
     const token = response[0].fcmToken;
 
     try {
-      await sendMessage(token, {
-        msg: message?message:" ",
+      const messageToSend={
+        msg: data.msg,
         senderUuid,
         receiverUuid,
+        receiverUserId:"",
         username: senderUsername,
         userid: senderUserid,
-        profile: senderProfile,
-        MsgUid: messageUid,
+        profile:senderProfile,
+        MsgUid:messageUid,
+        ReplyTOMsgUid:replyToMessageId,
         type,
+        postId:String(data.postId),
+        link,
         timestamp,
-        ReplyTOMsgUid: replyToMessageId,
         deliveryStatus: "-1",
         isDeleted: "false",
-      });
+        notificationText:data.notificationText?data.notificationText:"sent a message"
+      }
+      let result =await sendMessage(token,messageToSend);
+      console.log(result.data.msg)
       //add message to db
 
+     
       await addMessageToDb(
         messageUid,
         replyToMessageId,
@@ -141,6 +153,8 @@ const sendMessageController = async (req, res) => {
         receiverUuid,
         type,
         message,
+        postId,
+        link,
         timestamp,
         2,
         false
@@ -154,6 +168,8 @@ const sendMessageController = async (req, res) => {
     } catch (error) {
       console.log(error)
       //when fcm token found but message not send due to app not installed
+      
+      
       await addMessageToDb(
         messageUid,
         replyToMessageId,
@@ -161,6 +177,8 @@ const sendMessageController = async (req, res) => {
         receiverUuid,
         type,
         message,
+         postId,
+        link,
         timestamp,
         1,
         false

@@ -15,7 +15,7 @@ function setSocketFunctions(socket, io) {
 
   //when client send message to server to send to user
   socket.on("CToS", async (data) => {
-     console.log(data);
+    
     //generate a ,MessageUid;
     let MsgUid = data.MsgUid;
     let type = data.type != null ? data.type : "text";
@@ -193,7 +193,8 @@ function setSocketFunctions(socket, io) {
   });
   //msg seen status update call
   socket.on("update_seen_msg_status",async data=>{
-    console.log("into the bug")
+    // this mus have all the message ui to be treated as seen
+    console.log(data);
     const senderUUid=data.senderUUid;
     const receiverUserid=data.myUserid;
     let receiverUUid=await getUUidFromUserId(receiverUserid);

@@ -38,7 +38,7 @@ const sendMessage = (token, Message) => {
         deliveryStatus: Message.deliveryStatus,
         isDeleted: Message.isDeleted,
         responseType: "chat",
-        notificationText: Message.notificationText
+        notificationText: Message.notificationText?Message.notificationText:""
 
       }
     };
