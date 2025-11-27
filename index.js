@@ -15,6 +15,7 @@ import ForgetPasswordRoute from "./routes/ForgetPasswordRoute.js";
 import profileRouter from "./routes/ProfileRouter.js";
 import MessagesRouter from "./routes/MessageRoutes.js";
 import storyRouter from "./routes/StoryRoute.js";
+import SearchRouter from "./routes/SearchRoute.js"
 import { setSocketFunctions } from "./socketHandlers/SocketMainHandler.js";
 import { sendMessage, StartServiceFcm } from "./Fcm/FcmService.js";
 import Fcmrouter from "./routes/FcmRoute.js";
@@ -54,6 +55,7 @@ app.use("/api/story", storyRouter);
 app.use("/api/fcm", Fcmrouter);
 app.use("/api/messages", MessagesRouter);
 app.use("/api/privacy",PrivacyRouter)
+app.use("/api/search",SearchRouter);
 connection.connect((err, res) => {
   if (err) {
     console.log(err);

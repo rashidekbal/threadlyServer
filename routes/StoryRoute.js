@@ -12,7 +12,7 @@ import { uploadtoDisk, uploadToRam } from "../middlewares/multer.js";
 import accessCheckLayer from "../middlewares/AccountPrivacyMiddleware.js";
 
 const router = Router();
-const isProduction = process.env.PRODUCTION == "true";
+const isProduction = process.env.PRODUCTION === "true";
 if (isProduction) {
   router
     .route("/addStory")

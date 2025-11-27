@@ -194,7 +194,6 @@ function setSocketFunctions(socket, io) {
   //msg seen status update call
   socket.on("update_seen_msg_status",async data=>{
     // this mus have all the message ui to be treated as seen
-    console.log(data);
     const senderUUid=data.senderUUid;
     const receiverUserid=data.myUserid;
     let receiverUUid=await getUUidFromUserId(receiverUserid);

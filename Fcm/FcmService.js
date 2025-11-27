@@ -25,7 +25,8 @@ const sendMessage = (token, Message) => {
       data: {
         msg: Message.msg,
         senderUuid: Message.senderUuid,
-        receiverUuid: Message.receiverUuid, receiverUserId: Message.receiverUserId,
+        receiverUuid: Message.receiverUuid,
+        receiverUserId: Message.receiverUserId,
         username: Message.username,
         userid: Message.userid,
         profile: Message.profile,
@@ -38,7 +39,7 @@ const sendMessage = (token, Message) => {
         deliveryStatus: Message.deliveryStatus,
         isDeleted: Message.isDeleted,
         responseType: "chat",
-        notificationText: Message.notificationText?Message.notificationText:""
+        notificationText: Message.notificationText
 
       }
     };
