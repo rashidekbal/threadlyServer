@@ -106,7 +106,6 @@ async function generateOtpEmail(req, res) {
   try {
     // Send the OTP via email
     await sendEmailOtp(email, OTP);
-
     // SQL query to insert the email and OTP into the database
     let query = `insert into otpmodel (phone_email,otp) values (?,?)`;
 

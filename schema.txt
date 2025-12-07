@@ -20,7 +20,7 @@ CREATE TABLE imagepost (
   postid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   userid VARCHAR(250) NOT NULL,
   imageurl TEXT NOT NULL,
-  caption TEXT DEFAULT NULL,
+  caption varchar(255),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   type TEXT NOT NULL,
   FOREIGN KEY (userid) REFERENCES users(userid) ON DELETE CASCADE ON UPDATE CASCADE
@@ -127,8 +127,7 @@ CREATE TABLE messages (
 
 
 
-
-
-
-
+// indexing
+create  index idx_captions_userid on imagepost(caption);
+create unique index idx_users_userid on users(userid);
 

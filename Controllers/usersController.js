@@ -156,9 +156,9 @@ async function getMyDataController(req, res) {
     LEFT JOIN 
       imagepost AS imp ON u.userid=imp.userid
     LEFT JOIN 
-      followers AS follows ON u.userid=follows.followingid
+      followers AS follows ON u.userid=follows.followingid and follows.isApproved=1
     LEFT JOIN 
-      followers AS following ON u.userid=following.followerid
+      followers AS following ON u.userid=following.followerid and following.isApproved=1
     WHERE 
       u.userid=?
     GROUP BY 

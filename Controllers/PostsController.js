@@ -219,6 +219,7 @@ LIMIT 100;
     } else {
       response = await fetchDb(query, [userid, userid]);
     }
+ 
     res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
@@ -228,6 +229,9 @@ LIMIT 100;
 async function getUserPostsController(req, res) {
   let reqMakerUserId=req.ObtainedData;
   let userid = req.params.userid;
+  // const limit=40;
+  // let page=req.query.page?req.query.page-1:0;
+  // let offset=limit*page;
 
 let query = `
 SELECT 
@@ -248,6 +252,7 @@ LEFT JOIN followers AS flw ON p.userid = flw.followingid AND flw.followerid = ?
 WHERE p.userid = ?
 GROUP BY p.postid
 ORDER BY p.created_at DESC
+
 `;
 
   try {
