@@ -229,10 +229,10 @@ LIMIT 100;
 async function getUserPostsController(req, res) {
   let reqMakerUserId=req.ObtainedData;
   let userid = req.params.userid;
-  const limit=20;
+  const limit=50;
   let page=req.query.page?req.query.page-1:0;
   let offset=limit*page;
-  console.log(page)
+
 let query = `
 SELECT 
     p.*, u.username, u.profilepic,
@@ -259,10 +259,8 @@ offset ?
 
   try {
   let  response = await fetchDb(query,[userid,reqMakerUserId,userid,limit,offset]);
-  console.log("serving new data")
     return res.json({ status: 200, data: response });
   } catch (error) {
-    console.log(error);
     return res.sendStatus(500);
   }
 }

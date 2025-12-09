@@ -4,7 +4,6 @@ import fetchDb from "../utils/query.js";
 const accessCheckLayer = async (req, res, next) => {
   const requester_UserId = req.ObtainedData;
   const requested_UserId = req.params.userid;
-  console.log("requester " + requester_UserId);
   if(requested_UserId===requester_UserId) return next();
   if (!requested_UserId) return res.sendStatus(400);
 

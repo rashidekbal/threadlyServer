@@ -39,7 +39,6 @@ async function getSuggestUsersController(req, res) {
     let response = await fetchDb(Query, [userid, userid]);
 
     // Send the query response
-    console.log("response lenght: "+response.length)
     res.json({ status: 200, data: response });
   } catch (err) {
     console.log(err); // Log any errors for debugging
