@@ -229,10 +229,10 @@ LIMIT 100;
 async function getUserPostsController(req, res) {
   let reqMakerUserId=req.ObtainedData;
   let userid = req.params.userid;
-  // const limit=40;
-  // let page=req.query.page?req.query.page-1:0;
-  // let offset=limit*page;
-
+  const limit=20;
+  let page=req.query.page?req.query.page-1:0;
+  let offset=limit*page;
+  console.log(page)
 let query = `
 SELECT 
     p.*, u.username, u.profilepic,
@@ -252,11 +252,14 @@ LEFT JOIN followers AS flw ON p.userid = flw.followingid AND flw.followerid = ?
 WHERE p.userid = ?
 GROUP BY p.postid
 ORDER BY p.created_at DESC
+limit ?
+offset ?
 
 `;
 
   try {
-  let  response = await fetchDb(query,[userid,reqMakerUserId,userid]);
+  let  response = await fetchDb(query,[userid,reqMakerUserId,userid,limit,offset]);
+  console.log("serving new data")
     return res.json({ status: 200, data: response });
   } catch (error) {
     console.log(error);
