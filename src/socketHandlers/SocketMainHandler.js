@@ -1,5 +1,5 @@
 import { notifyStatus_via_Fcm, notifyUnsendMessageViaFcm, sendMessage } from "../Fcm/FcmService.js";
-import { socketIo } from "../index.js";
+import { socketIo } from "../../index.js";
 import fetchDb from "../utils/query.js";
 import {
   addMessageToDb, getBasicUserDetailsFromUUid,

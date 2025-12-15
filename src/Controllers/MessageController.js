@@ -1,6 +1,6 @@
 import Response from "../constants/Response.js";
 import { sendMessage } from "../Fcm/FcmService.js";
-import { socketIo } from "../index.js";
+import { socketIo } from "../../index.js";
 import { getSocketId } from "../socketHandlers/ConnectedUsers.js";
 import { notifyStatusChanged, notifyUnSendMessage } from "../socketHandlers/SocketMainHandler.js";
 import fetchDb from "../utils/query.js";
@@ -236,11 +236,12 @@ const uploadMessageMedia=async(req,res )=>{
 const getAllChatsController=async(req,res)=>{
   const userid = req.ObtainedData;
   if(!userid)return res.sendStatus(400);
-  const query=`select * from messages where (senderUUid=? or recieverUUid=?) and isDeletedBoth=false and not deliveryStatus='null'`;
+  const query=`select * from messages where (senderUUid=? or recieverUUid=?) and isDeletedBoth=false and not deliveryStatus='null' `;
   try {
      let uuid = await getUUidFromUserId(userid);
      if(!uuid)return res.sendStatus(400);
      let response=await fetchDb(query,[uuid,uuid]);
+  
     return  res.json(new Response(200,response))
 
   } catch (error) {
