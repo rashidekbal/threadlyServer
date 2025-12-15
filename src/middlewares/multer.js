@@ -6,7 +6,7 @@ const uploadToRam = multer({ storage });
 //upload to disk
 const storageondisk = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/temp");
+    cb(null, "./src/public/temp");
   },
   filename: function (req, file, cb) {
     let ext = path.extname(file.originalname);
