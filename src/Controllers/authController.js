@@ -1,8 +1,10 @@
 import fetchDb from "../utils/query.js"; // Utility function to execute database queries.
 import verifyAge from "../utils/ageVerfy.js"; // Utility function to verify if a user is an adult based on their date of birth.
-import bcrypt from "bcrypt"; // Library for hashing passwords.
 import jwt from "jsonwebtoken"; // Library for generating JSON Web Tokens (JWT).
 import { v4 as uuidv4 } from "uuid";
+import userRepo from "../repository/UsersTableRepo.js";
+import Response from "../constants/Response.js";
+import bcryptUtil from "../utils/BcryptUtil.js";
 
 // Controller to handle user registration via email
 async function registerUserEmailController(req, res) {
@@ -11,6 +13,7 @@ async function registerUserEmailController(req, res) {
   let password = req.body.nameValuePairs.password; // Password provided by user
   let dob = req.body.nameValuePairs.dob; // Date of birth of the user
   let username = req.body.nameValuePairs.username; // Username provided by user
+  if(password.length<6)return res.sendStatus(400);
 
   // Check for missing required fields
   if (!email || !password || !dob || !username) {
@@ -19,7 +22,7 @@ async function registerUserEmailController(req, res) {
 
   try {
     // Hash the password for secure storage
-    password = await bcrypt.hash(password, 12);
+    password = await bcryptUtil.hashPassword(password);
 
     // Generate a unique user ID using the username and current timestamp
     let userid = username.split(" ")[0] + Date.now();
@@ -65,4 +68,36 @@ async function registerUserEmailController(req, res) {
     res.sendStatus(500); // Internal Server Error
   }
 }
-export { registerUserEmailController };
+
+async function ResetPasswordController(req,res){
+  const userid=req.ObtainedData;
+  const oldPassword=req.body.nameValuePairs.oldPassword;
+  const newPassword=req.body.nameValuePairs.newPassword;
+ 
+  //if not all required values are provided return error 400 bad request
+  if(!oldPassword||!newPassword)return res.sendStatus(400);
+  if(newPassword.length<6)return res.sendStatus(400);
+  try {
+     //get user details for verification 
+  let response =await userRepo.getUserForAuth(userid);
+  //if no associated user found send 404 may be due to old token .
+  if(response==null)return res.sendStatus(404);
+
+  //if reponse is found then 
+  const userData=response[0];
+  const serverPasswordForUser=userData.pass;
+  //compare usergiven password with server stored password
+  const isPasswodVerified=await bcryptUtil.verifyPassword(serverPasswordForUser,oldPassword);
+  if(!isPasswodVerified)return res.sendStatus(403);
+  //if verified 
+  const isPasswordChangeSuccess =await userRepo.updateUserPassword(userid,newPassword);
+  //if password change failed send status 500;
+  if(!isPasswordChangeSuccess)return res.sendStatus(500);
+  return res.json(new Response(200,{msg:"ok"}));
+  } catch (error) {
+    console.log("error from authControllers.js resetpasswordFunction , erro: " +error);
+    return res.sendStatus(500); 
+  }
+
+}
+export { registerUserEmailController,ResetPasswordController };

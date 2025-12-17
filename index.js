@@ -20,6 +20,7 @@ import { setSocketFunctions } from "./src/socketHandlers/SocketMainHandler.js";
 import { sendMessage, StartServiceFcm } from "./src/Fcm/FcmService.js";
 import Fcmrouter from "./src/routes/FcmRoute.js";
 import PrivacyRouter from "./src/routes/PrivacyRoute.js";
+import AuthRouter from "./src/routes/AuthRoute.js";
 let app = express();
 const port = process.env.PORT;
 let server = http.createServer(app);
@@ -44,7 +45,8 @@ app.get("/", (req, res) => {
 app.use("/api/otp", OptRoute);
 app.use("/api/auth/register", registerRoute);
 app.use("/api/auth/login", loginRoute);
-app.use("/api/resetPassword", ForgetPasswordRoute);
+app.use("/api/ForgetPassword", ForgetPasswordRoute);
+app.use("/api/auth",AuthRouter);
 app.use("/api/posts", postRoute);
 app.use("/api/like", LikeRouter);
 app.use("/api/follow", followRoute);
