@@ -1,16 +1,14 @@
 import admin from "firebase-admin";
-import ServiceCred from "./fcmAdminKey.json" with { type: "json" };
 import Response from "../constants/Response.js"
+import "dotenv/config";
+const firebaseBase64=process.env.FIREBASE_ADMIN;
+const serviceAccount=JSON.parse(Buffer.from(firebaseBase64,"base64").toString("utf-8"));
 
-let certificate = ServiceCred;
-if (process.env.local === "false") {
-  certificate = JSON.parse(process.env.ADMIN_CERTIFICATE);
-}
 
 const StartServiceFcm = () => {
 
   admin.initializeApp({
-    credential: admin.credential.cert(certificate),
+    credential: admin.credential.cert(serviceAccount),
   });
 };
 
