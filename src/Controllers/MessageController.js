@@ -18,7 +18,7 @@ const getMsgPendingHistoryController = async (req, res) => {
 
   try {
     let uuid = await getUUidFromUserId(userid);
-    const query = `SELECT count(distinct msg.messageId)as messagesPending,msg.senderUUId as senderUUid,usr.userid,usr.username,usr.profilepic FROM MESSAGES as msg left join users as usr on usr.uuid =msg.senderUUid WHERE msg.recieverUUId=? and 
+    const query = `SELECT count(distinct msg.messageId)as messagesPending,msg.senderUUId as senderUUid,usr.userid,usr.username,usr.profilepic FROM messages as msg left join users as usr on usr.uuid =msg.senderUUid WHERE msg.recieverUUId=? and 
     msg.deliveryStatus=1 group by msg.senderUUId`;
     let response = await fetchDb(query, [uuid]);
     return res.json(new Response(200, response));
