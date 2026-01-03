@@ -37,7 +37,7 @@ const approveAllPendingFollowRequest=async(Userid)=>{
         pendingApprovals.forEach((item) => {
             notifyFollowRequestApproved(item.followerid,Userid);
         });
-        console.log("notified all followers ");
+        // console.log("notified all followers ");
     } catch (error) {
         console.log(error);
         

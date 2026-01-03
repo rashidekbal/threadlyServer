@@ -59,9 +59,16 @@ WHERE
 GROUP BY p.postid
 ORDER by 'rank' ASC ,p.caption asc 
 LIMIT 30;`
+try {
    const accountResult=await fetchDb(AccountsQuery,[target,target,target,target]);
    const reelsResult=await(fetchDb(ReelsQuery,[target,target,target,userid,userid,target]))
    const response=new Response(200,{Account: accountResult,Reels:reelsResult});
+     return res.json(response);
+} catch (error) {
+  console.log(error);
+  return res.sendStatus(500);
+}
   
-  return res.json(response);
+  
+
 };

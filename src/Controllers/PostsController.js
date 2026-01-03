@@ -10,7 +10,7 @@ async function backgroundUpload(path, userid, caption, type) {
   let url;
   try {
     url = await uploadOnColudinaryviaLocalPath(path);
-    console.log(url);
+    // console.log(url);
     let query = `insert into imagepost (userid,imageurl,caption,type) values (?,?,?,?)`;
     let data = [userid, url, caption, type];
     await fetchDb(query, data);

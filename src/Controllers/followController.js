@@ -10,7 +10,7 @@ import {
 import { isUserPrivate } from "../utils/PrivacyHelpers.js";
 
 let followController = async (req, res) => {
-  console.log("follow request recieved");
+  // console.log("follow request recieved");
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
 
@@ -27,7 +27,7 @@ let followController = async (req, res) => {
 };
 //new followController
 let followControllerV2 = async (req, res) => {
-  console.log("follow request recieved");
+  // console.log("follow request recieved");
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
   if (!followingid) return res.sendStatus(400);
@@ -51,7 +51,7 @@ let followControllerV2 = async (req, res) => {
 const rejectFollowRequest = async (req, res) => {
   const userid = req.ObtainedData;
   const followerId = req.params.followerId;
-  console.log(followerId + " is follower ");
+  // console.log(followerId + " is follower ");
   if (!followerId) return res.sendStatus(400);
   const query = `delete from followers where followerid=? and followingid=? and isApproved=false`;
   try {
@@ -78,7 +78,7 @@ const cancelFollowRequestController = async (req, res) => {
   }
 };
 const ApproveFollowRequestController = async (req, res) => {
-  console.log("Approve followRequest received");
+  // console.log("Approve followRequest received");
   let followingid = req.ObtainedData;
   let followerid = req.body.nameValuePairs.followerId;
   if (!followerid) return res.sendStatus(400);
@@ -126,7 +126,7 @@ const getFollowersController = async (req, res) => {
 
   try {
     let response = await fetchDb(query, [requestingUser, userid]);
-    console.log(response);
+    // console.log(response);
     return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
@@ -184,7 +184,7 @@ const notifyNewFollower = async (followerId, followingId) => {
         ReceiverUserId
       );
     } else {
-      console.log("no fcm token");
+      // console.log("no fcm token");
     }
   } catch (error) {
     console.log(error);
@@ -192,7 +192,7 @@ const notifyNewFollower = async (followerId, followingId) => {
 };
 
 const getAllFollowRequestsController = async (req, res) => {
-  console.log("request received");
+  // console.log("request received");
   const userid = req.ObtainedData;
   const query = `
 
@@ -203,7 +203,7 @@ where flws.followingid=? and isApproved=false
 `;
   try {
     let response = await fetchDb(query, [userid]);
-    console.log(response);
+    // console.log(response);
     return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
@@ -246,7 +246,7 @@ const notifyFollowRequest = async (followerId, followingId) => {
         ReceiverUserId
       );
     } else {
-      console.log("no fcm token");
+      // console.log("no fcm token");
     }
   } catch (error) {
     console.log(error);
@@ -254,7 +254,7 @@ const notifyFollowRequest = async (followerId, followingId) => {
 };
 
 const notifyFollowRequestCancelled = async (followerId, followingId) => {
-  console.log("notifying to delete request");
+  // console.log("notifying to delete request");
   const getFollowingDetailsQuery =
     "select fcmToken ,userid from users where userid=? limit 1";
   try {
@@ -267,7 +267,7 @@ const notifyFollowRequestCancelled = async (followerId, followingId) => {
         following[0].userid
       );
     } else {
-      console.log("no fcm token");
+      // console.log("no fcm token");
     }
   } catch (error) {
     console.log(error);
@@ -300,7 +300,7 @@ const notifyFollowRequestApproved = async (followerId, followingId) => {
         ReceiverUserId
       );
     } else {
-      console.log("no fcm token");
+      // console.log("no fcm token");
     }
   } catch (error) {
     console.log(error);
@@ -316,7 +316,7 @@ const notifyUnFollow = async (followerId, followingId) => {
       const token = following[0].fcmToken;
       await notify_UnFollow_via_fcm(token, followerId, following[0].userid);
     } else {
-      console.log("no fcm token");
+      // console.log("no fcm token");
     }
   } catch (error) {
     console.log(error);

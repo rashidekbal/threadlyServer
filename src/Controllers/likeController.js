@@ -139,10 +139,10 @@ const notify_Post_unliked=async (postId,userId)=>{
       }
 
     }else{
-      console.log("either token is null or username is null");
+      // console.log("either token is null or username is null");
     }
   }else{
-    console.log("something went wrong postDetails not found");
+    // console.log("something went wrong postDetails not found");
   }
 
 }
@@ -167,11 +167,11 @@ const notifyPostLike=async(postId,userid,insertId)=>{
       }
 
     }else{
-      console.log("either token is null or username is null");
+      // console.log("either token is null or username is null");
     }
 
   }else{
-    console.log("something went wrong userDetails or postDetails not found");
+    // console.log("something went wrong userDetails or postDetails not found");
   }
 
 
@@ -200,11 +200,11 @@ const notifyCommentLike=async(commentId,userid)=>{
       }
 
     }else{
-      console.log("either token is null or username is null");
+      // console.log("either token is null or username is null");
     }
 
   }else{
-    console.log("something went wrong userDetails or postDetails not found");
+    // console.log("something went wrong userDetails or postDetails not found");
   }
 
 
@@ -228,11 +228,11 @@ const notifyCommentUnLike=async(commentId,userid)=>{
       }
 
     }else{
-      console.log("either token is null or username is null");
+      // console.log("either token is null or username is null");
     }
 
   }else{
-    console.log("something went wrong userDetails or postDetails not found");
+    // console.log("something went wrong userDetails or postDetails not found");
   }
 
 
