@@ -14,7 +14,7 @@ const StartServiceFcm = () => {
 
 const sendMessage = (token, Message) => {
   return new Promise(async (resolve, reject) => {
-    console.log('sending .. inside sendMessage fcm service')
+    // console.log('sending .. inside sendMessage fcm service')
     const message = {
       token,
       android: {
@@ -95,7 +95,7 @@ const notifyUnsendMessageViaFcm = (token, messageUid, ReceiverUUId) => {
       }
     };
     try {
-      console.log(message.data);
+      // console.log(message.data);
       await admin.messaging().send(message);
       resolve(new Response(200, { msg: "success" }));
 
@@ -127,7 +127,6 @@ const notify_postLiked_via_fcm = async (token, postId, postLink, userprofile, us
 
     try {
       await admin.messaging().send(message);
-
       resolve(new Response(200, { msg: "success" }))
     } catch (e) {
       reject(new Response(500, { msg: e }))
@@ -223,7 +222,7 @@ const notify_Follow_request_accepted_fcm = async (token, userid, username, profi
 
 const notify_new_Follower_request_fcm=async (token, userid, username, profile, isFollowed, ReceiverUserId) => {
   return new Promise(async (resolve, reject) => {
-     console.log(ReceiverUserId);
+    //  console.log(ReceiverUserId);
     const message = {
       token,
       android: {

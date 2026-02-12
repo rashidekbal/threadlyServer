@@ -36,17 +36,17 @@ const getpendingMessagesController = async (req, res) => {
     receiverUuid = await getUUidFromUserId(userid);
     const query = `select * from messages where senderUUId=? and recieverUUId=? and deliveryStatus=1 order by creationTime asc`;
     let response = await fetchDb(query, [senderUuid, receiverUuid]);
-    console.log(response.length+" length of pending to receive messages")
+    // console.log(response.length+" length of pending to receive messages")
    
     for (let i = 0; i < response.length; i++) {
-      console.log("starting to notify");
+      // console.log("starting to notify");
        //on database set messages to delivered
     await fetchDb(
       "update messages set deliveryStatus=2 where senderUUID=? and recieverUUID=? and messageUid=? and deliveryStatus=1 ",
       [senderUuid, receiverUuid,response[i].messageUid],
     );
       notifyStatusChanged(senderUuid, response[i].messageUid, 2, false);
-      console.log("notified");
+      // console.log("notified");
     }
     return res.json(new Response(200, response));
   } catch (error) {
@@ -142,7 +142,7 @@ const sendMessageController = async (req, res) => {
         notificationText:data.notificationText?data.notificationText:"sent a message"
       }
       let result =await sendMessage(token,messageToSend);
-      console.log(result.data.msg)
+      // console.log(result.data.msg)
       //add message to db
 
      
@@ -245,7 +245,7 @@ const getAllChatsController=async(req,res)=>{
     return  res.json(new Response(200,response))
 
   } catch (error) {
-    console.log("error getting all chats :"+error);
+    // console.log("error getting all chats :"+error);
     return res.sendStatus(500);
     
   }
@@ -271,7 +271,7 @@ const deleteMessageForRoleController=async(req,res)=>{
       return  res.json(new Response(200,{Msg:"ok"}));
 
   } catch (error) {
-    console.log("error getting all chats :"+error);
+    // console.log("error getting all chats :"+error);
     return res.sendStatus(500);
     
   }
@@ -281,7 +281,7 @@ const deleteMessageForRoleController=async(req,res)=>{
 
 }
 const UnsendMessageController=async(req,res)=>{
-  console.log("unsend Request received")
+  // console.log("unsend Request received")
   const userid = req.ObtainedData;
     let MsgUid = req.body.nameValuePairs.MsgUid;
     const receiverUUid=req.body.nameValuePairs.receiverUUid;

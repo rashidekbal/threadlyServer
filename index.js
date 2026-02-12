@@ -15,12 +15,13 @@ import ForgetPasswordRoute from "./src/routes/ForgetPasswordRoute.js";
 import profileRouter from "./src/routes/ProfileRouter.js";
 import MessagesRouter from "./src/routes/MessageRoutes.js";
 import storyRouter from "./src/routes/StoryRoute.js";
-import SearchRouter from "./src/routes/SearchRoute.js"
+import SearchRouter from "./src/routes/SearchRoute.js";
 import { setSocketFunctions } from "./src/socketHandlers/SocketMainHandler.js";
 import { sendMessage, StartServiceFcm } from "./src/Fcm/FcmService.js";
 import Fcmrouter from "./src/routes/FcmRoute.js";
 import PrivacyRouter from "./src/routes/PrivacyRoute.js";
 import AuthRouter from "./src/routes/AuthRoute.js";
+import AdminAuthRouter from "./src/routes/admin/Auth.route.js";
 let app = express();
 const port = process.env.PORT;
 let server = http.createServer(app);
@@ -46,7 +47,7 @@ app.use("/api/otp", OptRoute);
 app.use("/api/auth/register", registerRoute);
 app.use("/api/auth/login", loginRoute);
 app.use("/api/ForgetPassword", ForgetPasswordRoute);
-app.use("/api/auth",AuthRouter);
+app.use("/api/auth", AuthRouter);
 app.use("/api/posts", postRoute);
 app.use("/api/like", LikeRouter);
 app.use("/api/follow", followRoute);
@@ -56,13 +57,14 @@ app.use("/api/profile", profileRouter);
 app.use("/api/story", storyRouter);
 app.use("/api/fcm", Fcmrouter);
 app.use("/api/messages", MessagesRouter);
-app.use("/api/privacy",PrivacyRouter)
-app.use("/api/search",SearchRouter);
+app.use("/api/privacy", PrivacyRouter);
+app.use("/api/search", SearchRouter);
+app.use("/api/v1/admin/auth", AdminAuthRouter);
 connection.connect((err, res) => {
   if (err) {
     console.log(err);
   } else {
-    server.listen(port,"0.0.0.0", () => {
+    server.listen(port, "0.0.0.0", () => {
       console.log("connected to database ");
       console.log(`running on server port ${port} `);
       StartServiceFcm();
