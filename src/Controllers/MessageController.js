@@ -1,6 +1,6 @@
 import Response from "../constants/Response.js";
 import { sendMessage } from "../Fcm/FcmService.js";
-import { socketIo } from "../../index.js";
+import { socketIo } from "../App.js";
 import { getSocketId } from "../socketHandlers/ConnectedUsers.js";
 import { notifyStatusChanged, notifyUnSendMessage } from "../socketHandlers/SocketMainHandler.js";
 import fetchDb from "../utils/query.js";
