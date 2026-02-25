@@ -22,6 +22,8 @@ import AdminAuthRouter from "./routes/admin/Auth.route.js";
 import AdminUsersRouter from "./routes/admin/Users.route.js";
 import { setSocketFunctions } from "./socketHandlers/SocketMainHandler.js";
 import { sendMessage} from "./Fcm/FcmService.js";
+import AdminPostsRoute from "./routes/admin/Posts.route.js"
+import AdminStoryRoute from "./routes/admin/Stories.Route.js"
 let app = express();
 
 let server = http.createServer(app);
@@ -59,6 +61,9 @@ app.use("/api/fcm", Fcmrouter);
 app.use("/api/messages", MessagesRouter);
 app.use("/api/privacy", PrivacyRouter);
 app.use("/api/search", SearchRouter);
-app.use("/api/v1/admin/auth", AdminAuthRouter);
-app.use("/api/v1/admin/users",AdminUsersRouter)
+// all rotes below are for admin panel use 
+app.use("/api/admin/v1/auth", AdminAuthRouter);
+app.use("/api/admin/v1/users",AdminUsersRouter);
+app.use("/api/admin/v1/posts",AdminPostsRoute);
+app.use("/api/admin/v1/story",AdminStoryRoute);
 export default server
