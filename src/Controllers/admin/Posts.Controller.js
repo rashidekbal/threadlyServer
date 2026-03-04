@@ -5,11 +5,12 @@ const getUserPostsController = async (req, res) => {
   const { authenticated, role, power, email } = req.ObtainedData;
   const db_query = `
 select imgpst.*,
+usr.profilepic as profile,
  count(distinct pl.userid) as likesCount,
 count(distinct pc.commentid)as commentsCount,
 '400' as viewsCount
 from imagepost as imgpst left join post_likes as pl on imgpst.postid=pl.postid 
-left join post_comments as pc on imgpst.postid=pc.postid 
+left join post_comments as pc on imgpst.postid=pc.postid  left join users as usr on imgpst.userid=usr.userid
 where imgpst.userid=? group by imgpst.postid
 `;
   if (!authenticated || !role == "admin") return res.sendStatus(401);

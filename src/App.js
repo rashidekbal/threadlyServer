@@ -24,6 +24,7 @@ import { setSocketFunctions } from "./socketHandlers/SocketMainHandler.js";
 import { sendMessage} from "./Fcm/FcmService.js";
 import AdminPostsRoute from "./routes/admin/Posts.route.js"
 import AdminStoryRoute from "./routes/admin/Stories.Route.js"
+import AdminCommentRoute from "./routes/admin/Comments.Route.js"
 let app = express();
 
 let server = http.createServer(app);
@@ -66,4 +67,5 @@ app.use("/api/admin/v1/auth", AdminAuthRouter);
 app.use("/api/admin/v1/users",AdminUsersRouter);
 app.use("/api/admin/v1/posts",AdminPostsRoute);
 app.use("/api/admin/v1/story",AdminStoryRoute);
+app.use("/api/admin/v1/comments",AdminCommentRoute)
 export default server
