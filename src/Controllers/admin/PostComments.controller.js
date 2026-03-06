@@ -13,7 +13,9 @@ usr.username ,
 usr.profilepic as profile ,
 pc.comment_text as comment ,
 count(distinct cl.comment_like_id)as likesCount ,
-count(distinct rply.commentid) as replyCount
+count(distinct rply.commentid) as replyCount,
+pc.createdAt,
+pc.replyToCommentId
 from post_comments as pc left join users as usr on pc.userid=usr.userid
 left join comment_likes as cl on pc.commentid=cl.commentid left join post_comments as rply on pc.commentid=rply.replyToCommentId
 where pc.postid=? group by pc.commentid order by pc.commentid desc

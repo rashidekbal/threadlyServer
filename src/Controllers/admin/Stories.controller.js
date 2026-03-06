@@ -8,7 +8,7 @@ select st.*,
  count(distinct sl.userid) as likesCount 
  from story as st left join story_likes as sl on st.id=sl.storyid 
  where st.userid=? 
- group by st.id
+ group by st.id order by st.id desc
 `;
   if (!authenticated || !role == "admin") return res.sendStatus(401);
   const userid = req.params.userid;

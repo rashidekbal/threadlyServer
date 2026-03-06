@@ -11,7 +11,7 @@ count(distinct pc.commentid)as commentsCount,
 '400' as viewsCount
 from imagepost as imgpst left join post_likes as pl on imgpst.postid=pl.postid 
 left join post_comments as pc on imgpst.postid=pc.postid  left join users as usr on imgpst.userid=usr.userid
-where imgpst.userid=? group by imgpst.postid
+where imgpst.userid=? group by imgpst.postid order by imgpst.postid desc
 `;
   if (!authenticated || !role == "admin") return res.sendStatus(401);
   const userid = req.params.userid;
