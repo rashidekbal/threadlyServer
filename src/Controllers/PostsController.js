@@ -5,6 +5,7 @@ import {
 import fetchDb from "../utils/query.js";
 import "dotenv/config";
 import Response from "../constants/Response.js";
+import { getUUidFromUserId } from "../utils/ReusableFunctions.js";
 
 async function backgroundUpload(path, userid, caption, type) {
   let url;
@@ -264,6 +265,21 @@ offset ?
     return res.sendStatus(500);
   }
 }
+const postViewRecordController=async(req,res)=>{
+   let userid = req.ObtainedData;
+  let postid = req.params.postid;
+  let uuid = req.body.nameValuePairs.uuid;
+  if(!postid||!uuid)return res.sendStatus(404);
+  const db_query=`insert into postview (userid,uuid,postid) values(?,?,?)`;
+  try {
+    await fetchDb(db_query,[userid,uuid,postid])
+    return res.json(new Response(201,"ok"))
+  } catch (error) {
+    return res.sendStatus(500);
+    
+  }
+
+}
 
 export {
   addImagePost,
@@ -273,4 +289,5 @@ export {
   getVideoFeed,
   getUserPostsController,
   getPostinfo,
+  postViewRecordController
 };

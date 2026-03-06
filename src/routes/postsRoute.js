@@ -9,6 +9,7 @@ import {
   getPostinfo,
   getUserPostsController,
   getVideoFeed,
+  postViewRecordController,
   removePost,
 } from "../Controllers/PostsController.js";
 import accessCheckLayer from "../middlewares/AccountPrivacyMiddleware.js";
@@ -45,6 +46,7 @@ Router.route("/getImagePostsFeed").get(verifyToken, getImageFeed);
 Router.route("/getVideoPostsFeed").get(verifyToken, getVideoFeed);
 Router.get("/getUserPosts/:userid", verifyToken,accessCheckLayer ,getUserPostsController);
 Router.route("/getPost/:postid").get(verifyToken,getPostinfo);
+Router.route("/postViewed/:postid").post(verifyToken,postViewRecordController);
 
 
 export default Router;

@@ -112,10 +112,10 @@ router.post("/userid", async (req, res) => {
   if (!password || !userid) return res.sendStatus(400);
   try {
     let response = await fetchUser("userid", userid);
-    if (response.length > 0) {
+    if (response.length < 1)return res.sendStatus(403);
       let userdata = response[0];
       let is_match = await bcrypt.compare(password, userdata.pass);
-      if (is_match) {
+      if (!is_match)return res.sendStatus(403);
         let checkLoginFromOtherMobileQuery=`select fcmToken from users where userid=?`
         let checkLoginFromOtherMobileResponse=await fetchDb(checkLoginFromOtherMobileQuery,[userid])
         if(checkLoginFromOtherMobileResponse.length>0){
@@ -132,7 +132,7 @@ router.post("/userid", async (req, res) => {
         }
          setTimeout(()=>{
           let token = jwt.sign(userdata.userid, process.env.SECRET_KEY);
-          res.json({
+          return res.json({
             message: "sucess",
             username: userdata.username,
             profile: userdata.profilepic,
@@ -142,14 +142,10 @@ router.post("/userid", async (req, res) => {
             isPrivate:userdata.isPrivate
           });
         },1000)
-      } else {
-        res.sendStatus(403);
-      }
-    } else {
-      res.sendStatus(403);
-    }
+      
+    
   } catch (e) {
-    res.sendStatus(403);
+   return res.sendStatus(403);
   }
 });
 router.get("/logout",verifyToken,async(req,res)=>{

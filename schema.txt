@@ -127,6 +127,33 @@ CREATE TABLE messages (
 
 
 
+create table Storyview (
+		viewId int not null primary key auto_increment,
+  userid varchar(250) not null,
+  uuid varchar(36) not null,
+  storyid int not null,
+  created_at timestamp not null default current_timestamp,
+  foreign key (userid) references users(userid) on delete cascade on update cascade,
+  foreign key (storyid) references story(id) on delete cascade on update cascade,
+  foreign key (uuid) references users(uuid) on delete cascade on update cascade
+
+)
+
+
+create table postview (
+		viewId int not null primary key auto_increment,
+  userid varchar(250) not null,
+  uuid varchar(36) not null,
+  postid int not null,
+  created_at timestamp not null default current_timestamp
+  foreign key (userid) references users(userid) on delete cascade on update cascade,
+  foreign key (postid) references imagepost(postid) on delete cascade on update cascade,
+  foreign key (uuid) references users(uuid)
+
+)
+
+
+
 // indexing
 create  index idx_captions_userid on imagepost(caption);
 create unique index idx_users_userid on users(userid);
