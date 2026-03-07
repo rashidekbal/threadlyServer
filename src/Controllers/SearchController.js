@@ -30,6 +30,7 @@ export const searchContorller = async (req, res) => {
     COUNT(DISTINCT ps.shareid) AS shareCount,
     COUNT(DISTINCT plp.likeid) AS isLiked,
     COUNT(DISTINCT flw.followid) AS isFollowed,
+    COUNT(DISTINCT pv.viewId) as viewCount,
     case 
     when lower(p.caption) like lower(?) then 1
     when lower(p.caption) like lower(concat(?,'%')) then 2
@@ -50,6 +51,7 @@ LEFT JOIN post_likes AS plp
 
 LEFT JOIN followers AS flw 
         ON p.userid = flw.followingid AND flw.followerid = ?
+LEFT JOIN postview as pv on p.postid=pv.postid
 
 WHERE 
 
