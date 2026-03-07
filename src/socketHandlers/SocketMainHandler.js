@@ -237,11 +237,27 @@ function setSocketFunctions(socket, io) {
     await fetchDb(`update messages set deliveryStatus=2 where senderUUId=? and messageUid=? and deliveryStatus=1`,[senderUUid,msgUid]).catch(err=>{console.log(err)});
     
   })
+  // when user viewes some post 
+  socket.on("postViewed",(data)=>{
+    handlePostViewed(data,socket);
+  });
   //when user gets disconnected
   socket.on("disconnect", () => {
     removeUser(socket.id);
     // console.log(socket.id + " disconnected");
   });
+}
+
+async function handlePostViewed(data,socket){
+  const db_query=`insert into postview (userid,uuid,postid) values(?,?,?)`;
+ 
+  try {
+    fetchDb(db_query,[data.userid,data.uuid,data.postid]);
+  } catch (error) {
+    
+  }
+
+
 }
 //this function is to notify the sender of the message that message is delivered
 //so here the sender is actually the receiver of the status
