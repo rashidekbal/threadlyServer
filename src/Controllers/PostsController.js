@@ -94,7 +94,8 @@ let getPostinfo = async (req, res) => {
     COUNT(DISTINCT post_comments.commentid) AS commentCount,
     COUNT(DISTINCT ps.shareid) AS shareCount,
     COUNT(DISTINCT plp.likeid) AS isLiked,
-    COUNT(DISTINCT flw.followid) AS isFollowed
+    COUNT(DISTINCT flw.followid) AS isFollowed,
+    COUNT(DISTINCT pv.viewId) as viewCount
 FROM imagepost AS p
 JOIN users AS u 
       ON p.userid = u.userid
@@ -108,6 +109,7 @@ LEFT JOIN post_likes AS plp
       ON p.postid = plp.postid AND plp.userid = ?
 LEFT JOIN followers AS flw 
       ON p.userid = flw.followingid AND flw.followerid = ?
+LEFT JOIN postview as pv on p.postid=pv.postid
 WHERE 
     p.postid = ?
     AND (u.isPrivate = 0 OR (flw.followid IS NOT NULL and flw.isApproved=true))
@@ -142,7 +144,8 @@ async function getImageFeed(req, res) {
       COUNT(DISTINCT post_comments.commentid) AS commentCount,
       COUNT(DISTINCT ps.shareid) AS shareCount,
       COUNT(DISTINCT plp.likeid) AS isLiked,
-      COUNT(DISTINCT flw.followid) AS isFollowed
+      COUNT(DISTINCT flw.followid) AS isFollowed,
+      COUNT(DISTINCT pv.viewId) as viewCount
 
     FROM imagepost AS p
            JOIN users AS u ON p.userid = u.userid
@@ -156,6 +159,7 @@ async function getImageFeed(req, res) {
 
            LEFT JOIN followers AS flw
                      ON p.userid = flw.followingid AND flw.followerid = ?
+          LEFT JOIN postview as pv on p.postid=pv.postid
 
     WHERE
       p.type = "image"
@@ -189,7 +193,8 @@ async function getVideoFeed(req, res) {
     COUNT(DISTINCT post_comments.commentid) AS commentCount,
     COUNT(DISTINCT ps.shareid) AS shareCount,
     COUNT(DISTINCT plp.likeid) AS isLiked,
-    COUNT(DISTINCT flw.followid) AS isFollowed
+    COUNT(DISTINCT flw.followid) AS isFollowed,
+    COUNT(DISTINCT pv.viewId) as viewCount
 
 FROM imagepost AS p
 JOIN users AS u ON p.userid = u.userid
@@ -203,6 +208,7 @@ LEFT JOIN post_likes AS plp
 
 LEFT JOIN followers AS flw 
         ON p.userid = flw.followingid AND flw.followerid = ?
+LEFT JOIN postview as pv on p.postid=pv.postid
 
 WHERE 
     p.type = "video"
@@ -242,7 +248,8 @@ SELECT
     COUNT(DISTINCT post_comments.commentid) AS commentCount,
     COUNT(DISTINCT ps.shareid) AS shareCount,
     COUNT(DISTINCT plp.likeid) AS isLiked,
-    COUNT(DISTINCT flw.followid) AS isFollowed
+    COUNT(DISTINCT flw.followid) AS isFollowed,
+    count(DISTINCT pv.viewId) as viewCount
 FROM imagepost AS p
 JOIN users AS u ON p.userid = u.userid
 LEFT JOIN post_likes AS pl ON p.postid = pl.postid
@@ -250,6 +257,7 @@ LEFT JOIN post_comments ON p.postid = post_comments.postid
 LEFT JOIN post_shares AS ps ON p.postid = ps.postid
 LEFT JOIN post_likes AS plp ON p.postid = plp.postid AND plp.userid = ?
 LEFT JOIN followers AS flw ON p.userid = flw.followingid AND flw.followerid = ?
+LEFT JOIN postview as pv on p.postid=pv.postid
 WHERE p.userid = ?
 GROUP BY p.postid
 ORDER BY p.created_at DESC
