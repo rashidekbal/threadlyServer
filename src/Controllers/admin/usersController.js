@@ -1,6 +1,7 @@
 import { response } from "express";
 import Response from "../../constants/Response.js";
 import fetchDb from "../../utils/query.js";
+import bcryptUtil from "../../utils/BcryptUtil.js";
 
 const getUsersController=async(req,res)=>{
     const {authenticated,role,power,email}=req.ObtainedData;
@@ -65,4 +66,22 @@ const getUserInfoController=async(req,res)=>{
 
 
 }
-export {getUsersController,getUserInfoController}
+const overridePasswordController=async(req,res)=>{
+  const query=`update users set pass=? where uuid=?`
+    const {authenticated,role,power,email}=req.ObtainedData;
+    if(!authenticated||!role=="admin")return res.sendStatus(401);
+    const newPassword=req.body.newPassword;
+    const uuid=req.body.uuid;
+    if(!uuid||newPassword.length<6)return res.sendStatus(400);
+
+    try {
+          let encrypterPassword=await bcryptUtil.hashPassword(newPassword);
+          await fetchDb(query,[encrypterPassword,uuid]);
+      return res.sendStatus(201);
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(500);
+    }
+    
+}
+export {getUsersController,getUserInfoController,overridePasswordController}
