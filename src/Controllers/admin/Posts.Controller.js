@@ -2,7 +2,7 @@ import Response from "../../constants/Response.js";
 import fetchDb from "../../utils/query.js";
 
 const getUserPostsController = async (req, res) => {
-  const { authenticated, role, power, email } = req.ObtainedData;
+
   const db_query = `
 select imgpst.*,
 usr.profilepic as profile,
@@ -14,7 +14,6 @@ left join post_comments as pc on imgpst.postid=pc.postid  left join users as usr
 left join postview as pv on imgpst.postid=pv.postid
 where imgpst.userid=? group by imgpst.postid order by imgpst.postid desc
 `;
-  if (!authenticated || !role == "admin") return res.sendStatus(401);
   const userid = req.params.userid;
   if (!userid) return res.sendStatus(400);
   try {

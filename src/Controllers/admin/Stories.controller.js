@@ -2,7 +2,6 @@ import Response from "../../constants/Response.js";
 import fetchDb from "../../utils/query.js";
 
 const getUserStoriesController = async (req, res) => {
-  const { authenticated, role, power, email } = req.ObtainedData;
   const db_query = `
 select st.*,
  count(distinct sl.userid) as likesCount 
@@ -10,7 +9,6 @@ select st.*,
  where st.userid=? 
  group by st.id order by st.id desc
 `;
-  if (!authenticated || !role == "admin") return res.sendStatus(401);
   const userid = req.params.userid;
   if (!userid) return res.sendStatus(404);
   try {

@@ -2,8 +2,6 @@ import Response from "../../constants/Response.js";
 import fetchDb from "../../utils/query.js";
 
 const getCommentsController = async (req, res) => {
-     const { authenticated, role, power, email } = req.ObtainedData;
-     if (!authenticated || !role == "admin") return res.sendStatus(401);
   const postid = req.params.postid;
   if (!postid) return res.sendStatus(404);
   const db_query = `select pc.commentid ,

@@ -2,10 +2,9 @@ import { response } from "express";
 import Response from "../../constants/Response.js";
 import fetchDb from "../../utils/query.js";
 import bcryptUtil from "../../utils/BcryptUtil.js";
+import { uploadOnColudinaryviaLocalPath } from "../../utils/cloudinary.js";
 
 const getUsersController=async(req,res)=>{
-    const {authenticated,role,power,email}=req.ObtainedData;
-    if(!authenticated||!role=="admin")return res.sendStatus(401);
     const db_query=`select usr.userid,usr.username,
       usr.email,
        usr.profilepic as profile,
@@ -35,8 +34,6 @@ const getUsersController=async(req,res)=>{
 
 }
 const getUserInfoController=async(req,res)=>{
-      const {authenticated,role,power,email}=req.ObtainedData;
-    if(!authenticated||!role=="admin")return res.sendStatus(401);
     const userid=req.params.userid;
     if(!userid)return res.sendStatus(404);
      const db_query=`select usr.userid,usr.username,
@@ -68,8 +65,6 @@ const getUserInfoController=async(req,res)=>{
 }
 const overridePasswordController=async(req,res)=>{
   const query=`update users set pass=? where uuid=?`
-    const {authenticated,role,power,email}=req.ObtainedData;
-    if(!authenticated||!role=="admin")return res.sendStatus(401);
     const newPassword=req.body.newPassword;
     const uuid=req.body.uuid;
     if(!uuid||newPassword.length<6)return res.sendStatus(400);
@@ -84,4 +79,45 @@ const overridePasswordController=async(req,res)=>{
     }
     
 }
-export {getUsersController,getUserInfoController,overridePasswordController}
+const editUserInfoController=async(req,res)=>{
+  const {userid,username,email,uuid}=req.body;
+  if(!userid||!username||!email||!uuid)return res.sendStatus(400);
+  const db_query=`update users set userid=? , username=? , email=? where uuid=?`;
+  try {
+    await fetchDb(db_query,[userid,username,email,uuid]);
+    return res.sendStatus(201);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+
+}
+const editUserProfilePicController=async(req,res)=>{
+  const uuid=req.params.uuid;
+  const filePath=req.file?.path;
+  const db_query=`update users set profilepic=? where uuid=?`;
+  if(!filePath||!uuid)return res.sendStatus(400);
+  try {
+  const url=await  uploadOnColudinaryviaLocalPath(filePath);
+  await fetchDb(db_query,[url,uuid]);
+  res.sendStatus(201);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+
+}
+const deleteUserProfilePicController=async(req,res)=>{
+  console.log("request received")
+  const uuid=req.params.uuid;
+  const db_query=`update users set profilepic='' where uuid=?`
+  if(!uuid)return res.sendStatus(400);
+  try {
+    await fetchDb(db_query,[uuid]);
+    return res.sendStatus(200);
+    
+  } catch (error) {
+    return res.sendStatus(500);
+    
+  }
+}
+export {getUsersController,getUserInfoController,overridePasswordController,editUserInfoController,editUserProfilePicController,deleteUserProfilePicController}

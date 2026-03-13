@@ -112,11 +112,11 @@ LEFT JOIN followers AS flw
 LEFT JOIN postview as pv on p.postid=pv.postid
 WHERE 
     p.postid = ?
-    AND (u.isPrivate = 0 OR (flw.followid IS NOT NULL and flw.isApproved=true))
+    AND (u.isPrivate = 0 OR (flw.followid IS NOT NULL and flw.isApproved=true) or u.userid=?)
 GROUP BY p.postid;
 `;
   try {
-     let response = await fetchDb(query, [userid, userid, postid]);
+     let response = await fetchDb(query, [userid, userid, postid,userid]);
     if(response.length===0) return res.sendStatus(404);
     res.json({ status: 200, data: response });
   } catch (error) {

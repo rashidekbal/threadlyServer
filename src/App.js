@@ -67,5 +67,5 @@ app.use("/api/admin/v1/auth", AdminAuthRouter);
 app.use("/api/admin/v1/users",AdminUsersRouter);
 app.use("/api/admin/v1/posts",AdminPostsRoute);
 app.use("/api/admin/v1/story",AdminStoryRoute);
-app.use("/api/admin/v1/comments",AdminCommentRoute)
+app.use("/api/admin/v1/comments",AdminCommentRoute);
 export default server
