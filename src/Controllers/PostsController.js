@@ -112,7 +112,7 @@ LEFT JOIN followers AS flw
 LEFT JOIN postview as pv on p.postid=pv.postid
 WHERE 
     p.postid = ?
-    AND (u.isPrivate = 0 OR (flw.followid IS NOT NULL and flw.isApproved=true) or u.userid=?)
+    AND ((u.isPrivate = 0 OR (flw.followid IS NOT NULL and flw.isApproved=true)) or u.userid=?)
 GROUP BY p.postid;
 `;
   try {
