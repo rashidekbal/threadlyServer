@@ -166,7 +166,7 @@ async function getImageFeed(req, res) {
       AND (u.isPrivate = 0 OR (flw.followid IS NOT NULL and flw.isApproved=true))
 
     GROUP BY p.postid
-    ORDER BY p.created_at DESC
+    ORDER BY RAND() asc
     LIMIT 100
   `;
 
