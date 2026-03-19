@@ -1,7 +1,7 @@
 import { Router } from "express";
 import verifyToken from "../middlewares/authorization.js";
-import { searchContorller } from "../Controllers/SearchController.js";
+import { searchController } from "../Controllers/SearchController.js";
 const router=Router();
-router.route("/get").get(verifyToken,searchContorller)
+router.route("/get").get(verifyToken,searchController)
 
 export default router;

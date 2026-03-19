@@ -181,7 +181,7 @@ async function getImageFeed(req, res) {
   }
 }
 async function getVideoFeed(req, res) {
-  let offset = req.query.offset || null;
+ const limit=15;
   let userid = req.ObtainedData;
   let query = ` SELECT 
     p.*,
@@ -216,16 +216,12 @@ WHERE
 
 GROUP BY p.postid
 ORDER BY RAND() ASC
-LIMIT 100;
+LIMIT ?
 `;
 
   try {
-    let response;
-    if (offset != null) {
-      response = await fetchDb(query + `offset ?`, [userid, offset * 10]);
-    } else {
-      response = await fetchDb(query, [userid, userid]);
-    }
+    let response = await fetchDb(query, [userid, userid,limit]);
+    
  
     res.json(new Response(200, response));
   } catch (error) {

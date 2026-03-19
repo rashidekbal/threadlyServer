@@ -1,7 +1,7 @@
 import Response from "../constants/Response.js";
 import fetchDb from "../utils/query.js";
 
-export const searchContorller = async (req, res) => {
+export const searchController = async (req, res) => {
   const userid=req.ObtainedData;
   const target = req.query.target;
   if (!target) return res.sendStatus(400);

@@ -11,10 +11,16 @@ CREATE TABLE users (
   uuid varchar(36) not null ,
   fcmToken text null,
   isPrivate boolean default false,
+  blocked boolean default false,
+  banDuration enum('24hr','permanent','none') deafult 'none',
+  banReason text null,
+  profileVersion int not null deafult =1,
+  modifiedAt datetime not null default current_timestamp,
   UNIQUE KEY email (email),
   UNIQUE KEY phone (phone),
   unique key uuid (uuid)
 );
+
 
 CREATE TABLE imagepost (
   postid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
