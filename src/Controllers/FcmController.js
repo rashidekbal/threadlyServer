@@ -16,7 +16,7 @@ const updateToken = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    return res.send(new Response(201, { msg: "update success" }));
+    return res.sendStatus(500);
   }
 };
 export { updateToken };
