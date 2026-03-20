@@ -8,7 +8,8 @@ const updateToken = async (req, res) => {
   if (!token) return res.senStatus(400);
   const query = `update users set fcmToken=? where userid=?`;
   try {
-    await fetchDb(query, [token, userid]);
+    let result =await fetchDb(query, [token, userid]);
+    console.log(result)
     return res.json(
       new Response(201, {
         msg: "success",
