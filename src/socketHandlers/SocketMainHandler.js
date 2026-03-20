@@ -52,7 +52,7 @@ function setSocketFunctions(socket, io) {
       //add msg to server
       socket.emit("MsgStatusUpdate", {
         MsgUid,
-        deliveryStatus: 2,
+        deliveryStatus: 1,
       });
       try {
         await addMessageToDb(
@@ -65,7 +65,7 @@ function setSocketFunctions(socket, io) {
           data.postId,
           data.link,
           timestamp,
-          2,
+          1,
           false
         );
       } catch (error) {
