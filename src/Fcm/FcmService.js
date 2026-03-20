@@ -371,7 +371,7 @@ const notifyCommentUnlike_via_fcm = async (token, userid, Commentid, ReceiverUse
     }
   })
 }
-const logOutPreviousDevice = async (token, userId) => {
+const logOutPreviousDevice = async (token, userId,logoutMessage) => {
   return new Promise(async (resolve, reject) => {
     const message = {
       token,
@@ -382,6 +382,7 @@ const logOutPreviousDevice = async (token, userId) => {
       data: {
         responseType: "logout",
         userId: userId,
+        logoutMessage
       }
     }
     try {

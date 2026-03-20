@@ -28,7 +28,7 @@ router.post("/mobile", async (req, res) => {
           const token=checkLoginFromOtherMobileResponse[0].fcmToken;
           if(token){
             try {
-              await logOutPreviousDevice(token,userdata.userid);
+              await logOutPreviousDevice(token,userdata.userid,"account logged in another device");
               await fetchDb(`update users set fcmToken=null where phone=?`[phone]);
             }catch (e){
 
@@ -74,7 +74,7 @@ router.post("/email", async (req, res) => {
           const token=checkLoginFromOtherMobileResponse[0].fcmToken;
           if(token){
             try {
-              await logOutPreviousDevice(token,userdata.userid);
+              await logOutPreviousDevice(token,userdata.userid,"account logged in another device");
               await fetchDb(`update users set fcmToken=null where email=?`[email]);
               console.log("sent logut message")
             }catch (e){
@@ -122,7 +122,7 @@ router.post("/userid", async (req, res) => {
           const token=checkLoginFromOtherMobileResponse[0].fcmToken;
           if(token){
             try {
-              await logOutPreviousDevice(token,userdata.userid);
+              await logOutPreviousDevice(token,userdata.userid,"account logged in another device");
               await fetchDb(`update users set fcmToken=null where userid=?`[userid]);
             }catch (e){
 
