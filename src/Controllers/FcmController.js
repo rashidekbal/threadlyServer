@@ -9,10 +9,11 @@ const updateToken = async (req, res) => {
   const query = `update users set fcmToken=? where userid=?`;
   try {
     let result =await fetchDb(query, [token, userid]);
-    console.log(result)
+    // console.log(result)
     return res.json(
       new Response(201, {
         msg: "success",
+        result
       })
     );
   } catch (error) {

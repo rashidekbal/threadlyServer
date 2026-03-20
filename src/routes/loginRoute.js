@@ -30,15 +30,8 @@ router.post("/mobile", async (req, res) => {
             try {
               await logOutPreviousDevice(token,userdata.userid,"account logged in another device");
               await fetchDb(`update users set fcmToken=null where phone=?`[phone]);
-            }catch (e){
-
-            }
-
-          }
-        }
-        setTimeout(()=>{
-          let token = jwt.sign(userdata.userid, process.env.SECRET_KEY);
-          res.json({
+              let token = jwt.sign(userdata.userid, process.env.SECRET_KEY);
+              return res.json({
             message: "sucess",
             username: userdata.username,
             profile: userdata.profilepic,
@@ -47,7 +40,13 @@ router.post("/mobile", async (req, res) => {
             uuid: userdata.uuid,
             isPrivate:userdata.isPrivate
           });
-        },1000)
+            }catch (e){
+
+            }
+
+          }
+        }
+        
       } else {
         res.sendStatus(403);
       }
@@ -122,8 +121,8 @@ router.post("/userid", async (req, res) => {
           const token=checkLoginFromOtherMobileResponse[0].fcmToken;
           if(token){
             try {
-              await logOutPreviousDevice(token,userdata.userid,"account logged in another device");
               await fetchDb(`update users set fcmToken=null where userid=?`[userid]);
+              await logOutPreviousDevice(token,userdata.userid,"account logged in another device");
             }catch (e){
 
             }
