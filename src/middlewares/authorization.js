@@ -29,6 +29,7 @@ async function validateSession(sessionId,userid){
         const sessionIdOnDb=dbResult[0].sessionId;
         if(sessionIdOnDb==null)return false;
               await redisClient.set(`UserSession:${userid}`,sessionIdOnDb);
+              await redisClient.expire(`UserSession:${userid}`);
         if(sessionIdOnDb===sessionId)return true;
     
           
