@@ -31,7 +31,7 @@ router.post("/mobile", async (req, res) => {
         let checkLoginFromOtherMobileQuery = `select fcmToken from users where phone=?`;
         let checkLoginFromOtherMobileResponse = await fetchDb(
           checkLoginFromOtherMobileQuery,
-          [phone],
+          [phone]
         );
         if (checkLoginFromOtherMobileResponse.length > 0) {
           const fcmtoken = checkLoginFromOtherMobileResponse[0].fcmToken;
@@ -43,9 +43,9 @@ router.post("/mobile", async (req, res) => {
                 "account logged in another device",
               );
               await fetchDb(
-                `update users set fcmToken=null , sessionId=null where phone=?`[
+                `update users set fcmToken=null , sessionId=null where phone=?`,[
                   phone
-                ],
+                ]
               );
             } catch (error) {
 
@@ -55,7 +55,7 @@ router.post("/mobile", async (req, res) => {
 
         await fetchDb(`update users set sessionId=? where userid=?`, [
           sessionId,
-          userdata.userid,
+          userdata.userid
         ]);
         let token = jwt.sign(
           { userid: userdata.userid, sessionId: sessionId },
@@ -101,7 +101,7 @@ router.post("/email", async (req, res) => {
         let checkLoginFromOtherMobileQuery = `select fcmToken from users where email=?`;
         let checkLoginFromOtherMobileResponse = await fetchDb(
           checkLoginFromOtherMobileQuery,
-          [email],
+          [email]
         );
         if (checkLoginFromOtherMobileResponse.length > 0) {
           const token = checkLoginFromOtherMobileResponse[0].fcmToken;
@@ -113,9 +113,9 @@ router.post("/email", async (req, res) => {
                 "account logged in another device",
               );
               await fetchDb(
-                `update users set fcmToken=null , sessionId=null where email=?`[
+                `update users set fcmToken=null , sessionId=null where email=?`,[
                   email
-                ],
+                ]
               );
               console.log("sent logut message");
             } catch (e) {
@@ -176,16 +176,16 @@ router.post("/userid", async (req, res) => {
     let checkLoginFromOtherMobileQuery = `select fcmToken from users where userid=?`;
     let checkLoginFromOtherMobileResponse = await fetchDb(
       checkLoginFromOtherMobileQuery,
-      [userid],
+      [userid]
     );
     if (checkLoginFromOtherMobileResponse.length > 0) {
       const token = checkLoginFromOtherMobileResponse[0].fcmToken;
       if (token) {
         try {
           await fetchDb(
-            `update users set fcmToken=null ,sessionId=null where userid=?`[
+            `update users set fcmToken=null ,sessionId=null where userid=?`,[
               userid
-            ],
+            ]
           );
           await logOutPreviousDevice(
             token,
@@ -199,11 +199,11 @@ router.post("/userid", async (req, res) => {
     }
     await fetchDb(`update users set sessionId=? where userid=?`, [
       sessionId,
-      userdata.userid,
+      userdata.userid
     ]);
     setTimeout(async () => {
       let token = jwt.sign(
-        { userid: userdata.userid, sessionId: sessionId },
+        { userid: userdata.userid, sessionId },
         process.env.SECRET_KEY,
       );
       await redisClient.set(`UserSession:${userdata.userid}`, sessionId);
