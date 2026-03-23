@@ -1,8 +1,9 @@
 import {Router} from "express"
 
-import verifyToken from "../../middlewares/authorization.js";
+
 import { getUserPostsController } from "../../Controllers/admin/Posts.Controller.js";
 import checkAdminAccess from "../../middlewares/AdminAccessCheckMiddleWare.js";
+import adminAuthorizationVerification from "../../middlewares/adminAuthorizationMiddleWare.js";
 const router =Router();
-router.route("/:userid").get(verifyToken,checkAdminAccess,getUserPostsController)
+router.route("/:userid").get(adminAuthorizationVerification,checkAdminAccess,getUserPostsController)
 export default router;

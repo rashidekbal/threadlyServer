@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import userRepo from "../repository/UsersTableRepo.js";
 import Response from "../constants/Response.js";
 import bcryptUtil from "../utils/BcryptUtil.js";
+import { sessionIdExpireTime } from "../constants/RedisConstants.js";
 
 // Controller to handle user registration via email
 async function registerUserEmailController(req, res) {
@@ -27,12 +28,13 @@ async function registerUserEmailController(req, res) {
     // Generate a unique user ID using the username and current timestamp
     let userid = username.split(" ")[0] + Date.now();
     let uuid = uuidv4();
-
+    const sessionId=uuidv4();
+  
     // Verify if the user is an adult based on their date of birth
     let isAdult = verifyAge(dob);
 
     // Database query to insert the new user into the "users" table
-    let db_query = `insert into users (userid,username,email,pass,bio,dob,uuid) values (?,?,?,?,?,?,?)`;
+    let db_query = `insert into users (userid,username,email,pass,bio,dob,uuid,sessionId) values (?,?,?,?,?,?,?,?)`;
     let data = [
       `${userid}`, // User ID
       `${username}`, // Username
@@ -41,6 +43,7 @@ async function registerUserEmailController(req, res) {
       "",
       `${dob}`,
       `${uuid}`,
+      sessionId
     ];
 
     // If the user is not an adult, send a "Forbidden" status
@@ -49,9 +52,9 @@ async function registerUserEmailController(req, res) {
     } else {
       // If the user is an adult, execute the database query to register the user
       await fetchDb(db_query, data);
-
       // Generate a JWT token containing the user's ID
-      let token = jwt.sign(userid, process.env.SECRET_KEY);
+
+      let token = jwt.sign({userid,sessionId}, process.env.SECRET_KEY);
 
       // Send a success response to the client
       res.json({

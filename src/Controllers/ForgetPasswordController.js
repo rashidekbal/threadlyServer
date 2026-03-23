@@ -1,6 +1,8 @@
 import fetchDb from "../utils/query.js";
 import bcrypt from "bcrypt";
 import Response from "../constants/Response.js";
+import { v4 } from "uuid";
+import redisClient from "../redis/redis.js";
 
 // Controller to handle password reset for users based on their phone number
 async function resetPasswordMobileContorler(req, res) {
@@ -14,10 +16,11 @@ async function resetPasswordMobileContorler(req, res) {
   try {
     // Hash the password with a salt factor of 12
     let hashedPassword = await bcrypt.hash(password, 12);
+    const sessionId=v4();
 
     // Query for updating the password in the database based on the phone number
-    let query = `update users set pass=? where phone=?`;
-    let response = await fetchDb(query, [hashedPassword, phone]);
+    let query = `update users set pass=? ,sesssionId=? where phone=?`;
+    let response = await fetchDb(query, [hashedPassword, sessionId,phone]);
 
     // If no rows are affected, respond with status 500 (internal server error)
     if (response.affectedRows < 1) return res.SendStatus(500);
@@ -40,10 +43,12 @@ async function resetPasswordEmailContorler(req, res) {
   try {
     // Hash the password with a salt factor of 12
     let hashedPassword = await bcrypt.hash(password, 12);
+    const sessionId=v4();
+
 
     // Query for updating the password in the database based on the email address
-    let query = `update users set pass=? where email=?`;
-    let response = await fetchDb(query, [hashedPassword, email]);
+    let query = `update users set pass=?, sessionId=? where email=?`;
+    let response = await fetchDb(query, [hashedPassword, sessionId,email]);
 
     // If no rows are affected, respond with status 500 (internal server error)
     if (response.affectedRows < 1) return res.SendStatus(500);
