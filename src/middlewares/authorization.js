@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 import redisClient from "../redis/redis.js";
 import fetchDb from "../utils/query.js";
+import { sessionIdExpireTime } from "../constants/RedisConstants.js";
 async function verifyToken(req, res, next) {
   let header = req.headers["authorization"];
   if (!header) return res.sendStatus(401);
@@ -29,7 +30,7 @@ async function validateSession(sessionId,userid){
         const sessionIdOnDb=dbResult[0].sessionId;
         if(sessionIdOnDb==null)return false;
               await redisClient.set(`UserSession:${userid}`,sessionIdOnDb);
-              await redisClient.expire(`UserSession:${userid}`);
+              await redisClient.expire(`UserSession:${userid}`,sessionIdExpireTime);
         if(sessionIdOnDb===sessionId)return true;
     
           
