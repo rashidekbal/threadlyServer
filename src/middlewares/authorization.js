@@ -24,11 +24,14 @@ async function validateSession(sessionId,userid){
       const sessionIdOnredis=await redisClient.get(`UserSession:${userid}`);
       if(!sessionIdOnredis){
         // check for db
-        const dbResult=fetchDb(`select sessionId from users where userid=? limit 1`,[userid]);
-        if(dbResult.lenght<1)return false;
+        const dbResult= await fetchDb(`select sessionId from users where userid=? limit 1`,[userid]);
+        if(dbResult.length<1)return false;
         const sessionIdOnDb=dbResult[0].sessionId;
         if(sessionIdOnDb==null)return false;
+              await redisClient.set(`UserSession:${userid}`,sessionIdOnDb);
         if(sessionIdOnDb===sessionId)return true;
+    
+          
         return false;
       }
       if(sessionIdOnredis===sessionId)return true;
