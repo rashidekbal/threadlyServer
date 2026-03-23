@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { uploadOnColudinaryviaLocalPath } from "../utils/cloudinary.js";
 import { v4 } from "uuid";
 import redisClient from "../redis/redis.js";
+import { sessionIdExpireTime } from "../constants/RedisConstants.js";
 
 const editNameController = async (req, res) => {
   let userid = req.ObtainedData;
@@ -32,6 +33,7 @@ const editUserIdController = async (req, res) => {
 
     let response = await fetchDb(updateQuery, [updateUserid, sessionId,userid]);
     await redisClient.set(`UserSession:${updateUserid}`,sessionId);
+     await redisClient.expire(`UserSession:${updateUserid}`,sessionIdExpireTime);
     let token = jwt.sign({userid:updateUserid,sessionId}, process.env.SECRET_KEY);
     return res.json(new Response(200, { token: token, userid: updateUserid }));
   } catch (e) {
