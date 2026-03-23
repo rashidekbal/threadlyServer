@@ -2,6 +2,8 @@ import fetchDb from "../utils/query.js";
 import Response from "../constants/Response.js";
 import jwt from "jsonwebtoken";
 import { uploadOnColudinaryviaLocalPath } from "../utils/cloudinary.js";
+import { v4 } from "uuid";
+import redisClient from "../redis/redis.js";
 
 const editNameController = async (req, res) => {
   let userid = req.ObtainedData;
@@ -22,13 +24,15 @@ const editUserIdController = async (req, res) => {
   let updateUserid = req.body.nameValuePairs.newUserId;
   if (!updateUserid || updateUserid.length < 6) return res.sendStatus(400);
   let checkQuery = `select userid from users where userid=?`;
-  let updateQuery = `update users set userid=? where userid=?`;
+  let updateQuery = `update users set userid=? , sessionId=? where userid=?`;
+  const sessionId=v4();
   try {
     let existance = await fetchDb(checkQuery, updateUserid);
     if (existance.length > 0) return res.sendStatus(409);
 
-    let response = await fetchDb(updateQuery, [updateUserid, userid]);
-    let token = jwt.sign(updateUserid, process.env.SECRET_KEY);
+    let response = await fetchDb(updateQuery, [updateUserid, sessionId,userid]);
+    await redisClient.set(`UserSession:${updateUserid}`,sessionId);
+    let token = jwt.sign({userid:updateUserid,sessionId}, process.env.SECRET_KEY);
     return res.json(new Response(200, { token: token, userid: updateUserid }));
   } catch (e) {
     console.log(e.message);
