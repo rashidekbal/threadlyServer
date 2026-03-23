@@ -20,7 +20,8 @@ const getUsersController = async (req, res) => {
       when isPrivate = 1 then 'private'
      else 'public'
    end as privacy,count(distinct flwr.followerid)as followers , count(distinct flwng.followingid)as following,
-   count(distinct imgpst.postid) as posts
+   count(distinct imgpst.postid) as posts ,
+   usr.sessionId
    from users as usr left join followers as flwr on usr.userid=flwr.followingid left join followers as flwng on usr.userid=flwng.followerid
    left join imagepost as imgpst on usr.userid=imgpst.userid group by usr.userid `;
   try {
@@ -48,7 +49,8 @@ const getUserInfoController = async (req, res) => {
       when isPrivate = 1 then 'private'
      else 'public'
    end as privacy,count(distinct flwr.followerid)as followers , count(distinct flwng.followingid)as following,
-   count(distinct imgpst.postid) as posts
+   count(distinct imgpst.postid) as posts ,
+   usr.sessionId
    from users as usr left join followers as flwr on usr.userid=flwr.followingid left join followers as flwng on usr.userid=flwng.followerid
    left join imagepost as imgpst on usr.userid=imgpst.userid where usr.userid=?`;
   try {

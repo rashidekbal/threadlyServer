@@ -26,11 +26,8 @@ router.post("/mobile", async (req, res) => {
       let is_match = await bcrypt.compare(password, userdata.pass);
       if (is_match) {
         const sessionId = v4();
-        await redisClient.set(`UserSession:${userdata.userid}`, null);
-        await redisClient.expire(
-          `UserSession:${userdata.userid}`,
-          sessionIdExpireTime,
-        );
+        await redisClient.del(`UserSession:${userdata.userid}`);
+        
         let checkLoginFromOtherMobileQuery = `select fcmToken from users where phone=?`;
         let checkLoginFromOtherMobileResponse = await fetchDb(
           checkLoginFromOtherMobileQuery,
@@ -99,11 +96,8 @@ router.post("/email", async (req, res) => {
       let userdata = response[0];
       let is_match = await bcrypt.compare(password, userdata.pass);
       if (is_match) {
-        await redisClient.set(`UserSession:${userdata.userid}`, null);
-        await redisClient.expire(
-          `UserSession:${userdata.userid}`,
-          sessionIdExpireTime,
-        );
+        await redisClient.del(`UserSession:${userdata.userid}`);
+        
         let checkLoginFromOtherMobileQuery = `select fcmToken from users where email=?`;
         let checkLoginFromOtherMobileResponse = await fetchDb(
           checkLoginFromOtherMobileQuery,
@@ -169,17 +163,14 @@ router.post("/userid", async (req, res) => {
   if (!password || !userid) return res.sendStatus(400);
   try {
     let response = await fetchUser("userid", userid);
-    console.log(response.length);
+   
     if (response.length < 1) return res.sendStatus(403);
     let userdata = response[0];
     let is_match = await bcrypt.compare(password, userdata.pass);
-    console.log(is_match);
+  
     if (!is_match) return res.sendStatus(403);
-    await redisClient.set(`UserSession:${userdata.userid}`, null);
-    await redisClient.expire(
-      `UserSession:${userdata.userid}`,
-      sessionIdExpireTime,
-    );
+    await redisClient.del(`UserSession:${userdata.userid}`);
+   
     const sessionId = v4();
 
     let checkLoginFromOtherMobileQuery = `select fcmToken from users where userid=?`;
@@ -240,8 +231,8 @@ router.get("/logout", verifyToken, async (req, res) => {
   const query = `update users set fcmToken=null , sessionId=null where userid=?`;
   try {
     let response = await fetchDb(query, [userid]);
-    await redisClient.set(`UserSession:${userid}`, null);
-    await redisClient.expire(`UserSession:${userid}`, sessionIdExpireTime);
+    await redisClient.del(`UserSession:${userid}`);
+   
     res.json(new Response(200, { msg: "ok" }));
   } catch (err) {
     console.log(err);
