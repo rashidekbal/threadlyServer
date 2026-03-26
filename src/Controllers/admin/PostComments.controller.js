@@ -1,9 +1,10 @@
 import Response from "../../constants/Response.js";
+import ApiError from "../../constants/ApiError.js";
 import fetchDb from "../../utils/query.js";
 
 const getCommentsController = async (req, res) => {
   const postid = req.params.postid;
-  if (!postid) return res.sendStatus(404);
+  if (!postid) return res.status(404).json(new ApiError(404, {}));
   const db_query = `select pc.commentid ,
 pc.postid ,
 pc.userid ,
@@ -23,7 +24,8 @@ try {
     return res.json(new Response(200, result));
   } catch (error) {
     console.log(error)
-    return res.sendStatus(500);
+    return res.status(500).json(new ApiError(500, {}));
   }
 };
 export {getCommentsController}
+

@@ -1,4 +1,5 @@
 import Response from "../constants/Response.js"
+import ApiError from "../constants/ApiError.js";
 import fetchDb from "../utils/query.js";
 import { notifyFollowRequestApproved } from "./followController.js";
 const setPrivateController=async (req,res)=>{
@@ -8,7 +9,7 @@ const setPrivateController=async (req,res)=>{
         await fetchDb(query,[userid]);
         res.json(new Response(200,"ok"));
     } catch (error) {
-        res.sendStatus(500);
+        res.status(500).json(new ApiError(500, {}));
         
     }
 
@@ -21,7 +22,7 @@ const setPublicController=async(req,res)=>{
         approveAllPendingFollowRequest(userid);
         res.json(new Response(200,"ok"));
     } catch (error) {
-        res.sendStatus(500);
+        res.status(500).json(new ApiError(500, {}));
         
     }
 

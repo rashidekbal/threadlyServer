@@ -3,6 +3,7 @@ import {
   uploadOnColudinaryviaLocalPath,
 } from "../utils/cloudinary.js";
 import fetchDb from "../utils/query.js";
+import ApiError from "../constants/ApiError.js";
 import "dotenv/config";
 import Response from "../constants/Response.js";
 import { getUUidFromUserId } from "../utils/ReusableFunctions.js";
@@ -27,11 +28,11 @@ async function addImagePost(req, res) {
   let caption = req.body.caption.length > 0 ? req.body.caption : null;
   if (ProductionMode) {
     imagePath = req.file?.buffer;
-    if (!imagePath) return res.sendStatus(500);
+    if (!imagePath) return res.status(500).json(new ApiError(500, {}));
     backgroundUpload(imagePath, userid, caption, "image");
   } else {
     imagePath = req.file?.path;
-    if (!imagePath) return res.sendStatus(500);
+    if (!imagePath) return res.status(500).json(new ApiError(500, {}));
     backgroundUpload(imagePath, userid, caption, "image");
   }
   return res.json(
@@ -51,11 +52,11 @@ async function addVideoPost(req, res) {
   if (ProductionMode) {
     VideoPath = req.file?.buffer;
 
-    if (!VideoPath) return res.sendStatus(500);
+    if (!VideoPath) return res.status(500).json(new ApiError(500, {}));
     backgroundUpload(VideoPath, userid, caption, "video");
   } else {
     VideoPath = req.file?.path;
-    if (!VideoPath) return res.sendStatus(500);
+    if (!VideoPath) return res.status(500).json(new ApiError(500, {}));
     backgroundUpload(VideoPath, userid, caption, "video");
   }
 
@@ -79,7 +80,7 @@ async function removePost(req, res) {
       })
     );
   } catch (error) {
-    return res.sendStatus(500);
+    return res.status(500).json(new ApiError(500, {}));
   }
 }
 let getPostinfo = async (req, res) => {
@@ -117,11 +118,11 @@ GROUP BY p.postid;
 `;
   try {
      let response = await fetchDb(query, [userid, userid, postid,userid]);
-    if(response.length===0) return res.sendStatus(404);
+    if(response.length===0) return res.status(404).json(new ApiError(404, {}));
     res.json({ status: 200, data: response });
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    res.status(500).json(new ApiError(500, {}));
   }
 };
 async function getImageFeed(req, res) {
@@ -177,7 +178,7 @@ async function getImageFeed(req, res) {
     res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    res.status(500).json(new ApiError(500, {}));
   }
 }
 async function getVideoFeed(req, res) {
@@ -226,7 +227,7 @@ LIMIT ?
     res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    res.status(500).json(new ApiError(500, {}));
   }
 }
 async function getUserPostsController(req, res) {
@@ -266,20 +267,20 @@ offset ?
   let  response = await fetchDb(query,[userid,reqMakerUserId,userid,limit,offset]);
     return res.json({ status: 200, data: response });
   } catch (error) {
-    return res.sendStatus(500);
+    return res.status(500).json(new ApiError(500, {}));
   }
 }
 const postViewRecordController=async(req,res)=>{
    let userid = req.ObtainedData;
   let postid = req.params.postid;
   let uuid = req.body.nameValuePairs.uuid;
-  if(!postid||!uuid)return res.sendStatus(404);
+  if(!postid||!uuid)return res.status(404).json(new ApiError(404, {}));
   const db_query=`insert into postview (userid,uuid,postid) values(?,?,?)`;
   try {
     await fetchDb(db_query,[userid,uuid,postid])
     return res.json(new Response(201,"ok"))
   } catch (error) {
-    return res.sendStatus(500);
+    return res.status(500).json(new ApiError(500, {}));
     
   }
 
@@ -295,3 +296,5 @@ export {
   getPostinfo,
   postViewRecordController
 };
+
+

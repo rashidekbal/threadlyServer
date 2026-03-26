@@ -1,4 +1,5 @@
 import fetchDb from "../utils/query.js";
+import ApiError from "../constants/ApiError.js";
 import Response from "../constants/Response.js";
 
 // Controller to add a comment
@@ -10,7 +11,7 @@ let addComentController = async (req, res) => {
   let comment = req.body.nameValuePairs.comment; // Comment text from the request body
 
   // Return 400 Bad Request status if 'postid' or 'comment' are missing
-  if (!postid || !comment) return res.sendStatus(400);
+  if (!postid || !comment) return res.status(400).json(new ApiError(400, {}));
 
   // SQL query to insert the user comment into the database
   let query =
@@ -22,7 +23,7 @@ let addComentController = async (req, res) => {
     res.json(new Response(201, { commentid: response.insertId }));
   } catch (error) {
     console.log(error); // Log the error for debugging
-    res.sendStatus(500); // Return 500 Internal Server Error status
+    res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error status
   }
 };
 
@@ -35,7 +36,7 @@ let removeCommentController = async (req, res) => {
   let commentid = req.body.nameValuePairs.commentid; // Comment ID from the request body
 
   // Return 400 Bad Request status if 'postid' is missing
-  if (!postid) return res.sendStatus(400);
+  if (!postid) return res.status(400).json(new ApiError(400, {}));
 
   // SQL query to delete the comment based on user ID, post ID, and comment ID
   let query =
@@ -44,10 +45,10 @@ let removeCommentController = async (req, res) => {
   try {
     // Execute the database query and respond with 201 Created status if successful
     await fetchDb(query, [userid, Number(postid), Number(commentid)]);
-    res.sendStatus(201);
+    res.status(201).json(new ApiError(201, {}));
   } catch (error) {
     console.log(error); // Log the error for debugging
-    res.sendStatus(500); // Return 500 Internal Server Error status
+    res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error status
   }
 };
 
@@ -59,7 +60,7 @@ async function getComments(req, res) {
   let postid = req.params.postid; // Post ID from the URL parameter
 
   // Return 400 Bad Request status if 'postid' is missing
-  if (!postid) return res.sendStatus(400);
+  if (!postid) return res.status(400).json(new ApiError(400, {}));
 
   // SQL query to retrieve comments along with user details and like info
   let query = `
@@ -81,7 +82,7 @@ count(distinct cl.userid) as comment_likes_count,
 
     res.json(new Response(200, response));
   } catch (error) {
-    res.sendStatus(500); // Return 500 Internal Server Error status on failure
+    res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error status on failure
   }
 }
 const replyToCommentController=async (req,res)=>{
@@ -90,7 +91,7 @@ const replyToCommentController=async (req,res)=>{
   const data=req.body.nameValuePairs;
   const postId=data.postId;
   const reply=data.comment;
-  if(!ReplyToCommentId||!postId||!reply)return res.sendStatus(400);
+  if(!ReplyToCommentId||!postId||!reply)return res.status(400).json(new ApiError(400, {}));
 let query =
     "insert into post_comments (userid,postid,comment_text,replyToCommentId) values (?,?,?,?)";
 
@@ -100,7 +101,7 @@ let query =
     res.json(new Response(201, { commentid: response.insertId }));
   } catch (error) {
     console.log(error); // Log the error for debugging
-    res.sendStatus(500); // Return 500 Internal Server Error status
+    res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error status
   }
 }
 async function getReplyOfCommentController(req,res){
@@ -108,7 +109,7 @@ async function getReplyOfCommentController(req,res){
   let commentid = req.params.commentId; // Post ID from the URL parameter
 
   // Return 400 Bad Request status if 'postid' is missing
-  if (!commentid) return res.sendStatus(400);
+  if (!commentid) return res.status(400).json(new ApiError(400, {}));
 
   // SQL query to retrieve comments along with user details and like info
   let query = `
@@ -127,8 +128,10 @@ count(distinct cl.userid) as comment_likes_count,
     let response = await fetchDb(query, [userid, Number(commentid)]);
     res.json(new Response(200, response));
   } catch (error) {
-    res.sendStatus(500); // Return 500 Internal Server Error status on failure
+    res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error status on failure
   }
 
 }
 export { removeCommentController, addComentController, getComments ,replyToCommentController,getReplyOfCommentController};
+
+

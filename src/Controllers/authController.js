@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"; // Library for generating JSON Web Tokens (JWT).
 import { v4 as uuidv4 } from "uuid";
 import userRepo from "../repository/UsersTableRepo.js";
 import Response from "../constants/Response.js";
+import ApiError from "../constants/ApiError.js";
 import bcryptUtil from "../utils/BcryptUtil.js";
 import { sessionIdExpireTime } from "../constants/RedisConstants.js";
 
@@ -14,11 +15,11 @@ async function registerUserEmailController(req, res) {
   let password = req.body.nameValuePairs.password; // Password provided by user
   let dob = req.body.nameValuePairs.dob; // Date of birth of the user
   let username = req.body.nameValuePairs.username; // Username provided by user
-  if(password.length<6)return res.sendStatus(400);
+  if(password.length<6)return res.status(400).json(new ApiError(400, {}));
 
   // Check for missing required fields
   if (!email || !password || !dob || !username) {
-    return res.sendStatus(400); // Bad Request: Missing required fields
+    return res.status(400).json(new ApiError(400, {})); // Bad Request: Missing required fields
   }
 
   try {
@@ -48,7 +49,7 @@ async function registerUserEmailController(req, res) {
 
     // If the user is not an adult, send a "Forbidden" status
     if (!isAdult) {
-      return res.sendStatus(403);
+      return res.status(403).json(new ApiError(403, {}));
     } else {
       // If the user is an adult, execute the database query to register the user
       await fetchDb(db_query, data);
@@ -68,7 +69,7 @@ async function registerUserEmailController(req, res) {
     }
   } catch (error) {
     // Handle server errors
-    res.sendStatus(500); // Internal Server Error
+    res.status(500).json(new ApiError(500, {})); // Internal Server Error
   }
 }
 
@@ -78,28 +79,28 @@ async function ResetPasswordController(req,res){
   const newPassword=req.body.nameValuePairs.newPassword;
  
   //if not all required values are provided return error 400 bad request
-  if(!oldPassword||!newPassword)return res.sendStatus(400);
-  if(newPassword.length<6)return res.sendStatus(400);
+  if(!oldPassword||!newPassword)return res.status(400).json(new ApiError(400, {}));
+  if(newPassword.length<6)return res.status(400).json(new ApiError(400, {}));
   try {
      //get user details for verification 
   let response =await userRepo.getUserForAuth(userid);
   //if no associated user found send 404 may be due to old token .
-  if(response==null)return res.sendStatus(404);
+  if(response==null)return res.status(404).json(new ApiError(404, {}));
 
   //if reponse is found then 
   const userData=response[0];
   const serverPasswordForUser=userData.pass;
   //compare usergiven password with server stored password
   const isPasswodVerified=await bcryptUtil.verifyPassword(serverPasswordForUser,oldPassword);
-  if(!isPasswodVerified)return res.sendStatus(403);
+  if(!isPasswodVerified)return res.status(403).json(new ApiError(403, {}));
   //if verified 
   const isPasswordChangeSuccess =await userRepo.updateUserPassword(userid,newPassword);
   //if password change failed send status 500;
-  if(!isPasswordChangeSuccess)return res.sendStatus(500);
+  if(!isPasswordChangeSuccess)return res.status(500).json(new ApiError(500, {}));
   return res.json(new Response(200,{msg:"ok"}));
   } catch (error) {
     console.log("error from authControllers.js resetpasswordFunction , erro: " +error);
-    return res.sendStatus(500); 
+    return res.status(500).json(new ApiError(500, {}));
   }
 
 }

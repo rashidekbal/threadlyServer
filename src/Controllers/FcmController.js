@@ -1,4 +1,5 @@
 import Response from "../constants/Response.js";
+import ApiError from "../constants/ApiError.js";
 import fetchDb from "../utils/query.js";
 const updateToken = async (req, res) => {
   
@@ -18,7 +19,8 @@ const updateToken = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    return res.sendStatus(500);
+    return res.status(500).json(new ApiError(500, {}));
   }
 };
 export { updateToken };
+

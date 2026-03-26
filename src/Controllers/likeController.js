@@ -1,4 +1,5 @@
 import fetchDb from "../utils/query.js";
+import ApiError from "../constants/ApiError.js";
 import Response from "../constants/Response.js";
 import {
   notify_post_unliked_via_fcm,
@@ -15,7 +16,7 @@ let PostlikeController = async (req, res) => {
   let postid = req.params.postid; // Obtained post id from the request parameters.
 
   // Return 400 Bad Request if post id is not provided.
-  if (!postid) return res.sendStatus(400);
+  if (!postid) return res.status(400).json(new ApiError(400, {}));
 
   let query = "insert into post_likes (userid,postid) values (?,?)";
 
@@ -26,7 +27,7 @@ let PostlikeController = async (req, res) => {
     res.json(new Response(201, "success")); // Respond with success if the query is executed successfully.
   } catch (error) {
     console.log(error); // Log any errors for debugging purposes.
-    res.sendStatus(500); // Return 500 Internal Server Error on failure.
+    res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error on failure.
   }
 };
 
@@ -38,7 +39,7 @@ let PostunlikeController = async (req, res) => {
   let postid = req.params.postid; // Obtained post id from the request parameters.
 
   // Return 400 Bad Request if post id is not provided.
-  if (!postid) return res.sendStatus(400);
+  if (!postid) return res.status(400).json(new ApiError(400, {}));
 
   let query = "delete from post_likes where  userid = ? and postid=?";
 
@@ -48,7 +49,7 @@ let PostunlikeController = async (req, res) => {
     res.json(new Response(201, "success")); // Respond with success if the query is executed successfully.
   } catch (error) {
     console.log(error); // Log any errors for debugging purposes.
-    res.sendStatus(500); // Return 500 Internal Server Error on failure.
+    res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error on failure.
   }
 };
 
@@ -70,7 +71,7 @@ async function CommentLikeContorller(req, res) {
 
     res.json(new Response(201, "success")); // Respond with success if the query is executed successfully.
   } catch (err) {
-    res.sendStatus(500); // Return 500 Internal Server Error on failure.
+    res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error on failure.
   }
 }
 
@@ -90,14 +91,14 @@ async function CommentUnlikeController(req, res) {
 
     res.json(new Response(201, "success")); // Respond with success if the query is executed successfully.
   } catch (err) {
-    res.sendStatus(500); // Return 500 Internal Server Error on failure.
+    res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error on failure.
   }
 }
 
 const likeStoryController = async (req, res) => {
   const userid = req.ObtainedData;
   const story_id = req.params.storyid;
-  if (story_id == null) return res.sendStatus(400);
+  if (story_id == null) return res.status(400).json(new ApiError(400, {}));
   const query = `insert into story_likes (userid,storyid) values(?,?)
 `;
 
@@ -106,14 +107,14 @@ const likeStoryController = async (req, res) => {
     return res.json(new Response(201, "created"));
   } catch (error) {
     console.log("error occured: " + error);
-    return res.sendStatus(500);
+    return res.status(500).json(new ApiError(500, {}));
   }
 };
 
 const UnlikeStoryController = async (req, res) => {
   const userid = req.ObtainedData;
   const story_id = req.params.storyid;
-  if (story_id == null) return res.sendStatus(400);
+  if (story_id == null) return res.status(400).json(new ApiError(400, {}));
   const query = `delete from story_likes where userid=? and storyid=?
 `;
 
@@ -122,7 +123,7 @@ const UnlikeStoryController = async (req, res) => {
     return res.json(new Response(201, "created"));
   } catch (error) {
     console.log("error occured: " + error);
-    return res.sendStatus(500);
+    return res.status(500).json(new ApiError(500, {}));
   }
 };
 const notify_Post_unliked=async (postId,userId)=>{
@@ -253,3 +254,5 @@ export {
   likeStoryController,
   UnlikeStoryController,
 };
+
+

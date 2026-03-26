@@ -1,10 +1,11 @@
 import Response from "../constants/Response.js";
+import ApiError from "../constants/ApiError.js";
 import fetchDb from "../utils/query.js";
 
 export const searchController = async (req, res) => {
   const userid=req.ObtainedData;
   const target = req.query.target;
-  if (!target) return res.sendStatus(400);
+  if (!target) return res.status(400).json(new ApiError(400, {}));
   const AccountsQuery = `SELECT 
   uuid,username,
     userid,
@@ -68,7 +69,7 @@ try {
      return res.json(response);
 } catch (error) {
   console.log(error);
-  return res.sendStatus(500);
+  return res.status(500).json(new ApiError(500, {}));
 }
   
   

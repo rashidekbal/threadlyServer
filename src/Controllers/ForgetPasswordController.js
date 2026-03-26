@@ -1,4 +1,5 @@
 import fetchDb from "../utils/query.js";
+import ApiError from "../constants/ApiError.js";
 import bcrypt from "bcrypt";
 import Response from "../constants/Response.js";
 import { v4 } from "uuid";
@@ -11,7 +12,7 @@ async function resetPasswordMobileContorler(req, res) {
 
   // Validate phone number and password length
   if (phone.toString().length < 10 || password.length < 6)
-    return res.SendStatus(400); // Respond with status 400 if validation fails
+    return res.status(400).json(new ApiError(400, {})); // Respond with status 400 if validation fails
 
   try {
     // Hash the password with a salt factor of 12
@@ -23,7 +24,7 @@ async function resetPasswordMobileContorler(req, res) {
     let response = await fetchDb(query, [hashedPassword, sessionId,phone]);
 
     // If no rows are affected, respond with status 500 (internal server error)
-    if (response.affectedRows < 1) return res.SendStatus(500);
+    if (response.affectedRows < 1) return res.status(500).json(new ApiError(500, {}));
 
     // Respond with a success message and a 201 status code
     return res.json(new Response(201, "success"));
@@ -31,7 +32,7 @@ async function resetPasswordMobileContorler(req, res) {
     // Log any errors that occur during the process
     console.log(error);
     // Respond with status 500 for an internal server error
-    res.SendStatus(500);
+    res.status(500).json(new ApiError(500, {}));
   }
 }
 
@@ -51,7 +52,7 @@ async function resetPasswordEmailContorler(req, res) {
     let response = await fetchDb(query, [hashedPassword, sessionId,email]);
 
     // If no rows are affected, respond with status 500 (internal server error)
-    if (response.affectedRows < 1) return res.SendStatus(500);
+    if (response.affectedRows < 1) return res.status(500).json(new ApiError(500, {}));
 
     // Respond with a success message and a 201 status code
     return res.json(new Response(201, "success"));
@@ -59,9 +60,10 @@ async function resetPasswordEmailContorler(req, res) {
     // Log any errors that occur during the process
     console.log(error);
     // Respond with status 500 for an internal server error
-    res.SendStatus(500);
+    res.status(500).json(new ApiError(500, {}));
   }
 }
 
 // Export the controllers to be used in other parts of the application
 export { resetPasswordMobileContorler, resetPasswordEmailContorler };
+

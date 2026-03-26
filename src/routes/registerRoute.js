@@ -1,4 +1,5 @@
 import express from "express";
+import ApiError from "../constants/ApiError.js";
 import verifyToken from "../middlewares/authorization.js";
 import connection from "../db/connection.js";
 import verifyAge from "../utils/ageVerfy.js";
@@ -14,7 +15,7 @@ route.post("/mobile", verifyToken, async (req, res) => {
   let dob = req.body.nameValuePairs.dob;
   let username = req.body.nameValuePairs.username;
   if (!phone || !password || !dob || !username) {
-    return res.sendStatus(400);
+    return res.status(400).json(new ApiError(400, {}));
   }
   try {
     password = await bcrypt.hash(password, 12);
@@ -27,7 +28,7 @@ route.post("/mobile", verifyToken, async (req, res) => {
   let db_query = `insert into users (userid,username,phone,pass,dob) values (?,?,?,?,?)`;
   let data = [`${userid}`, `${username}`, `${phone}`, `${password}`, `${dob}`];
   if (!isAdult) {
-    return res.sendStatus(403);
+    return res.status(403).json(new ApiError(403, {}));
   } else {
     connection.query(db_query, data, (err, response) => {
       if (!err) {
@@ -40,7 +41,7 @@ route.post("/mobile", verifyToken, async (req, res) => {
           token: token,
         });
       } else {
-        res.sendStatus(500);
+        res.status(500).json(new ApiError(500, {}));
       }
     });
   }
@@ -48,3 +49,5 @@ route.post("/mobile", verifyToken, async (req, res) => {
 route.post("/email", verifyToken, registerUserEmailController);
 
 export default route;
+
+
