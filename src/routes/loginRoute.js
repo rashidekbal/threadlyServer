@@ -1,15 +1,8 @@
-import express, { response } from "express";
-import jwt from "jsonwebtoken";
-import connection from "../db/connection.js";
+import express from "express";
 import "dotenv/config";
-import bcrypt from "bcrypt";
-import fetchDb from "../utils/query.js";
-import { logOutPreviousDevice } from "../Fcm/FcmService.js";
-import Response from "../constants/Response.js";
+
 import verifyToken from "../middlewares/authorization.js";
-import redisClient from "../redis/redis.js";
-import { sessionIdExpireTime } from "../constants/RedisConstants.js";
-import { v4 } from "uuid";
+
 import {
   Login_email_controller,
   Login_mobile_controller,

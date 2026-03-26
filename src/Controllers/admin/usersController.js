@@ -3,7 +3,8 @@ import Response from "../../constants/Response.js";
 import fetchDb from "../../utils/query.js";
 import bcryptUtil from "../../utils/BcryptUtil.js";
 import { uploadOnColudinaryviaLocalPath } from "../../utils/cloudinary.js";
-import { logOutPreviousDevice } from "../../Fcm/FcmService.js";
+
+import redisClient from "../../redis/redis.js";
 
 const getUsersController = async (req, res) => {
   const db_query = `select usr.userid,usr.username,
@@ -119,26 +120,21 @@ const restrictUserController =async (req, res) => {
   let banDuration=req.body.banDuration;
   const banReason=req.body.banReason;
   const userid=req.body.userid;
-  const fcmToken=req.body.fcmToken;
   if(!banDuration||!banReason||!userid)return res.sendStatus(400);
   if(banDuration==24){
     banDuration="24hr";
   }else{
     banDuration="permanent";
   }
-  const db_query=`update users set blocked=1, banDuration=? , banReason=? where uuid=?`
+  const db_query=`update users set blocked=1, banDuration=? ,sessionId=null , fcmToken=null , banReason=? where uuid=?`
 
   try {
     let result=  await fetchDb(db_query,[banDuration,banReason,uuid]);
-   if(fcmToken){
-    await logOutPreviousDevice(fcmToken,userid,"your account have been restriced, try relogin to get the exact cause");
-    await fetchDb("update users set fcmToken=null where uuid=?",[uuid]);
-   }
+    redisClient.del(`UserSession:${userid}`);
   return res.status(200).json(new Response(200,result));
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
-    
   }
 };
 const unRestrictUserController =async (req, res) => {

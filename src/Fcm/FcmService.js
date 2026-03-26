@@ -371,28 +371,28 @@ const notifyCommentUnlike_via_fcm = async (token, userid, Commentid, ReceiverUse
     }
   })
 }
-const logOutPreviousDevice = async (token, userId,logoutMessage) => {
-  return new Promise(async (resolve, reject) => {
-    const message = {
-      token,
-      android: {
-        priority: "high"
-      }
-      ,
-      data: {
-        responseType: "logout",
-        userId: userId,
-        logoutMessage
-      }
-    }
-    try {
-      await admin.messaging().send(message);
-      resolve(new Response(200, { msg: "success" }));
-    } catch (e) {
-      reject(new Response(500, { msg: e }));
-    }
-  })
-}
+// const logOutPreviousDevice = async (token, userId,logoutMessage) => {
+//   return new Promise(async (resolve, reject) => {
+//     const message = {
+//       token,
+//       android: {
+//         priority: "high"
+//       }
+//       ,
+//       data: {
+//         responseType: "logout",
+//         userId: userId,
+//         logoutMessage
+//       }
+//     }
+//     try {
+//       await admin.messaging().send(message);
+//       resolve(new Response(200, { msg: "success" }));
+//     } catch (e) {
+//       reject(new Response(500, { msg: e }));
+//     }
+//   })
+// }
 export {
   StartServiceFcm,
   sendMessage,
@@ -400,7 +400,7 @@ export {
   notify_postLiked_via_fcm,
   notify_new_Follower_via_fcm,
   notify_post_unliked_via_fcm,
-  logOutPreviousDevice,
+  // logOutPreviousDevice,
   notify_UnFollow_via_fcm,
   notifyCommentLike_via_fcm,
   notifyCommentUnlike_via_fcm, notifyUnsendMessageViaFcm,
