@@ -1,12 +1,9 @@
 {
-  "name": "gpgram",
+  "name": "threadly",
   "version": "1.0.0",
-  "description": "GpGram inspired by instagram",
+  "description": "threadly inspired by instagram",
   "keywords": [
-    "gpGram",
-    "instaClone",
-    "Gpgram",
-    "GoldenPagluGram"
+    "threadly"
   ],
   "license": "ISC",
   "author": "rasid ekbal",

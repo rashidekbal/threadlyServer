@@ -1,4 +1,3 @@
-import { response } from "express";
 import Response from "../../constants/Response.js";
 import fetchDb from "../../utils/query.js";
 import bcryptUtil from "../../utils/BcryptUtil.js";
