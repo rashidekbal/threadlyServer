@@ -215,7 +215,7 @@ WHERE
     AND (u.isPrivate = 0 OR( flw.followid IS NOT NULL and flw.isApproved=true))
 
 GROUP BY p.postid
-ORDER BY RAND() ASC
+ORDER BY RAND() + (p.postid * 0.0001)
 LIMIT ?
 `;
 
