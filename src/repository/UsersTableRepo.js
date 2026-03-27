@@ -9,7 +9,7 @@ async function getUserForAuth(userid){
         return null; 
         
     } catch (error) {
-        console.log("error from UserTableRepo.js , error :" +error);
+       logger.error(formErrorBody(error,null));
         return null;
         
     }
@@ -24,7 +24,7 @@ async function updateUserPassword(userid,newPassword){
         await fetchDb(query,[hashedPassword,userid]);
         return true;
     } catch (error) {
-        console.log("error from UsersTableRepo updatePassword function , error :"+error);
+        logger.error(formErrorBody(error,null));
         return false;
         
     }

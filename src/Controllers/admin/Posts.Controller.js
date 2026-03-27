@@ -22,6 +22,7 @@ where imgpst.userid=? group by imgpst.postid order by imgpst.postid desc
     let result = await fetchDb(db_query, [userid]);
     return res.json(new Response(200, result));
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };

@@ -1,3 +1,4 @@
+import logger, { formErrorBody } from "../../utils/Pino.js";
 import jwt from "jsonwebtoken";
 import ApiError from "../../constants/ApiError.js";
 import validateAdminCreds from "../../utils/AdminTokenAuthenticator.js";
@@ -22,7 +23,7 @@ const LoginController = async (req, res) => {
     const token = jwt.sign(JSON.stringify(payload), process.env.SECRET_KEY);
     return res.status(200).json({ token });
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };

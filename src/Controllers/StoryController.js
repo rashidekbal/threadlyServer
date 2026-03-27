@@ -1,4 +1,6 @@
 import "dotenv/config";
+import logger from "../utils/Pino.js";
+
 import fetchDb from "../utils/query.js";
 import {
   uploadOnColudinaryFromRam,
@@ -33,7 +35,7 @@ const addStoryController = async (req, res) => {
     let response = await fetchDb(query, [userid, url, type]);
     res.json(new Response(201, { msg: "success" }));
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -58,7 +60,7 @@ GROUP BY us.userid;
     let response = await fetchDb(query, [userid]);
     return res.json(new Response(200, response));
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -70,7 +72,7 @@ const getMyStoriesController = async (req, res) => {
     let response = await fetchDb(query, [userid, userid]);
     return res.json(new Response(200, response));
   } catch (error) {
-    console.log(error);
+   logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -84,7 +86,7 @@ const getStoryOfUserController = async (req, res) => {
     let response = await fetchDb(query, [loggedInUser, userid]);
     return res.json(new Response(200, response));
   } catch (error) {
-    console.log(error);
+   logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -100,7 +102,7 @@ async function removeStory(req, res) {
       })
     );
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 }

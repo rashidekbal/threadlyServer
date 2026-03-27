@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import {
   uploadOnColudinaryFromRam,
   uploadOnColudinaryviaLocalPath,
@@ -18,7 +19,7 @@ async function backgroundUpload(path, userid, caption, type) {
     let data = [userid, url, caption, type];
     await fetchDb(query, data);
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,null));
   }
 }
 
@@ -81,6 +82,7 @@ async function removePost(req, res) {
       })
     );
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 }
@@ -122,7 +124,7 @@ GROUP BY p.postid;
     if(response.length===0) return res.status(404).json(new ApiError(404, API_ERROR,{}));
     res.json({ status: 200, data: response });
   } catch (error) {
-    console.log(error);
+   logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -178,7 +180,7 @@ async function getImageFeed(req, res) {
     let response = await fetchDb(query, [userid, userid]);
     res.json(new Response(200, response));
   } catch (error) {
-    console.log(error);
+   logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 }
@@ -227,7 +229,7 @@ LIMIT ?
  
     res.json(new Response(200, response));
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 }
@@ -268,6 +270,7 @@ offset ?
   let  response = await fetchDb(query,[userid,reqMakerUserId,userid,limit,offset]);
     return res.json({ status: 200, data: response });
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 }
@@ -281,6 +284,7 @@ const postViewRecordController=async(req,res)=>{
     await fetchDb(db_query,[userid,uuid,postid])
     return res.json(new Response(201,"ok"))
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
     
   }

@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import Response from "../constants/Response.js"
 import ApiError from "../constants/ApiError.js";
 import fetchDb from "../utils/query.js";
@@ -10,6 +11,7 @@ const setPrivateController=async (req,res)=>{
         await fetchDb(query,[userid]);
        return  res.json(new Response(200,"ok"));
     } catch (error) {
+        logger.error(formErrorBody(error,req));
        return res.status(500).json(new ApiError(500, API_ERROR,{}));
         
     }
@@ -23,6 +25,7 @@ const setPublicController=async(req,res)=>{
         approveAllPendingFollowRequest(userid);
         res.json(new Response(200,"ok"));
     } catch (error) {
+        logger.error(formErrorBody(error,req));
         res.status(500).json(new ApiError(500,API_ERROR, {}));
         
     }
@@ -41,7 +44,8 @@ const approveAllPendingFollowRequest=async(Userid)=>{
         });
         // console.log("notified all followers ");
     } catch (error) {
-        console.log(error);
+        logger.error(formErrorBody(error,null));
+      
         
     }
 

@@ -49,7 +49,7 @@ const Login_userid_controller = async (req, res) => {
         isPrivate: userdata.isPrivate,
       });
     } catch (e) {
-      console.log(e);
+      logger.error(formErrorBody(error,req));
       return res.status(500).json(new ApiError(500,API_ERROR, {}));
     }
 
@@ -90,6 +90,7 @@ const Login_email_controller=async(req,res)=>{
       isPrivate: userdata.isPrivate,
     });
   } catch (e) {
+   logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500,API_ERROR, {}));
   }
 }
@@ -129,6 +130,7 @@ const Login_mobile_controller=async(req,res)=>{
       isPrivate: userdata.isPrivate,
     });
   } catch (e) {
+    logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500,ApiError, {}));
   }
 }
@@ -142,7 +144,7 @@ const logout_controller=async (req, res) => {
 
     res.json(new Response(200, { msg: "ok" }));
   } catch (err) {
-    console.log(err);
+    logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 }

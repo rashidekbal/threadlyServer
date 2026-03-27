@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import fetchDb from "../utils/query.js";
 import Response from "../constants/Response.js";
 import ApiError from "../constants/ApiError.js";
@@ -17,7 +18,7 @@ const editNameController = async (req, res) => {
     let response = await fetchDb(query, [name, userid]);
     return res.json(new Response(201, { message: "success", newName: name }));
   } catch (e) {
-    console.log(e.message);
+    logger.error(formErrorBody(e,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -39,7 +40,7 @@ const editUserIdController = async (req, res) => {
     let token = jwt.sign({userid:updateUserid,sessionId}, process.env.SECRET_KEY);
     return res.json(new Response(200, { token: token, userid: updateUserid }));
   } catch (e) {
-    console.log(e.message);
+    logger.error(formErrorBody(e,req));
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -53,7 +54,7 @@ const editUserBioController = async (req, res) => {
     let response = await fetchDb(updateQuery, [bio, userid]);
     return res.json(new Response(201, "successfully updated user"));
   } catch (e) {
-    console.log(e.message);
+logger.error(formErrorBody(e,req));
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -76,7 +77,7 @@ const editProfileController = async (req, res) => {
     let response = await fetchDb(query, [url, userid]);
     return res.json(new Response(201, { url: url, message: "success" }));
   } catch (e) {
-    console.log(e.message);
+     logger.error(formErrorBody(e,req));
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };

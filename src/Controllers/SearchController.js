@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import Response from "../constants/Response.js";
 import ApiError from "../constants/ApiError.js";
 import fetchDb from "../utils/query.js";
@@ -69,7 +70,7 @@ try {
    const response=new Response(200,{Account: accountResult,Reels:reelsResult});
      return res.json(response);
 } catch (error) {
-  console.log(error);
+  logger.error(formErrorBody(error,req));
   return res.status(500).json(new ApiError(500,API_ERROR ,{}));
 }
   

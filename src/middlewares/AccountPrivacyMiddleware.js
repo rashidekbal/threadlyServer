@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import { isUserPrivate } from "../utils/PrivacyHelpers.js";
 import ApiError from "../constants/ApiError.js";
 import fetchDb from "../utils/query.js";
@@ -22,7 +23,7 @@ const accessCheckLayer = async (req, res, next) => {
     }
     next();
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -38,7 +39,7 @@ select count(distinct followerid) as isFollowed from followers where followerid=
       const isFollowed = response[0].isFollowed == 1;
       resolve(isFollowed);
     } catch (error) {
-      console.log(error);
+      logger.error(formErrorBody(error,null));
       return reject(error);
     }
   });

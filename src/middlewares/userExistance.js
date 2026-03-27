@@ -13,6 +13,7 @@ function ifUserExistsMobile(req, res, next) {
       if (response.length > 0) return res.status(409).json(new ApiError(409,API_ERROR ,{}));
       next();
     } else {
+      logger.error(formErrorBody(err,req));
       return res.status(500).json(new ApiError(500, API_ERROR,{}));
     }
   });
@@ -27,6 +28,7 @@ async function ifUserExistsEmail(req, res, next) {
     if (response.length > 0) return res.status(409).json(new ApiError(409,API_ERROR, {}));
     return next();
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500,API_ERROR, {}));
   }
 }

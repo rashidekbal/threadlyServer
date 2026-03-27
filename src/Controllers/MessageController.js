@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import Response from "../constants/Response.js";
 import ApiError from "../constants/ApiError.js";
 import { sendMessage } from "../Fcm/FcmService.js";
@@ -25,7 +26,7 @@ const getMsgPendingHistoryController = async (req, res) => {
     let response = await fetchDb(query, [uuid]);
     return res.json(new Response(200, response));
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -52,7 +53,7 @@ const getpendingMessagesController = async (req, res) => {
     }
     return res.json(new Response(200, response));
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -168,7 +169,7 @@ const sendMessageController = async (req, res) => {
         })
       );
     } catch (error) {
-      console.log(error)
+     logger.error(formErrorBody(error,req));
       //when fcm token found but message not send due to app not installed
       
       
@@ -230,7 +231,7 @@ const uploadMessageMedia=async(req,res )=>{
     return res.json(new Response(201,{link:url}));
 
   }catch(err){
-    console.log(err);
+    logger.error(formErrorBody(err,req));
     res.status(500).json(new ApiError(500, API_ERROR,{}));
 
     }
@@ -247,7 +248,7 @@ const getAllChatsController=async(req,res)=>{
     return  res.json(new Response(200,response))
 
   } catch (error) {
-    // console.log("error getting all chats :"+error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
     
   }
@@ -273,7 +274,7 @@ const deleteMessageForRoleController=async(req,res)=>{
       return  res.json(new Response(200,{Msg:"ok"}));
 
   } catch (error) {
-    // console.log("error getting all chats :"+error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
     
   }
@@ -297,7 +298,7 @@ const UnsendMessageController=async(req,res)=>{
      return  res.json(new Response(200,{msg:"ok"}));
       
     } catch (error) {
-      console.log(error);
+      logger.error(formErrorBody(error,req));
       return res.status(500).json(new ApiError(500, API_ERROR,{}));
       
     }

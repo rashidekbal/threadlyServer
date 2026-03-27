@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import fetchDb from "../utils/query.js"; // Helper function for database queries
 import ApiError from "../constants/ApiError.js";
 import { API_ERROR } from "../constants/Error_types.js";
@@ -43,7 +44,7 @@ async function getSuggestUsersController(req, res) {
     // Send the query response
     res.json({ status: 200, data: response });
   } catch (err) {
-    console.log(err); // Log any errors for debugging
+    logger.error(formErrorBody(error,req)); // Log any errors for debugging
     return res.status(500).json(new ApiError(500, API_ERROR,{})); // Return 500 Internal Server Error on failure
   }
 }
@@ -100,7 +101,7 @@ async function getUserController(req, res) {
     return res.json({ status: 200, data: response }); // Return query results
   
   } catch (err) {
-    console.log(err); // Log any errors
+    logger.error(formErrorBody(error,req)); // Log any errors
     return res.status(500).json(new ApiError(500,API_ERROR ,{})); // Return 500 Internal Server Error on failure
   }
 }
@@ -126,7 +127,7 @@ async function getUserByUUidController(req, res) {
 
     return res.json({ status: 200, data: response }); // Return query results
   } catch (err) {
-    console.log(err); // Log any errors
+    logger.error(formErrorBody(error,req));// Log any errors
     return res.status(500).json(new ApiError(500, API_ERROR,{})); // Return 500 Internal Server Error on failure
   }
 }
@@ -172,7 +173,7 @@ async function getMyDataController(req, res) {
 
     return res.json({ status: 200, data: response }); // Return query results
   } catch (err) {
-    console.log(err); // Log any errors
+   logger.error(formErrorBody(error,req)); // Log any errors
     return res.status(500).json(new ApiError(500, API_ERROR,{})); // Return 500 Internal Server Error on failure
   }
 }

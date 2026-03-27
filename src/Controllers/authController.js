@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import fetchDb from "../utils/query.js"; // Utility function to execute database queries.
 import verifyAge from "../utils/ageVerfy.js"; // Utility function to verify if a user is an adult based on their date of birth.
 import jwt from "jsonwebtoken"; // Library for generating JSON Web Tokens (JWT).
@@ -71,6 +72,7 @@ async function registerUserEmailController(req, res) {
     }
   } catch (error) {
     // Handle server errors
+    logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500,API_ERROR ,{})); // Internal Server Error
   }
 }
@@ -101,7 +103,7 @@ async function ResetPasswordController(req,res){
   if(!isPasswordChangeSuccess)return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   return res.json(new Response(200,{msg:"ok"}));
   } catch (error) {
-    console.log("error from authControllers.js resetpasswordFunction , erro: " +error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 
@@ -117,7 +119,7 @@ const register_phone_controller= async (req, res) => {
   try {
     password = await bcryptUtil.hashPassword(password);
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
   }
 
   let userid = username.split(" ")[0] + Date.now();
@@ -138,6 +140,7 @@ const register_phone_controller= async (req, res) => {
           token: token,
         });
       } else {
+        logger.error(formErrorBody(err,req));
         res.status(500).json(new ApiError(500, API_ERROR,{}));
       }
     });

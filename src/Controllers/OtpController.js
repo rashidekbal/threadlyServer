@@ -43,6 +43,7 @@ let sendOtpMobile = (req, res) => {
           res.json(new Response(200, "success"));
         } else {
           // Handle error in sending the OTP
+          logger.error(formErrorBody(error,null));
           res.status(500).json(new ApiError(500, API_ERROR,{}));
         }
       });
@@ -80,7 +81,11 @@ function verifyOtpMobile(req, res) {
         // Delete the verified OTP from the database
         connection.query(
           `delete from otpmodel WHERE phone_email= '${phone}' AND otp='${otp}'`,
-          (error, result) => {} // No extra action needed on deletion
+          (error, result) => {
+            if(error){
+              logger.error(formErrorBody(error,null));
+            }
+          } // No extra action needed on deletion
         );
 
         res.json({ token: token }); // Send the token to the user
@@ -116,7 +121,7 @@ async function generateOtpEmail(req, res) {
 
     res.json(new Response(200, "success")); // Send success response
   } catch (error) {
-    console.log("error sending otp" + error); // Log the error
+    logger.error(formErrorBody(error,req)); // Log the error
     res.status(500).json(new ApiError(500, API_ERROR,{})); // Return server error
   }
 }
@@ -163,6 +168,7 @@ async function verifyOtpEmail(req, res) {
     }
   } catch (error) {
     // Handle server errors
+    logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 }

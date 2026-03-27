@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import jwt from "jsonwebtoken";
 import ApiError from "../constants/ApiError.js";
 import "dotenv/config";
@@ -11,7 +12,7 @@ async function verifyToken(req, res, next) {
   let token = header.split(" ")[1];
   if (token ==null) return res.status(401).json(new ApiError(401,AUTH_ERROR ,{}));
   jwt.verify(token, process.env.SECRET_KEY, async(err, result) => {
-    if (err){console.log(err); return res.status(401).json(new ApiError(401,AUTH_ERROR ,{}))};
+    if (err){logger.error(formErrorBody(err,req)); return res.status(401).json(new ApiError(401,AUTH_ERROR ,{}))};
     const sessionId=result.sessionId;
      if(!sessionId||!result.userid)return res.status(401).json(new ApiError(401,AUTH_ERROR ,{}));
     let isValidSession =await validateSession(sessionId,result.userid);
@@ -42,7 +43,7 @@ async function validateSession(sessionId,userid){
       return false;
 
   } catch (error) {
-    console.log(error)
+    logger.error(formErrorBody(error,null));
     return false;
   }
 

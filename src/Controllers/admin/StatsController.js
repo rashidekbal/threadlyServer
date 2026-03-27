@@ -42,7 +42,7 @@ async function getLikesStats() {
 
     return data;
   } catch (error) {
-    console.log("error: " + error);
+    logger.error(formErrorBody(error,null));
     return null;
   }
 }
@@ -78,7 +78,7 @@ async function getCommentsStats() {
 
     return data;
   } catch (error) {
-    console.log("error: " + error);
+   logger.error(formErrorBody(error,null));
     return null;
   }
 }
@@ -114,7 +114,7 @@ async function getUsersStats() {
 
     return data;
   } catch (error) {
-    console.log("error: " + error);
+    logger.error(formErrorBody(error,null));
     return null;
   }
 }
@@ -152,7 +152,7 @@ async function getPostViewStats() {
 
     return data;
   } catch (error) {
-    console.log("error: " + error);
+    logger.error(formErrorBody(error,null));
     return null;
   }
 }

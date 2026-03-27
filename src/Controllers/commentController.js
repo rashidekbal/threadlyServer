@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import fetchDb from "../utils/query.js";
 import ApiError from "../constants/ApiError.js";
 import Response from "../constants/Response.js";
@@ -23,7 +24,7 @@ let addComentController = async (req, res) => {
     let response = await fetchDb(query, [userid, Number(postid), comment]);
     res.json(new Response(201, { commentid: response.insertId }));
   } catch (error) {
-    console.log(error); // Log the error for debugging
+    logger.error(formErrorBody(error,req)); // Log the error for debugging
     res.status(500).json(new ApiError(500,API_ERROR ,{})); // Return 500 Internal Server Error status
   }
 };
@@ -48,7 +49,7 @@ let removeCommentController = async (req, res) => {
     await fetchDb(query, [userid, Number(postid), Number(commentid)]);
     res.status(201).json(new ApiError(201, {}));
   } catch (error) {
-    console.log(error); // Log the error for debugging
+    logger.error(formErrorBody(error,req));// Log the error for debugging
     res.status(500).json(new ApiError(500,API_ERROR ,{})); // Return 500 Internal Server Error status
   }
 };
@@ -83,6 +84,7 @@ count(distinct cl.userid) as comment_likes_count,
 
     res.json(new Response(200, response));
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500,API_ERROR ,{})); // Return 500 Internal Server Error status on failure
   }
 }
@@ -101,7 +103,7 @@ let query =
     let response = await fetchDb(query, [userid, Number(postId), reply,ReplyToCommentId]);
     res.json(new Response(201, { commentid: response.insertId }));
   } catch (error) {
-    console.log(error); // Log the error for debugging
+   logger.error(formErrorBody(error,req)); // Log the error for debugging
     res.status(500).json(new ApiError(500,API_ERROR, {})); // Return 500 Internal Server Error status
   }
 }
@@ -129,6 +131,7 @@ count(distinct cl.userid) as comment_likes_count,
     let response = await fetchDb(query, [userid, Number(commentid)]);
     res.json(new Response(200, response));
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500, API_ERROR,{})); // Return 500 Internal Server Error status on failure
   }
 

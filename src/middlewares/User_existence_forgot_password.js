@@ -12,6 +12,7 @@ function userMobileExistanceForgetPassword(req, res, next) {
       if (response.length > 0) return next();
       return res.status(404).json(new ApiError(404, API_ERROR,{}));
     } else {
+      logger.error(formErrorBody(err,req));
       return res.status(500).json(new ApiError(500,API_ERROR, {}));
     }
   });
@@ -26,6 +27,7 @@ async function userEmailExistanceForgetPassword(req, res, next) {
     if (response.length > 0) return next();
     return res.status(404).json(new ApiError(404, API_ERROR,{}));
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500,API_ERROR, {}));
   }
 }

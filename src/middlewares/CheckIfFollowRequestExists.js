@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import Response from "../constants/Response.js";
 import ApiError from "../constants/ApiError.js";
 import { isUserPrivate } from "../utils/PrivacyHelpers.js";
@@ -21,7 +22,7 @@ export default async function CheckIfFollowExists(req,res,next){
     }
    return res.json(new Response(201, { status: "SUCCESS" })); 
    } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
    }
 

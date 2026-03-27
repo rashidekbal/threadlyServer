@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import fetchDb from "../utils/query.js";
 import ApiError from "../constants/ApiError.js";
 import bcrypt from "bcrypt";
@@ -31,7 +32,7 @@ async function resetPasswordMobileContorler(req, res) {
     return res.json(new Response(201, "success"));
   } catch (error) {
     // Log any errors that occur during the process
-    console.log(error);
+  logger.error(formErrorBody(error,req));
     // Respond with status 500 for an internal server error
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
@@ -59,7 +60,7 @@ async function resetPasswordEmailContorler(req, res) {
     return res.json(new Response(201, "success"));
   } catch (error) {
     // Log any errors that occur during the process
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     // Respond with status 500 for an internal server error
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }

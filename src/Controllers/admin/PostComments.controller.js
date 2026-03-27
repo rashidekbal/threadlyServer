@@ -1,3 +1,4 @@
+import logger from "../../utils/Pino.js";
 import Response from "../../constants/Response.js";
 import ApiError from "../../constants/ApiError.js";
 import fetchDb from "../../utils/query.js";
@@ -24,7 +25,7 @@ try {
     let result = await fetchDb(db_query, [postid]);
     return res.json(new Response(200, result));
   } catch (error) {
-    console.log(error)
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };

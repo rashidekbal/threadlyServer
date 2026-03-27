@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import fetchDb from "../utils/query.js";
 import ApiError from "../constants/ApiError.js";
 import Response from "../constants/Response.js";
@@ -24,6 +25,7 @@ let followController = async (req, res) => {
     notifyNewFollower(followerid, followingid);
     res.json(new Response(201, { msg: "success" }));
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -47,6 +49,7 @@ let followControllerV2 = async (req, res) => {
     notifyNewFollower(followerid, followingid);
     res.json(new Response(201, { status: "SUCCESS" }));
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -61,7 +64,7 @@ const rejectFollowRequest = async (req, res) => {
 
     return res.json(new Response(200, { msg: "success" }));
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -76,6 +79,7 @@ const cancelFollowRequestController = async (req, res) => {
     notifyFollowRequestCancelled(followerid, followingid);
     return res.json(new Response(200, { msg: "success" }));
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -90,6 +94,7 @@ const ApproveFollowRequestController = async (req, res) => {
     notifyFollowRequestApproved(followerid, followingid);
     return res.json(new Response(200, { msg: "success" }));
   } catch (error) {
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -105,7 +110,7 @@ let unfollowController = async (req, res) => {
     notifyUnFollow(followerid, followingid);
     res.json(new Response(201, { mag: "success" }));
   } catch (error) {
-    console.log(error);
+   logger.error(formErrorBody(error,req));
     res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -131,7 +136,7 @@ const getFollowersController = async (req, res) => {
     // console.log(response);
     return res.json(new Response(200, response));
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -155,7 +160,7 @@ const getFollowingController = async (req, res) => {
     let response = await fetchDb(query, [requestingUser, userid]);
     return res.json(new Response(200, response));
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -189,7 +194,7 @@ const notifyNewFollower = async (followerId, followingId) => {
       // console.log("no fcm token");
     }
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,null));
   }
 };
 
@@ -208,7 +213,7 @@ where flws.followingid=? and isApproved=false
     // console.log(response);
     return res.json(new Response(200, response));
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500,API_ERROR,{}));
   }
 };
@@ -251,7 +256,7 @@ const notifyFollowRequest = async (followerId, followingId) => {
       // console.log("no fcm token");
     }
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,null));
   }
 };
 
@@ -272,7 +277,7 @@ const notifyFollowRequestCancelled = async (followerId, followingId) => {
       // console.log("no fcm token");
     }
   } catch (error) {
-    console.log(error);
+   logger.error(formErrorBody(error,null));
   }
 };
 const notifyFollowRequestApproved = async (followerId, followingId) => {
@@ -305,7 +310,7 @@ const notifyFollowRequestApproved = async (followerId, followingId) => {
       // console.log("no fcm token");
     }
   } catch (error) {
-    console.log(error);
+   logger.error(formErrorBody(error,null));
   }
 };
 
@@ -321,7 +326,7 @@ const notifyUnFollow = async (followerId, followingId) => {
       // console.log("no fcm token");
     }
   } catch (error) {
-    console.log(error);
+   logger.error(formErrorBody(error,null));
   }
 };
 export {

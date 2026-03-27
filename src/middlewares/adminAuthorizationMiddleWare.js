@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import jwt from "jsonwebtoken";
 import ApiError from "../constants/ApiError.js";
 import "dotenv/config";
@@ -8,7 +9,7 @@ function adminAuthorizationVerification(req, res, next) {
   let token = header.split(" ")[1];
   if (token ==null) return res.status(401).json(new ApiError(401, AUTH_ERROR,{}));
   jwt.verify(token, process.env.SECRET_KEY, (err, result) => {
-    if (err){console.log(err); return res.status(403).json(new ApiError(403, AUTH_ERROR,{}))};
+    if (err){logger.error(formErrorBody(error,req)); return res.status(403).json(new ApiError(403, AUTH_ERROR,{}))};
     req.ObtainedData = result;
     next();
   });

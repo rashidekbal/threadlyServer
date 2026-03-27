@@ -1,3 +1,4 @@
+import logger from "../../utils/Pino.js";
 import Response from "../../constants/Response.js";
 import ApiError from "../../constants/ApiError.js";
 import fetchDb from "../../utils/query.js";
@@ -30,7 +31,7 @@ const getUsersController = async (req, res) => {
     const result = await fetchDb(db_query);
     return res.json(new Response(200, result));
   } catch (error) {
-    console.log(error);
+    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -59,7 +60,7 @@ const getUserInfoController = async (req, res) => {
     const result = await fetchDb(db_query, [userid]);
     return res.json(new Response(200, result));
   } catch (error) {
-    console.log(error);
+    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -74,7 +75,7 @@ const overridePasswordController = async (req, res) => {
     await fetchDb(query, [encrypterPassword, uuid]);
     return res.status(201).json(new ApiError(201, {}));
   } catch (error) {
-    console.log(error);
+    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -86,6 +87,7 @@ const editUserInfoController = async (req, res) => {
     await fetchDb(db_query, [userid, username, email, uuid]);
     return res.status(201).json(new ApiError(201, {}));
   } catch (error) {
+    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -100,7 +102,7 @@ const editUserProfilePicController = async (req, res) => {
     await fetchDb(db_query, [url, uuid]);
     res.status(201).json(new ApiError(201, {}));
   } catch (error) {
-    console.log(error);
+    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -112,6 +114,7 @@ const deleteUserProfilePicController = async (req, res) => {
     await fetchDb(db_query, [uuid]);
     return res.status(200).json(new ApiError(200, {}));
   } catch (error) {
+    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -134,7 +137,7 @@ const restrictUserController =async (req, res) => {
     redisClient.del(`UserSession:${userid}`);
   return res.status(200).json(new Response(200,result));
   } catch (error) {
-    console.log(error);
+    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -150,7 +153,7 @@ const unRestrictUserController =async (req, res) => {
     
   return res.status(200).json(new Response(200,result));
   } catch (error) {
-    console.log(error);
+    logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
     
   }

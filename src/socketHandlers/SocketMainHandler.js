@@ -1,3 +1,4 @@
+import logger from "../utils/Pino.js";
 import { notifyStatus_via_Fcm, notifyUnsendMessageViaFcm, sendMessage } from "../Fcm/FcmService.js";
 import { socketIo } from "../App.js"
 import fetchDb from "../utils/query.js";
@@ -69,7 +70,8 @@ function setSocketFunctions(socket, io) {
           false
         );
       } catch (error) {
-        // console.log("error adding message to the server " + console.log(error));
+        logger.error(formErrorBody(error,null));
+        // console.log("error adding message to the server " + logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error"););
       }
     } else {
       //if socket it not found add fall back action for fcm token
@@ -127,14 +129,12 @@ function setSocketFunctions(socket, io) {
         );
         // console.log("msg added to db");
       } catch (error) {
-        console.log(
-            "msg not added for last fallback : " + JSON.stringify(error)
-        );
+        logger.error(formErrorBody(error,null)); 
       }
     } catch (error) {
       //when fcm token found but message not send due to app not installed
 
-      console.log("APP DELETED BY USERS or :"+error.data.msg);
+      logger.error(formErrorBody(error,null));
       socket.emit("MsgStatusUpdate", {
         MsgUid,
         deliveryStatus: 1,
@@ -156,7 +156,7 @@ function setSocketFunctions(socket, io) {
         );
         // console.log("msg added to db");
       } catch (error) {
-        console.log("msg not added for last fallback : " + error);
+        logger.error(formErrorBody(error,null));
       }
     }
   }
@@ -182,7 +182,7 @@ function setSocketFunctions(socket, io) {
           false
       );
     } catch (error) {
-      console.log("msg not added for last fallback : " + error);
+      logger.error(formErrorBody(error,null));
     }
   }
 }catch (e){
@@ -214,7 +214,8 @@ function setSocketFunctions(socket, io) {
         try {
           await fetchDb(UpdateQuery,[senderUUid,receiverUUid]);
         } catch (error) {
-          console.log("error updating  to code 3")
+          logger.error(formErrorBody(error,null));
+          
           
         }
         
@@ -222,7 +223,7 @@ function setSocketFunctions(socket, io) {
 
     }
     } catch (error) {
-      console.log(error)
+      logger.error(formErrorBody(error,null));
     }
    
 
@@ -234,7 +235,7 @@ function setSocketFunctions(socket, io) {
     const senderUUid=data.senderUUid;
     const msgUid=data.msgUid;
     notifyStatusChanged(senderUUid,msgUid,2,false);
-    await fetchDb(`update messages set deliveryStatus=2 where senderUUId=? and messageUid=? and deliveryStatus=1`,[senderUUid,msgUid]).catch(err=>{console.log(err)});
+    await fetchDb(`update messages set deliveryStatus=2 where senderUUId=? and messageUid=? and deliveryStatus=1`,[senderUUid,msgUid]).catch(err=>{logger.error({ err: err, code: err.statusCode || 500 }, err.message || "Internal Server Error");});
     
   })
   // when user viewes some post 
@@ -254,6 +255,7 @@ async function handlePostViewed(data,socket){
   try {
     fetchDb(db_query,[data.userid,data.uuid,data.postid]);
   } catch (error) {
+    logger.error(formErrorBody(error,null));
     
   }
 
@@ -289,7 +291,8 @@ async function notifyStatusChanged(uuid, messageUid, status, isDeleted,receiverU
 
 
   } catch (error) {
-    console.log("error in getting fcm "+error)
+    logger.error(formErrorBody(error,null));
+    
   }
 
 
@@ -311,7 +314,7 @@ async function notifyUnSendMessage(ReceiverUuid, messageUid) {
   try {
        fcmToken= await getFcmTokenWithUUid(ReceiverUuid);
   } catch (error) {
-    console.log("error in getting fcm "+error)
+   logger.error(formErrorBody(error,null));
   }
 
   if (fcmToken != null) {
@@ -319,7 +322,8 @@ async function notifyUnSendMessage(ReceiverUuid, messageUid) {
     try {
       await notifyUnsendMessageViaFcm(fcmToken, messageUid,ReceiverUuid);
     } catch (error) {
-      console.log(error);
+          logger.error(formErrorBody(error,null));
+
     }
   }
 }
