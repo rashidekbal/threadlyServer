@@ -2,14 +2,15 @@ import Response from "../constants/Response.js"
 import ApiError from "../constants/ApiError.js";
 import fetchDb from "../utils/query.js";
 import { notifyFollowRequestApproved } from "./followController.js";
+import { API_ERROR } from "../constants/Error_types.js";
 const setPrivateController=async (req,res)=>{
     const userid=req.ObtainedData;
     const query=`update users set isPrivate=true where userid=?`
     try {
         await fetchDb(query,[userid]);
-        res.json(new Response(200,"ok"));
+       return  res.json(new Response(200,"ok"));
     } catch (error) {
-        res.status(500).json(new ApiError(500, {}));
+       return res.status(500).json(new ApiError(500, API_ERROR,{}));
         
     }
 
@@ -22,7 +23,7 @@ const setPublicController=async(req,res)=>{
         approveAllPendingFollowRequest(userid);
         res.json(new Response(200,"ok"));
     } catch (error) {
-        res.status(500).json(new ApiError(500, {}));
+        res.status(500).json(new ApiError(500,API_ERROR, {}));
         
     }
 

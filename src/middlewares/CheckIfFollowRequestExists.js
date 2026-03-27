@@ -2,11 +2,12 @@ import Response from "../constants/Response.js";
 import ApiError from "../constants/ApiError.js";
 import { isUserPrivate } from "../utils/PrivacyHelpers.js";
 import fetchDb from "../utils/query.js";
+import { API_ERROR } from "../constants/Error_types.js";
 
 export default async function CheckIfFollowExists(req,res,next){
    let followerid = req.ObtainedData;
    let followingid = req.body.nameValuePairs.followingid;
-   if(!followingid) return res.status(400).json(new ApiError(400, {}));
+   if(!followingid) return res.status(400).json(new ApiError(400, API_ERROR,{}));
    const checkQuery=`select * from followers where followerid=? and followingid=? and (isApproved=true or isApproved=false)`;
    const checkApprovalQuery=`select isApproved from followers where followerid=? and followingid=?`;
    try {
@@ -21,7 +22,7 @@ export default async function CheckIfFollowExists(req,res,next){
    return res.json(new Response(201, { status: "SUCCESS" })); 
    } catch (error) {
     console.log(error);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500, API_ERROR,{}));
    }
 
 

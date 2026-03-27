@@ -1,6 +1,7 @@
 import Response from "../../constants/Response.js";
 import ApiError from "../../constants/ApiError.js";
 import fetchDb from "../../utils/query.js";
+import { API_ERROR } from "../../constants/Error_types.js";
 
 const getCommentsController = async (req, res) => {
   const postid = req.params.postid;
@@ -24,7 +25,7 @@ try {
     return res.json(new Response(200, result));
   } catch (error) {
     console.log(error)
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
 export {getCommentsController}

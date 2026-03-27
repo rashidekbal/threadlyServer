@@ -6,6 +6,7 @@ import {
 } from "../utils/cloudinary.js";
 import Response from "../constants/Response.js";
 import ApiError from "../constants/ApiError.js";
+import { API_ERROR } from "../constants/Error_types.js";
 
 let ProductionMode = process.env.PRODUCTION === "true";
 const addStoryController = async (req, res) => {
@@ -14,26 +15,26 @@ const addStoryController = async (req, res) => {
   let url;
   let isVideo = req.body.type == "video";
   const type = isVideo ? "video" : "image";
-  if (type == null) return res.status(500).json(new ApiError(500, {}));
+  if (type == null) return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   try {
     if (ProductionMode) {
       mediaPath = req.file?.buffer;
-      if (!mediaPath) return res.status(500).json(new ApiError(500, {}));
+      if (!mediaPath) return res.status(500).json(new ApiError(500,API_ERROR ,{}));
       url = await uploadOnColudinaryFromRam(mediaPath);
     } else {
       mediaPath = req.file?.path;
-      if (!mediaPath) return res.status(500).json(new ApiError(500, {}));
+      if (!mediaPath) return res.status(500).json(new ApiError(500, API_ERROR,{}));
       url = await uploadOnColudinaryviaLocalPath(mediaPath);
     }
 
-    if (!url) return res.status(500).json(new ApiError(500, {}));
+    if (!url) return res.status(500).json(new ApiError(500, API_ERROR,{}));
     const query = `insert into story (userid,storyUrl,type) values (?,?,?)`;
 
     let response = await fetchDb(query, [userid, url, type]);
     res.json(new Response(201, { msg: "success" }));
   } catch (error) {
     console.log(error);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
 const getStoriesAllController = async (req, res) => {
@@ -58,7 +59,7 @@ GROUP BY us.userid;
     return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
 const getMyStoriesController = async (req, res) => {
@@ -70,7 +71,7 @@ const getMyStoriesController = async (req, res) => {
     return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
 
@@ -84,7 +85,7 @@ const getStoryOfUserController = async (req, res) => {
     return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
 async function removeStory(req, res) {
@@ -100,7 +101,7 @@ async function removeStory(req, res) {
     );
   } catch (error) {
     console.log(error);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 }
 export {

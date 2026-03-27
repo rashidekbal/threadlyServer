@@ -9,13 +9,14 @@ import {
   notify_UnFollow_via_fcm,
 } from "../Fcm/FcmService.js";
 import { isUserPrivate } from "../utils/PrivacyHelpers.js";
+import { API_ERROR } from "../constants/Error_types.js";
 
 let followController = async (req, res) => {
   // console.log("follow request recieved");
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
 
-  if (!followingid) return res.status(400).json(new ApiError(400, {}));
+  if (!followingid) return res.status(400).json(new ApiError(400, API_ERROR,{}));
   let query =
     "insert into followers (followerid,followingid,isApproved) values (?,?,?)";
   try {
@@ -23,7 +24,7 @@ let followController = async (req, res) => {
     notifyNewFollower(followerid, followingid);
     res.json(new Response(201, { msg: "success" }));
   } catch (error) {
-    res.status(500).json(new ApiError(500, {}));
+    res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
 //new followController
@@ -31,7 +32,7 @@ let followControllerV2 = async (req, res) => {
   // console.log("follow request recieved");
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
-  if (!followingid) return res.status(400).json(new ApiError(400, {}));
+  if (!followingid) return res.status(400).json(new ApiError(400,API_ERROR ,{}));
   let query =
     "insert into followers (followerid,followingid,isApproved) values (?,?,?)";
   try {
@@ -46,14 +47,14 @@ let followControllerV2 = async (req, res) => {
     notifyNewFollower(followerid, followingid);
     res.json(new Response(201, { status: "SUCCESS" }));
   } catch (error) {
-    res.status(500).json(new ApiError(500, {}));
+    res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
 const rejectFollowRequest = async (req, res) => {
   const userid = req.ObtainedData;
   const followerId = req.params.followerId;
   // console.log(followerId + " is follower ");
-  if (!followerId) return res.status(400).json(new ApiError(400, {}));
+  if (!followerId) return res.status(400).json(new ApiError(400,API_ERROR ,{}));
   const query = `delete from followers where followerid=? and followingid=? and isApproved=false`;
   try {
     await fetchDb(query, [followerId, userid]);
@@ -61,42 +62,42 @@ const rejectFollowRequest = async (req, res) => {
     return res.json(new Response(200, { msg: "success" }));
   } catch (error) {
     console.log(error);
-    res.status(500).json(new ApiError(500, {}));
+    res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
 //cancel follow request from the follower end controller
 const cancelFollowRequestController = async (req, res) => {
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
-  if (!followingid) return res.status(400).json(new ApiError(400, {}));
+  if (!followingid) return res.status(400).json(new ApiError(400,API_ERROR ,{}));
   try {
     const query = `delete from followers where followerid=? and  followingid=? and isApproved=false`;
     await fetchDb(query, [followerid, followingid]);
     notifyFollowRequestCancelled(followerid, followingid);
     return res.json(new Response(200, { msg: "success" }));
   } catch (error) {
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
 const ApproveFollowRequestController = async (req, res) => {
   // console.log("Approve followRequest received");
   let followingid = req.ObtainedData;
   let followerid = req.body.nameValuePairs.followerId;
-  if (!followerid) return res.status(400).json(new ApiError(400, {}));
+  if (!followerid) return res.status(400).json(new ApiError(400, API_ERROR,{}));
   try {
     const query = `update followers set isApproved=true where followerid=? and  followingid=? and isApproved=false`;
     await fetchDb(query, [followerid, followingid]);
     notifyFollowRequestApproved(followerid, followingid);
     return res.json(new Response(200, { msg: "success" }));
   } catch (error) {
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
 
 let unfollowController = async (req, res) => {
   let followerid = req.ObtainedData;
   let followingid = req.body.nameValuePairs.followingid;
-  if (!followingid) return res.status(400).json(new ApiError(400, {}));
+  if (!followingid) return res.status(400).json(new ApiError(400,API_ERROR ,{}));
   let query =
     "delete from followers where  followerid = ? and followingid=? and isApproved=true ";
   try {
@@ -105,14 +106,14 @@ let unfollowController = async (req, res) => {
     res.json(new Response(201, { mag: "success" }));
   } catch (error) {
     console.log(error);
-    res.status(500).json(new ApiError(500, {}));
+    res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
 
 const getFollowersController = async (req, res) => {
   let requestingUser = req.ObtainedData;
   let userid = req.params.userid;
-  if (!userid) return res.status(400).json(new ApiError(400, {}));
+  if (!userid) return res.status(400).json(new ApiError(400, API_ERROR,{}));
   let query = `select users.uuid,
     users.userid,
     users.isPrivate,
@@ -131,14 +132,14 @@ const getFollowersController = async (req, res) => {
     return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
 
 const getFollowingController = async (req, res) => {
   let requestingUser = req.ObtainedData;
   let userid = req.params.userid;
-  if (!userid) return res.status(400).json(new ApiError(400, {}));
+  if (!userid) return res.status(400).json(new ApiError(400,API_ERROR ,{}));
   let query = `select users.uuid ,
   users.userid ,
   users.isPrivate,
@@ -155,7 +156,7 @@ const getFollowingController = async (req, res) => {
     return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
 const notifyNewFollower = async (followerId, followingId) => {
@@ -208,7 +209,7 @@ where flws.followingid=? and isApproved=false
     return res.json(new Response(200, response));
   } catch (error) {
     console.log(error);
-    return req.sendStatus(500);
+    return res.status(500).json(new ApiError(500,API_ERROR,{}));
   }
 };
 

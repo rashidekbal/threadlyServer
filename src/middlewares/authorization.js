@@ -4,17 +4,18 @@ import "dotenv/config";
 import redisClient from "../redis/redis.js";
 import fetchDb from "../utils/query.js";
 import { sessionIdExpireTime } from "../constants/RedisConstants.js";
+import { AUTH_ERROR } from "../constants/Error_types.js";
 async function verifyToken(req, res, next) {
   let header = req.headers["authorization"];
-  if (!header) return res.status(401).json(new ApiError(401, {}));
+  if (!header) return res.status(401).json(new ApiError(401, AUTH_ERROR,{}));
   let token = header.split(" ")[1];
-  if (token ==null) return res.status(401).json(new ApiError(401, {}));
+  if (token ==null) return res.status(401).json(new ApiError(401,AUTH_ERROR ,{}));
   jwt.verify(token, process.env.SECRET_KEY, async(err, result) => {
-    if (err){console.log(err); return res.status(401).json(new ApiError(401, {}))};
+    if (err){console.log(err); return res.status(401).json(new ApiError(401,AUTH_ERROR ,{}))};
     const sessionId=result.sessionId;
-     if(!sessionId||!result.userid)return res.status(401).json(new ApiError(401, {}));
+     if(!sessionId||!result.userid)return res.status(401).json(new ApiError(401,AUTH_ERROR ,{}));
     let isValidSession =await validateSession(sessionId,result.userid);
-    if(!isValidSession)return res.status(401).json(new ApiError(401, {}));
+    if(!isValidSession)return res.status(401).json(new ApiError(401, AUTH_ERROR,{}));
     req.ObtainedData = result.userid;
    return next();
   });

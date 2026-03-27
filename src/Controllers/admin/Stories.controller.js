@@ -1,6 +1,7 @@
 import Response from "../../constants/Response.js";
 import ApiError from "../../constants/ApiError.js";
 import fetchDb from "../../utils/query.js";
+import { API_ERROR } from "../../constants/Error_types.js";
 
 const getUserStoriesController = async (req, res) => {
   const db_query = `
@@ -16,7 +17,7 @@ select st.*,
     let result = await fetchDb(db_query, [userid]);
     return res.json(new Response(200, result));
   } catch (error) {
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
 export { getUserStoriesController };

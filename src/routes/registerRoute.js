@@ -6,46 +6,11 @@ import verifyAge from "../utils/ageVerfy.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import bcrypt from "bcrypt";
-import { registerUserEmailController } from "../Controllers/authController.js";
+import { register_phone_controller, registerUserEmailController } from "../Controllers/authController.js";
+import { API_ERROR } from "../constants/Error_types.js";
 
 let route = express.Router();
-route.post("/mobile", verifyToken, async (req, res) => {
-  let phone = req.ObtainedData.phone;
-  let password = req.body.nameValuePairs.password;
-  let dob = req.body.nameValuePairs.dob;
-  let username = req.body.nameValuePairs.username;
-  if (!phone || !password || !dob || !username) {
-    return res.status(400).json(new ApiError(400, {}));
-  }
-  try {
-    password = await bcrypt.hash(password, 12);
-  } catch (error) {
-    console.log(error);
-  }
-
-  let userid = username.split(" ")[0] + Date.now();
-  let isAdult = verifyAge(dob);
-  let db_query = `insert into users (userid,username,phone,pass,dob) values (?,?,?,?,?)`;
-  let data = [`${userid}`, `${username}`, `${phone}`, `${password}`, `${dob}`];
-  if (!isAdult) {
-    return res.status(403).json(new ApiError(403, {}));
-  } else {
-    connection.query(db_query, data, (err, response) => {
-      if (!err) {
-        let token = jwt.sign(userid, process.env.SECRET_KEY);
-        res.json({
-          message: "sucess",
-          username: username,
-          profile: null,
-          userid: userid,
-          token: token,
-        });
-      } else {
-        res.status(500).json(new ApiError(500, {}));
-      }
-    });
-  }
-});
+route.route("/mobile").post( verifyToken,register_phone_controller);
 route.post("/email", verifyToken, registerUserEmailController);
 
 export default route;

@@ -6,31 +6,32 @@ import { uploadOnColudinaryviaLocalPath } from "../utils/cloudinary.js";
 import { v4 } from "uuid";
 import redisClient from "../redis/redis.js";
 import { sessionIdExpireTime } from "../constants/RedisConstants.js";
+import { API_ERROR } from "../constants/Error_types.js";
 
 const editNameController = async (req, res) => {
   let userid = req.ObtainedData;
   let name = req.body.nameValuePairs.name;
-  if (!name || name.length < 3) return res.status(400).json(new ApiError(400, {}));
+  if (!name || name.length < 3) return res.status(400).json(new ApiError(400, API_ERROR,{}));
   const query = `update users set username=? where userid=?`;
   try {
     let response = await fetchDb(query, [name, userid]);
     return res.json(new Response(201, { message: "success", newName: name }));
   } catch (e) {
     console.log(e.message);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
 
 const editUserIdController = async (req, res) => {
   let userid = req.ObtainedData;
   let updateUserid = req.body.nameValuePairs.newUserId;
-  if (!updateUserid || updateUserid.length < 6) return res.status(400).json(new ApiError(400, {}));
+  if (!updateUserid || updateUserid.length < 6) return res.status(400).json(new ApiError(400, API_ERROR,{}));
   let checkQuery = `select userid from users where userid=?`;
   let updateQuery = `update users set userid=? , sessionId=? where userid=?`;
   const sessionId=v4();
   try {
     let existance = await fetchDb(checkQuery, updateUserid);
-    if (existance.length > 0) return res.status(409).json(new ApiError(409, {}));
+    if (existance.length > 0) return res.status(409).json(new ApiError(409, API_ERROR,{}));
 
     let response = await fetchDb(updateQuery, [updateUserid, sessionId,userid]);
     await redisClient.set(`UserSession:${updateUserid}`,sessionId);
@@ -39,13 +40,13 @@ const editUserIdController = async (req, res) => {
     return res.json(new Response(200, { token: token, userid: updateUserid }));
   } catch (e) {
     console.log(e.message);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
 const editUserBioController = async (req, res) => {
   let userid = req.ObtainedData;
   let bio = req.body.nameValuePairs.bioText;
-  if (!bio) return res.status(400).json(new ApiError(400, {}));
+  if (!bio) return res.status(400).json(new ApiError(400, API_ERROR,{}));
   const updateQuery = `update users set bio=? where userid=? `;
 
   try {
@@ -53,7 +54,7 @@ const editUserBioController = async (req, res) => {
     return res.json(new Response(201, "successfully updated user"));
   } catch (e) {
     console.log(e.message);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
 const editProfileController = async (req, res) => {
@@ -62,21 +63,21 @@ const editProfileController = async (req, res) => {
   let url;
   if (process.env.PRODUCTION == "true") {
     imagePath = req.file?.buffer;
-    if (!imagePath) return res.status(500).json(new ApiError(500, {}));
+    if (!imagePath) return res.status(500).json(new ApiError(500, API_ERROR,{}));
     url = await uploadOnColudinaryFromRam(imagePath);
   } else {
     imagePath = req.file?.path;
-    if (!imagePath) return res.status(500).json(new ApiError(500, {}));
+    if (!imagePath) return res.status(500).json(new ApiError(500, API_ERROR,{}));
     url = await uploadOnColudinaryviaLocalPath(imagePath);
   }
-  if (!url) return res.status(500).json(new ApiError(500, {}));
+  if (!url) return res.status(500).json(new ApiError(500, API_ERROR,{}));
   try {
     let query = `update users set profilepic=? where userid=?`;
     let response = await fetchDb(query, [url, userid]);
     return res.json(new Response(201, { url: url, message: "success" }));
   } catch (e) {
     console.log(e.message);
-    return res.status(500).json(new ApiError(500, {}));
+    return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
 export {

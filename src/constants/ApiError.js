@@ -4,11 +4,13 @@ export default class ApiError {
     status;
     
     /** Error message describing what went wrong */
-    data;
+    errorBody;
+    errorType;
 
     
-    constructor(status, data) {
+    constructor(status,errorType ,dataObject) {
         this.status = status;
-        this.data = data;
+        this.errorBody = dataObject;
+        this.errorType=errorType;
     }
 }

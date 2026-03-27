@@ -7,6 +7,7 @@ import fetchDb from "../utils/query.js"; // Helper function for executing databa
 import { emailRegex } from "../constants/regex.js"; // Regex pattern for validating email addresses
 import Response from "../constants/Response.js"; // Class for standardized API responses
 import ApiError from "../constants/ApiError.js";
+import { API_ERROR, AUTH_ERROR } from "../constants/Error_types.js";
 
 /**
  * Function to send an OTP to a mobile number.
@@ -42,12 +43,12 @@ let sendOtpMobile = (req, res) => {
           res.json(new Response(200, "success"));
         } else {
           // Handle error in sending the OTP
-          res.status(500).json(new ApiError(500, {}));
+          res.status(500).json(new ApiError(500, API_ERROR,{}));
         }
       });
     } else {
       // Handle database insertion error
-      res.status(500).json(new ApiError(500, {}));
+      res.status(500).json(new ApiError(500, API_ERROR,{}));
     }
   });
 };
@@ -63,7 +64,7 @@ function verifyOtpMobile(req, res) {
   let phone = req.body.nameValuePairs.phone; // Extract phone number from the request body
 
   // Return 400 Bad Request if OTP or phone number is missing
-  if (!otp || !phone) return res.status(400).json(new ApiError(400, {}));
+  if (!otp || !phone) return res.status(400).json(new ApiError(400, API_ERROR,{}));
 
   // SQL query to validate OTP within a 5-minute timeframe
   let query = `SELECT * FROM otpmodel WHERE phone_email= ? AND otp=? AND createdAt >=NOW() -INTERVAL 5 MINUTE AND flag='false' `;
@@ -85,11 +86,11 @@ function verifyOtpMobile(req, res) {
         res.json({ token: token }); // Send the token to the user
       } else {
         // Return 401 Unauthorized if OTP verification fails
-        res.status(401).json(new ApiError(401, {}));
+        res.status(401).json(new ApiError(401, AUTH_ERROR,{}));
       }
     } else {
       // Handle server errors
-      res.status(500).json(new ApiError(500, { msg: "something went wrong" }));
+      res.status(500).json(new ApiError(500, API_ERROR,{ msg: "something went wrong" }));
     }
   });
 }
@@ -116,7 +117,7 @@ async function generateOtpEmail(req, res) {
     res.json(new Response(200, "success")); // Send success response
   } catch (error) {
     console.log("error sending otp" + error); // Log the error
-    res.status(500).json(new ApiError(500, {})); // Return server error
+    res.status(500).json(new ApiError(500, API_ERROR,{})); // Return server error
   }
 }
 
@@ -134,7 +135,7 @@ async function verifyOtpEmail(req, res) {
   let isvalidEmail = emailRegex.test(email);
 
   // Return 400 Bad Request if OTP or email is invalid
-  if (!otp || !isvalidEmail) return res.status(400).json(new ApiError(400, {}));
+  if (!otp || !isvalidEmail) return res.status(400).json(new ApiError(400, API_ERROR,{}));
 
   // SQL query to validate OTP within a 5-minute timeframe
   let query = `SELECT * FROM otpmodel WHERE phone_email= ? AND otp=? AND createdAt >=NOW() -INTERVAL 5 MINUTE AND flag='false' `;
@@ -158,11 +159,11 @@ async function verifyOtpEmail(req, res) {
       res.json({ token: token }); // Send the token to the user
     } else {
       // Return 401 Unauthorized if OTP verification fails
-      res.status(401).json(new ApiError(401, {}));
+      res.status(401).json(new ApiError(401, AUTH_ERROR,{}));
     }
   } catch (error) {
     // Handle server errors
-    res.status(500).json(new ApiError(500, {}));
+    res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 }
 

@@ -1,5 +1,6 @@
 import fetchDb from "../utils/query.js"; // Helper function for database queries
 import ApiError from "../constants/ApiError.js";
+import { API_ERROR } from "../constants/Error_types.js";
 
 /**
  * Controller to get a list of users.
@@ -9,7 +10,7 @@ import ApiError from "../constants/ApiError.js";
  */
 async function getSuggestUsersController(req, res) {
   let userid = req.ObtainedData; // Extract user ID from the request
-  if (!userid) return res.status(400).json(new ApiError(400, {})); // Return 400 Bad Request if user ID is missing
+  if (!userid) return res.status(400).json(new ApiError(400, API_ERROR,{})); // Return 400 Bad Request if user ID is missing
 
   // SQL query to retrieve non-followed users with their follower count
   const Query = `
@@ -43,7 +44,7 @@ async function getSuggestUsersController(req, res) {
     res.json({ status: 200, data: response });
   } catch (err) {
     console.log(err); // Log any errors for debugging
-    return res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error on failure
+    return res.status(500).json(new ApiError(500, API_ERROR,{})); // Return 500 Internal Server Error on failure
   }
 }
 
@@ -55,7 +56,7 @@ async function getSuggestUsersController(req, res) {
 async function getUserController(req, res) {
   let userid = req.ObtainedData; // Extract user ID from the request
   let useridtofetch = req.params.userid; // Extract ID of the user to fetch
-  if (!useridtofetch) return res.status(400).json(new ApiError(400, {})); // Return 400 Bad Request if no user ID is provided
+  if (!useridtofetch) return res.status(400).json(new ApiError(400, API_ERROR,{})); // Return 400 Bad Request if no user ID is provided
 
   // SQL query to fetch detailed user data along with counts (posts, followers, following
 
@@ -100,13 +101,13 @@ async function getUserController(req, res) {
   
   } catch (err) {
     console.log(err); // Log any errors
-    return res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error on failure
+    return res.status(500).json(new ApiError(500,API_ERROR ,{})); // Return 500 Internal Server Error on failure
   }
 }
 
 async function getUserByUUidController(req, res) {
   let uuid = req.params.uuid; // Extract ID of the user to fetch
-  if (!uuid) return res.status(400).json(new ApiError(400, {})); // Return 400 Bad Request if no user ID is provided
+  if (!uuid) return res.status(400).json(new ApiError(400, API_ERROR,{})); // Return 400 Bad Request if no user ID is provided
 
   // SQL query to fetch detailed user data along with counts (posts, followers, following
 
@@ -126,7 +127,7 @@ async function getUserByUUidController(req, res) {
     return res.json({ status: 200, data: response }); // Return query results
   } catch (err) {
     console.log(err); // Log any errors
-    return res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error on failure
+    return res.status(500).json(new ApiError(500, API_ERROR,{})); // Return 500 Internal Server Error on failure
   }
 }
 
@@ -172,7 +173,7 @@ async function getMyDataController(req, res) {
     return res.json({ status: 200, data: response }); // Return query results
   } catch (err) {
     console.log(err); // Log any errors
-    return res.status(500).json(new ApiError(500, {})); // Return 500 Internal Server Error on failure
+    return res.status(500).json(new ApiError(500, API_ERROR,{})); // Return 500 Internal Server Error on failure
   }
 }
 
