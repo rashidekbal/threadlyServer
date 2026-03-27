@@ -1,3 +1,4 @@
+import logger from "./Pino.js";
 import fetchDb from "./query.js";
 
 const addMessageToDb = (
@@ -32,7 +33,8 @@ const addMessageToDb = (
       ]);
       resolve(new Response(201, { msg: "success" }));
     } catch (error) {
-      console.log(error);
+          logger.error(formErrorBody(error,null));
+
       reject(error);
     }
   });
@@ -51,7 +53,8 @@ const getUUidFromUserId = (userid) => {
         reject(null);
       }
     } catch (error) {
-      console.log(error);
+          logger.error(formErrorBody(error,null));
+
       reject(null);
     }
   });
@@ -70,7 +73,8 @@ const getFcmTokenWithUUid = (uuid) => {
         reject(null);
       }
     } catch (error) {
-      console.log(error);
+           logger.error(formErrorBody(error,null));
+
       reject(null);
     }
   });
@@ -87,6 +91,8 @@ async function getBasicUserDetailsFromUUid(uuid){
       resolve(response);
 
     }catch (e){
+     logger.error(formErrorBody(e,null));
+
       reject(e);
     }
 

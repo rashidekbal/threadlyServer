@@ -50,6 +50,7 @@ async function sendEmailOtp(email, otp) {
     let response = await transporter.sendMail(mailOptions);
     return response.response;
   } catch (error) {
+    logger.error(formErrorBody(error,null));
     return error;
   }
 }

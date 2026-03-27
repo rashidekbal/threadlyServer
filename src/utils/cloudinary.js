@@ -1,3 +1,4 @@
+import logger from "./Pino.js";
 import { v2 as cloudinary } from "cloudinary";
 import "dotenv/config";
 import fs from "fs";
@@ -26,7 +27,8 @@ async function uploadOnColudinaryFromRam(buffer) {
       stream.end(buffer); // ⬅️ RAM buffer se upload
     });
   } catch (error) {
-    console.log(error);
+         logger.error(formErrorBody(error,null));
+
     return null;
   }
 }
@@ -44,7 +46,8 @@ async function uploadOnColudinaryviaLocalPath(localpath) {
     return response.url;
   } catch (error) {
     fs.unlinkSync(localpath); //remove temp file
-    console.log(error);
+        logger.error(formErrorBody(error,null));
+
     return null;
   }
 }

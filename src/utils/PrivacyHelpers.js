@@ -1,3 +1,4 @@
+import logger from "./Pino.js";
 import fetchDb from "./query.js";
 
 const isUserPrivate = async (userid) => {
@@ -9,7 +10,8 @@ const isUserPrivate = async (userid) => {
       const isPrivate = response[0].isPrivate == 1;
       resolve(isPrivate);
     } catch (error) {
-      console.log(err);
+           logger.error(formErrorBody(error,null));
+
       reject(error);
     }
   });
