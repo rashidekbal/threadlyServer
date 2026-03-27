@@ -145,7 +145,7 @@ const notify_Post_unliked = async (postId, userId) => {
           PostDetailsResponse[0].userid,
         );
       } catch (e) {
-        logger.error(formErrorBody(error,null));
+        logger.error(formErrorBody(e,null));
       }
     } else {
       // console.log("either token is null or username is null");
@@ -183,7 +183,7 @@ const notifyPostLike = async (postId, userid, insertId) => {
           ReceiverUserId,
         );
       } catch (e) {
-        logger.error(formErrorBody(error,null));
+        logger.error(formErrorBody(e,null));
       }
     } else {
       // console.log("either token is null or username is null");
