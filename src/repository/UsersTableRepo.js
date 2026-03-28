@@ -1,4 +1,5 @@
 import bcryptUtil from "../utils/BcryptUtil.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 import fetchDb from "../utils/query.js";
 async function getUserForAuth(userid){
     if(!userid)return null;

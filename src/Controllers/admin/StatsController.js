@@ -1,4 +1,5 @@
 import Response from "../../constants/Response.js";
+import logger, { formErrorBody } from "../../utils/Pino.js";
 import fetchDb from "../../utils/query.js";
 
 export async function statsController(req, res) {

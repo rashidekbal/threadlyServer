@@ -8,6 +8,7 @@ import { emailRegex } from "../constants/regex.js"; // Regex pattern for validat
 import Response from "../constants/Response.js"; // Class for standardized API responses
 import ApiError from "../constants/ApiError.js";
 import { API_ERROR, AUTH_ERROR } from "../constants/Error_types.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 
 /**
  * Function to send an OTP to a mobile number.

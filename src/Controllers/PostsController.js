@@ -1,4 +1,4 @@
-import logger from "../utils/Pino.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 import {
   uploadOnColudinaryFromRam,
   uploadOnColudinaryviaLocalPath,
@@ -7,7 +7,7 @@ import fetchDb from "../utils/query.js";
 import ApiError from "../constants/ApiError.js";
 import "dotenv/config";
 import Response from "../constants/Response.js";
-import { getUUidFromUserId } from "../utils/ReusableFunctions.js";
+
 import { API_ERROR } from "../constants/Error_types.js";
 
 async function backgroundUpload(path, userid, caption, type) {

@@ -1,4 +1,4 @@
-import logger from "./Pino.js";
+import logger, { formErrorBody } from "./Pino.js";
 import { v2 as cloudinary } from "cloudinary";
 import "dotenv/config";
 import fs from "fs";

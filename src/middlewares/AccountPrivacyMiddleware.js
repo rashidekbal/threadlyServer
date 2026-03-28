@@ -1,4 +1,4 @@
-import logger from "../utils/Pino.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 import { isUserPrivate } from "../utils/PrivacyHelpers.js";
 import ApiError from "../constants/ApiError.js";
 import fetchDb from "../utils/query.js";

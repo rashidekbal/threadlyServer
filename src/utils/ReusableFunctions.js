@@ -1,4 +1,4 @@
-import logger from "./Pino.js";
+import logger, { formErrorBody } from "./Pino.js";
 import fetchDb from "./query.js";
 
 const addMessageToDb = (
@@ -99,4 +99,9 @@ async function getBasicUserDetailsFromUUid(uuid){
   })
 }
 
-export { addMessageToDb, getUUidFromUserId, getFcmTokenWithUUid,getBasicUserDetailsFromUUid };
+const get_CurrentTimeStamp_Sql_Format=()=>{
+  const date=new Date();
+  return date.toISOString().slice(0,19).replace("T"," ");
+}
+
+export { addMessageToDb, getUUidFromUserId, getFcmTokenWithUUid,getBasicUserDetailsFromUUid,get_CurrentTimeStamp_Sql_Format };

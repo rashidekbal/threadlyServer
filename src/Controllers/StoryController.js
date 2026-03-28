@@ -1,5 +1,5 @@
 import "dotenv/config";
-import logger from "../utils/Pino.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 
 import fetchDb from "../utils/query.js";
 import {

@@ -1,4 +1,4 @@
-import logger from "../utils/Pino.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 import fetchDb from "../utils/query.js";
 import ApiError from "../constants/ApiError.js";
 import Response from "../constants/Response.js";
@@ -220,10 +220,7 @@ const notifyCommentLike = async (commentId, userid) => {
           ReceiverUserId,
         );
       } catch (e) {
-        logger.error(
-          { err: e, code: e.statusCode || 500 },
-          e.message || "Internal Server Error",
-        );
+         logger.error(formErrorBody(e,null));
       }
     } else {
       // console.log("either token is null or username is null");
@@ -248,7 +245,7 @@ const notifyCommentUnLike = async (commentId, userid) => {
           ReceiverUserId,
         );
       } catch (e) {
-        logger.error(formErrorBody(error,null));
+        logger.error(formErrorBody(e,null));
       }
     } else {
       // console.log("either token is null or username is null");

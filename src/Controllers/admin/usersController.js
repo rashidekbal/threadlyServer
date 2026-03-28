@@ -1,4 +1,4 @@
-import logger from "../../utils/Pino.js";
+import logger, { formErrorBody } from "../../utils/Pino.js";
 import Response from "../../constants/Response.js";
 import ApiError from "../../constants/ApiError.js";
 import fetchDb from "../../utils/query.js";
@@ -7,6 +7,8 @@ import { uploadOnColudinaryviaLocalPath } from "../../utils/cloudinary.js";
 
 import redisClient from "../../redis/redis.js";
 import { API_ERROR } from "../../constants/Error_types.js";
+import { get_CurrentTimeStamp_Sql_Format } from "../../utils/ReusableFunctions.js";
+import ApiError_Body from "../../constants/ApiError_body.js";
 
 const getUsersController = async (req, res) => {
   const db_query = `select usr.userid,usr.username,
@@ -31,7 +33,7 @@ const getUsersController = async (req, res) => {
     const result = await fetchDb(db_query);
     return res.json(new Response(200, result));
   } catch (error) {
-    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
+     logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -60,7 +62,7 @@ const getUserInfoController = async (req, res) => {
     const result = await fetchDb(db_query, [userid]);
     return res.json(new Response(200, result));
   } catch (error) {
-    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
+     logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -75,7 +77,7 @@ const overridePasswordController = async (req, res) => {
     await fetchDb(query, [encrypterPassword, uuid]);
     return res.status(201).json(new ApiError(201, {}));
   } catch (error) {
-    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
+     logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -87,7 +89,7 @@ const editUserInfoController = async (req, res) => {
     await fetchDb(db_query, [userid, username, email, uuid]);
     return res.status(201).json(new ApiError(201, {}));
   } catch (error) {
-    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
+     logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -102,7 +104,7 @@ const editUserProfilePicController = async (req, res) => {
     await fetchDb(db_query, [url, uuid]);
     res.status(201).json(new ApiError(201, {}));
   } catch (error) {
-    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
+     logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500,API_ERROR ,{}));
   }
 };
@@ -114,7 +116,7 @@ const deleteUserProfilePicController = async (req, res) => {
     await fetchDb(db_query, [uuid]);
     return res.status(200).json(new ApiError(200, {}));
   } catch (error) {
-    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
+     logger.error(formErrorBody(error,req));
     return res.status(500).json(new ApiError(500, API_ERROR,{}));
   }
 };
@@ -130,15 +132,16 @@ const restrictUserController =async (req, res) => {
   }else{
     banDuration="permanent";
   }
-  const db_query=`update users set blocked=1, banDuration=? ,sessionId=null , fcmToken=null , banReason=? where uuid=?`
+  const db_query=`update users set blocked=1, banDuration=?,banned_at=? ,sessionId=null , fcmToken=null , banReason=? where uuid=?`
 
   try {
-    let result=  await fetchDb(db_query,[banDuration,banReason,uuid]);
+    let result=  await fetchDb(db_query,[banDuration,get_CurrentTimeStamp_Sql_Format(),banReason,uuid]);
     redisClient.del(`UserSession:${userid}`);
   return res.status(200).json(new Response(200,result));
   } catch (error) {
-    logger.error({ err: error, code: error.statusCode || 500 }, error.message || "Internal Server Error");
-    return res.status(500).json(new ApiError(500, API_ERROR,{}));
+     logger.error(formErrorBody(error,req));
+     console.log(error)
+    return res.status(500).json(new ApiError(500, API_ERROR,new ApiError_Body(error)));
   }
 };
 const unRestrictUserController =async (req, res) => {
@@ -146,7 +149,7 @@ const unRestrictUserController =async (req, res) => {
   if(!uuid)return res.status(400).json(new ApiError(400, API_ERROR,{}));
   
  
-  const db_query=`update users set blocked=0 , banDuration='none', banReason=null where uuid=?`
+  const db_query=`update users set blocked=0 , banDuration='none',banned_at=null ,banReason=null where uuid=?`
 
   try {
     let result=  await fetchDb(db_query,[uuid]);

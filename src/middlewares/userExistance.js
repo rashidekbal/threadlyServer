@@ -3,6 +3,7 @@ import ApiError from "../constants/ApiError.js";
 import { emailRegex } from "../constants/regex.js";
 import fetchDb from "../utils/query.js";
 import { API_ERROR } from "../constants/Error_types.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 function ifUserExistsMobile(req, res, next) {
   let phone = req.body.nameValuePairs.phone;
   if (!phone || phone.length < 10) return res.status(400).json(new ApiError(400, API_ERROR,{}));

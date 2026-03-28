@@ -1,4 +1,4 @@
-import logger from "../utils/Pino.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 import fetchDb from "../utils/query.js";
 import Response from "../constants/Response.js";
 import ApiError from "../constants/ApiError.js";

@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import "dotenv/config";
+import logger, { formErrorBody } from "./Pino.js";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",

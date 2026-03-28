@@ -1,4 +1,4 @@
-import logger from "../utils/Pino.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 import { notifyStatus_via_Fcm, notifyUnsendMessageViaFcm, sendMessage } from "../Fcm/FcmService.js";
 import { socketIo } from "../App.js"
 import fetchDb from "../utils/query.js";

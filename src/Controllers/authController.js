@@ -1,4 +1,4 @@
-import logger from "../utils/Pino.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 import fetchDb from "../utils/query.js"; // Utility function to execute database queries.
 import verifyAge from "../utils/ageVerfy.js"; // Utility function to verify if a user is an adult based on their date of birth.
 import jwt from "jsonwebtoken"; // Library for generating JSON Web Tokens (JWT).

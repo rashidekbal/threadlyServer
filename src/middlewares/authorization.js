@@ -1,4 +1,4 @@
-import logger from "../utils/Pino.js";
+import logger, { formErrorBody } from "../utils/Pino.js";
 import jwt from "jsonwebtoken";
 import ApiError from "../constants/ApiError.js";
 import "dotenv/config";

@@ -46,6 +46,7 @@ const sendMessage = (token, Message) => {
       resolve(new Response(200, { msg: "success" }));
 
     } catch (error) {
+  
       reject(new Response(500, { msg: error }));
     }
   })

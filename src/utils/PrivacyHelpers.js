@@ -1,4 +1,4 @@
-import logger from "./Pino.js";
+import logger, { formErrorBody } from "./Pino.js";
 import fetchDb from "./query.js";
 
 const isUserPrivate = async (userid) => {

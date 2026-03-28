@@ -2,6 +2,7 @@ import Response from "../../constants/Response.js";
 import ApiError from "../../constants/ApiError.js";
 import fetchDb from "../../utils/query.js";
 import { API_ERROR } from "../../constants/Error_types.js";
+import logger, { formErrorBody } from "../../utils/Pino.js";
 
 const getUserStoriesController = async (req, res) => {
   const db_query = `
