@@ -151,6 +151,7 @@ async function getImageFeed(req, res) {
       COUNT(DISTINCT plp.likeid) AS isLiked,
       COUNT(DISTINCT flw.followid) AS isFollowed,
       COUNT(DISTINCT pv.viewId) as viewCount
+      
 
     FROM imagepost AS p
            JOIN users AS u ON p.userid = u.userid
@@ -165,6 +166,7 @@ async function getImageFeed(req, res) {
            LEFT JOIN followers AS flw
                      ON p.userid = flw.followingid AND flw.followerid = ?
           LEFT JOIN postview as pv on p.postid=pv.postid
+          
 
     WHERE
       p.type = "image"
@@ -215,6 +217,7 @@ LEFT JOIN followers AS flw
         ON p.userid = flw.followingid AND flw.followerid = ?
 LEFT JOIN postview as pv on p.postid=pv.postid
 
+
 WHERE 
     p.type = "video"
     AND (u.isPrivate = 0 OR( flw.followid IS NOT NULL and flw.isApproved=true))
@@ -251,6 +254,8 @@ SELECT
     COUNT(DISTINCT plp.likeid) AS isLiked,
     COUNT(DISTINCT flw.followid) AS isFollowed,
     count(DISTINCT pv.viewId) as viewCount
+   
+
 FROM imagepost AS p
 JOIN users AS u ON p.userid = u.userid
 LEFT JOIN post_likes AS pl ON p.postid = pl.postid

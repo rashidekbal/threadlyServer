@@ -16,7 +16,7 @@ select usr.userid,
 usr.profilepic,
 usr.uuid
 from users as usr left join post_likes as pl on usr.userid=pl.userid 
-where pl.postid=? and usr.blocked=false group by pl.likeid , usr.userid
+where pl.postid=? and usr.blocked=false group by  usr.userid
 limit 100 offset ?`;
     if(!postid)return res.status(400).json(new ApiError(400,API_ERROR,new ErrorBody_apiError("PLEASE PROVIDE A VALID POST ID")));
     try {
@@ -41,7 +41,7 @@ select usr.userid,
 usr.profilepic,
 usr.uuid
 from users as usr left join post_shares as ps on usr.userid=ps.sharerid 
-where ps.postid=? and usr.blocked=false group by ps.shareid , usr.userid
+where ps.postid=? and usr.blocked=false group by usr.userid
 limit 100 offset ?`;
     if(!postid)return res.status(400).json(new ApiError(400,API_ERROR,new ErrorBody_apiError("PLEASE PROVIDE A VALID POST ID")));
     try {
