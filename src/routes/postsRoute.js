@@ -13,6 +13,8 @@ import {
   removePost,
 } from "../Controllers/PostsController.js";
 import accessCheckLayer from "../middlewares/AccountPrivacyMiddleware.js";
+import { likedBy_User_controller, sharedBy_User_Record_controller } from "../Controllers/PostStats.controller.js";
+import { handlePostShareController } from "../Controllers/postShare_controller.js";
 let ProductionMode = process.env.PRODUCTION === "true";
 let Router = express.Router();
 if (ProductionMode) {
@@ -47,6 +49,9 @@ Router.route("/getVideoPostsFeed").get(verifyToken, getVideoFeed);
 Router.get("/getUserPosts/:userid", verifyToken,accessCheckLayer ,getUserPostsController);
 Router.route("/getPost/:postid").get(verifyToken,getPostinfo);
 Router.route("/postViewed/:postid").post(verifyToken,postViewRecordController);
+Router.route("/:postid/likedby").get(verifyToken,likedBy_User_controller);
+Router.route("/share").post(verifyToken,handlePostShareController);
+Router.route("/:postid/sharedby").get(verifyToken,sharedBy_User_Record_controller);
 
 
 export default Router;

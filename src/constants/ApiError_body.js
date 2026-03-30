@@ -1,4 +1,4 @@
-export default class ApiError_Body{
+export default class ErrorBody_apiError{
     errorDetails;
     constructor(errorDetails){
         this.errorDetails=errorDetails;
