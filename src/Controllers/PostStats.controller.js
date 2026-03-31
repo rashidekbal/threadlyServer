@@ -32,7 +32,8 @@ limit 100 offset ?`;
     }
 }
 const storyViewed_by_User_controller=async(req,res)=>{
-    const storyid=req.params.storyid;
+    const userid=req.ObtainedData;
+     const storyid=req.params.storyid;
     const page=req.query.page;
     const offset=page&&page==1?0:page>1?page-1:0
     const get_ViewedBy_users_query=`
@@ -40,12 +41,13 @@ select usr.userid,
  usr.username,
 usr.profilepic,
 usr.uuid
-from users as usr left join storyview as sv on usr.userid=sv.userid 
-where sv.storyid=? and usr.blocked=false group by  usr.userid
+from users as usr left join storyview as sv on usr.userid=sv.userid and not(sv.userid=?)
+left join story as ps on ps.id=sv.storyid
+where ps.userid=? and sv.storyid=? and usr.blocked=false group by  usr.userid
 limit 100 offset ?`;
-    if(!storyid)return res.status(400).json(new ApiError(400,API_ERROR,new ErrorBody_apiError("PLEASE PROVIDE A VALID STORY ID")));
+    if(!storyid||!userid)return res.status(400).json(new ApiError(400,API_ERROR,new ErrorBody_apiError("PLEASE PROVIDE A VALID STORY ID")));
     try {
-        let result=await fetchDb(get_ViewedBy_users_query,[storyid,offset*100])
+        let result=await fetchDb(get_ViewedBy_users_query,[userid,userid,storyid,offset*100])
         return res.json(new Response(200,result))
     } catch (error) {
         logger.error(formErrorBody(error,req));

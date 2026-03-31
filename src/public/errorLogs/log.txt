@@ -1,0 +1,2 @@
+{"level":50,"time":1774956371432,"pid":21180,"hostname":"rashid","msg":"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'sv.storyid='29' and usr.blocked=false group by  usr.userid\nlimit 100 offset 0' at line 7"}
+{"level":50,"time":1774956402013,"pid":6944,"hostname":"rashid","msg":"Table 'threadly.post_stories' doesn't exist"}

@@ -86,12 +86,15 @@ const getMyStoriesController = async (req, res) => {
 const getStoryOfUserController = async (req, res) => {
   let loggedInUser = req.ObtainedData;
   let userid = req.params.userid;
-  let query = `select st.* ,count(distinct sl.likeid)as isLiked
-   from story as st left join story_likes as sl on st.id=sl.storyid and sl.userid=?
-    where st.userid=? and st.createdAt >=NOW()-interval 24 hour group by st.id; 
+  let query = `select st.* ,count(distinct sl.likeid)as isLiked, 
+  count(distinct sv.userid)as isViewed,
+  0 as viewCount 
+  from story as st left join story_likes as sl on st.id=sl.storyid and sl.userid=? 
+  left join storyview as sv on st.id=sv.storyid and sv.userid=?
+  where st.userid=? and st.createdAt >=NOW()-interval 24 hour group by st.id; 
  `;
   try {
-    let response = await fetchDb(query, [loggedInUser, userid]);
+    let response = await fetchDb(query, [loggedInUser, loggedInUser,userid]);
     return res.json(new Response(200, response));
   } catch (error) {
    logger.error(formErrorBody(error,req));
