@@ -6,10 +6,12 @@ import {
   getStoriesAllController,
   getStoryOfUserController,
   removeStory,
+  StoryViewRecordController,
 } from "../Controllers/StoryController.js";
 import "dotenv/config";
 import { uploadtoDisk, uploadToRam } from "../middlewares/multer.js";
 import accessCheckLayer from "../middlewares/AccountPrivacyMiddleware.js";
+import { storyViewed_by_User_controller } from "../Controllers/PostStats.controller.js";
 
 const router = Router();
 const isProduction = process.env.PRODUCTION === "true";
@@ -26,4 +28,6 @@ router.route("/removeStory/:storyid").delete(verifyToken, removeStory);
 router.route("/getStories").get(verifyToken, getStoriesAllController);
 router.route("/getMyStories").get(verifyToken, getMyStoriesController);
 router.route("/getStories/:userid").get(verifyToken,accessCheckLayer ,getStoryOfUserController);
+router.route("/storyViewed/:storyid").post(verifyToken,StoryViewRecordController);
+router.route("/:storyid/viewedby").get(verifyToken,storyViewed_by_User_controller);
 export default router;

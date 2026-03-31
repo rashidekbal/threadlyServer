@@ -242,6 +242,11 @@ function setSocketFunctions(socket, io) {
   socket.on("postViewed",(data)=>{
     handlePostViewed(data,socket);
   });
+
+  //when user views some stories
+  socket.on("StoryViewed",(data)=>{
+    handleStoryViewed(data,socket);
+  });
   //when user gets disconnected
   socket.on("disconnect", () => {
     removeUser(socket.id);
@@ -254,6 +259,20 @@ async function handlePostViewed(data,socket){
  
   try {
     fetchDb(db_query,[data.userid,data.uuid,data.postid]);
+  } catch (error) {
+    logger.error(formErrorBody(error,null));
+    
+  }
+
+
+}
+
+async function handleStoryViewed(data,socket){
+  const db_query=`insert into storyview (userid,uuid,storyid) values(?,?,?)`;
+  
+ 
+  try {
+    fetchDb(db_query,[data.userid,data.uuid,data.storyid]);
   } catch (error) {
     logger.error(formErrorBody(error,null));
     
