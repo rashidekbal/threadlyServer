@@ -134,7 +134,7 @@ CREATE TABLE messages (
 
 
 
-create table Storyview (
+create table storyview (
 		viewId int not null primary key auto_increment,
   userid varchar(250) not null,
   uuid varchar(36) not null,
