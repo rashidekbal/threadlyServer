@@ -40,9 +40,11 @@ const storyViewed_by_User_controller=async(req,res)=>{
 select usr.userid,
  usr.username,
 usr.profilepic,
-usr.uuid
+usr.uuid,
+count(distinct sl.likeid)as isLiked
 from users as usr left join storyview as sv on usr.userid=sv.userid and not(sv.userid=?)
 left join story as ps on ps.id=sv.storyid
+left join story_likes as sl on ps.id=sl.storyid
 where ps.userid=? and sv.storyid=? and usr.blocked=false group by  usr.userid
 limit 100 offset ?`;
     if(!storyid||!userid)return res.status(400).json(new ApiError(400,API_ERROR,new ErrorBody_apiError("PLEASE PROVIDE A VALID STORY ID")));
