@@ -9,6 +9,7 @@ import {
 import Response from "../constants/Response.js";
 import ApiError from "../constants/ApiError.js";
 import { API_ERROR } from "../constants/Error_types.js";
+import ErrorBody_apiError from "../constants/ApiError_body.js";
 
 let ProductionMode = process.env.PRODUCTION === "true";
 const addStoryController = async (req, res) => {
@@ -79,7 +80,7 @@ const getMyStoriesController = async (req, res) => {
     return res.json(new Response(200, response));
   } catch (error) {
    logger.error(formErrorBody(error,req));
-    return res.status(500).json(new ApiError(500,API_ERROR ,{}));
+    return res.status(500).json(new ApiError(500,API_ERROR ,new ErrorBody_apiError(error)));
   }
 };
 
@@ -98,7 +99,7 @@ const getStoryOfUserController = async (req, res) => {
     return res.json(new Response(200, response));
   } catch (error) {
    logger.error(formErrorBody(error,req));
-    return res.status(500).json(new ApiError(500, API_ERROR,{}));
+    return res.status(500).json(new ApiError(500, API_ERROR,new ErrorBody_apiError(error)));
   }
 };
 async function removeStory(req, res) {
