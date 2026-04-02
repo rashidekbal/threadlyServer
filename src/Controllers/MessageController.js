@@ -286,7 +286,7 @@ const uploadMessageMedia=async(req,res )=>{
 const getAllChatsController=async(req,res)=>{
   const userid = req.ObtainedData;
   if(!userid)return res.status(400).json(new ApiError(400, API_ERROR,{}));
-  const query=`select * from messages where (senderUUid=? or recieverUUid=?) and isDeletedBoth=false and not deliveryStatus='null' order by senderUUid asc  `;
+  const query=`select * from messages where (senderUUid=? or recieverUUid=?) and isDeletedBoth=false and not deliveryStatus='null' order by senderUUid asc `;
   try {
      let uuid = await getUUidFromUserId(userid);
      if(!uuid)return res.status(400).json(new ApiError(400, API_ERROR,{}));
