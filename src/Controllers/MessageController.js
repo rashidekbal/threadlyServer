@@ -1,4 +1,4 @@
-import logger, { formErrorBody } from "../utils/Pino.js";
+import logger ,{formErrorBody} from "../utils/Pino.js";
 import Response from "../constants/Response.js";
 import ApiError from "../constants/ApiError.js";
 import { sendMessage } from "../Fcm/FcmService.js";
@@ -39,11 +39,10 @@ const getpendingMessagesController = async (req, res) => {
     receiverUuid = await getUUidFromUserId(userid);
     const query = `select * from messages where senderUUId=? and recieverUUId=? and deliveryStatus=1 order by creationTime asc`;
     let response = await fetchDb(query, [senderUuid, receiverUuid]);
-    // console.log(response.length+" length of pending to receive messages")
+   
    
     for (let i = 0; i < response.length; i++) {
-      // console.log("starting to notify");
-       //on database set messages to delivered
+     
     await fetchDb(
       "update messages set deliveryStatus=2 where senderUUID=? and recieverUUID=? and messageUid=? and deliveryStatus=1 ",
       [senderUuid, receiverUuid,response[i].messageUid],
@@ -58,47 +57,60 @@ const getpendingMessagesController = async (req, res) => {
   }
 };
 const sendMessageController = async (req, res) => {
-  let data = req.body.nameValuePairs;
-  if ((data == null) | (data == undefined)) return res.status(400).json(new ApiError(400, API_ERROR,{}));
-  let messageUid = data.MsgUid;
-  let replyToMessageId = data.replyToMessageId
-    ? data.replyToMessageId
-    : "null";
-  let senderProfile = data.senderProfilePic;
-  let senderUsername = data.senderName;
-  let senderUserid = data.senderUserId;
-  let senderUuid = data.senderUuid;
-  let receiverUuid = data.receiverUuid;
-  let type = data.type ? data.type : "text";
-  let message = data.msg;
-  let timestamp = data.timestamp;
-  let link=data.postLink?data.postLink:" "
-  let postId=data.postId;
-  if (!senderUuid || !receiverUuid || !timestamp || !messageUid) {
-    return res.status(400).json(new ApiError(400,API_ERROR ,{}));
+  const data = req.body.nameValuePairs;
+
+  //  Validate input
+  if (data == null || data == undefined) {
+    return res.status(400).json(new ApiError(400, API_ERROR, {}));
   }
 
-  //approach 1 is user on socket
-  let socketid = getSocketId(receiverUuid);
-  if (socketid != null) {
-     socketIo.to(socketid).emit("StoC", {
-        msg: message,
-        senderUuid,
-        receiverUuid,
-        username:senderUsername,
-        userid: senderUserid,
-        profile:senderProfile,
-        MsgUid:messageUid,
-        ReplyTOMsgUid:replyToMessageId,
-        type,
-        link,
-        postId,
-        timestamp,
-      });
-  
+  // Extract fields
+  const {
+    MsgUid: messageUid,
+    replyToMessageId,
+    senderProfilePic: senderProfile,
+    senderName: senderUsername,
+    senderUserId: senderUserid,
+    senderUuid,
+    receiverUuid,
+    type = "text",
+    msg: message,
+    timestamp,
+    postLink,
+    postId,
+    notificationText
+  } = data;
+
+  const replyTo = replyToMessageId ? replyToMessageId : "null";
+  const link = postLink ? postLink : " ";
+
+  // Required fields check
+  if (!senderUuid || !receiverUuid || !timestamp || !messageUid) {
+    return res.status(400).json(new ApiError(400, API_ERROR, {}));
+  }
+
+  // socket delivery
+  const socketId = getSocketId(receiverUuid);
+
+  if (socketId != null) {
+    socketIo.to(socketId).emit("StoC", {
+      msg: message,
+      senderUuid,
+      receiverUuid,
+      username: senderUsername,
+      userid: senderUserid,
+      profile: senderProfile,
+      MsgUid: messageUid,
+      ReplyTOMsgUid: replyTo,
+      type,
+      link,
+      postId,
+      timestamp,
+    });
+
     await addMessageToDb(
       messageUid,
-      replyToMessageId,
+      replyTo,
       senderUuid,
       receiverUuid,
       type,
@@ -109,6 +121,7 @@ const sendMessageController = async (req, res) => {
       2,
       false
     );
+
     return res.json(
       new Response(200, {
         MsgUid: messageUid,
@@ -116,83 +129,117 @@ const sendMessageController = async (req, res) => {
       })
     );
   }
-  //if socket id not found fall back fro fcm
-  let query = `select fcmToken from users where uuid=?`;
-  let response = await fetchDb(query, [receiverUuid]);
-  if (
-    response.length > 0 &&
-    (response[0].fcmToken != null || response[0].fcmToken != undefined)
-  ) {
-    const token = response[0].fcmToken;
 
-    try {
-      const messageToSend={
-        msg: data.msg,
+  // fallback for fcm
+  const query = `select fcmToken from users where uuid=?`;
+
+  try {
+    const response = await fetchDb(query, [receiverUuid]);
+
+    const hasValidToken =
+      response.length > 0 &&
+      (response[0].fcmToken != null && response[0].fcmToken != undefined);
+
+    if (hasValidToken) {
+      const token = response[0].fcmToken;
+
+      const messageToSend = {
+        msg: message,
         senderUuid,
         receiverUuid,
-        receiverUserId:"",
+        receiverUserId: "",
         username: senderUsername,
         userid: senderUserid,
-        profile:senderProfile,
-        MsgUid:messageUid,
-        ReplyTOMsgUid:replyToMessageId,
+        profile: senderProfile,
+        MsgUid: messageUid,
+        ReplyTOMsgUid: replyTo,
         type,
-        postId:String(data.postId),
+        postId: String(postId),
         link,
         timestamp,
         deliveryStatus: "-1",
         isDeleted: "false",
-        notificationText:data.notificationText?data.notificationText:"sent a message"
-      }
-      let result =await sendMessage(token,messageToSend);
-      // console.log(result.data.msg)
-      //add message to db
+        notificationText: notificationText
+          ? notificationText
+          : "sent a message",
+      };
 
-     
-      await addMessageToDb(
-        messageUid,
-        replyToMessageId,
-        senderUuid,
-        receiverUuid,
-        type,
-        message,
-        postId,
-        link,
-        timestamp,
-        2,
-        false
-      );
-      return res.json(
-        new Response(200, {
-          MsgUid: messageUid,
-          deliveryStatus: 2,
-        })
-      );
-    } catch (error) {
-     logger.error(formErrorBody(error,req));
-      //when fcm token found but message not send due to app not installed
-      
-      
-      await addMessageToDb(
-        messageUid,
-        replyToMessageId,
-        senderUuid,
-        receiverUuid,
-        type,
-        message,
-         postId,
-        link,
-        timestamp,
-        1,
-        false
-      );
-      return res.json(
-        new Response(200, {
-          MsgUid: messageUid,
-          deliveryStatus: 1,
-        })
-      );
+      try {
+        await sendMessage(token, messageToSend);
+
+        await addMessageToDb(
+          messageUid,
+          replyTo,
+          senderUuid,
+          receiverUuid,
+          type,
+          message,
+          postId,
+          link,
+          timestamp,
+          2,
+          false
+        );
+
+        return res.json(
+          new Response(200, {
+            MsgUid: messageUid,
+            deliveryStatus: 2,
+          })
+        );
+      } catch (error) {
+        logger.error(formErrorBody(error, req));
+
+        await addMessageToDb(
+          messageUid,
+          replyTo,
+          senderUuid,
+          receiverUuid,
+          type,
+          message,
+          postId,
+          link,
+          timestamp,
+          1,
+          false
+        );
+
+        return res.json(
+          new Response(200, {
+            MsgUid: messageUid,
+            deliveryStatus: 1,
+          })
+        );
+      }
     }
+
+    // No FCM token case
+    await addMessageToDb(
+      messageUid,
+      replyTo,
+      senderUuid,
+      receiverUuid,
+      type,
+      message,
+      postId,
+      link,
+      timestamp,
+      1,
+      false
+    );
+
+    return res.json(
+      new Response(200, {
+        MsgUid: messageUid,
+        deliveryStatus: 1,
+      })
+    );
+
+  } catch (error) {
+    logger.error(formErrorBody(error, req));
+    return res.status(500).json(
+      new ApiError(500, API_ERROR, new ErrorBody_apiError(error))
+    );
   }
 };
 const updateMessageSeenStatusController = async (req, res) => {

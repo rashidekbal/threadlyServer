@@ -258,7 +258,7 @@ async function handlePostViewed(data,socket){
   const db_query=`insert into postview (userid,uuid,postid) values(?,?,?)`;
  
   try {
-    fetchDb(db_query,[data.userid,data.uuid,data.postid]);
+   await fetchDb(db_query,[data.userid,data.uuid,data.postid]);
   } catch (error) {
     logger.error(formErrorBody(error,null));
     
@@ -272,7 +272,7 @@ async function handleStoryViewed(data,socket){
   
  
   try {
-    fetchDb(db_query,[data.userid,data.uuid,data.storyid]);
+  await  fetchDb(db_query,[data.userid,data.uuid,data.storyid]);
   } catch (error) {
     logger.error(formErrorBody(error,null));
     

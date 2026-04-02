@@ -19,8 +19,9 @@ const getuuid = (socketId) => {
     if (value == socketId) {
       return key;
     }
-    return null;
+    
   });
+  return null;
 };
 const getSocketId = (uuid) => {
   if (Users.has(uuid)) {

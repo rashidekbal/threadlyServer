@@ -9,6 +9,6 @@ const logger=pino({
 });
 export const formErrorBody=(error,req)=>{
     const apiPath=req?req.route.path:"no path"
-     return ({ err: error,Apipath:apiPath,code: error.statusCode || 500 }, error.message || "Internal Server Error");
+     return ({ err: error,Apipath:apiPath,code: error.statusCode || 500 });
 }
 export default logger
