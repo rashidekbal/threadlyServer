@@ -8,10 +8,11 @@ import "dotenv/config";
 import bcrypt from "bcrypt";
 import { register_phone_controller, registerUserEmailController } from "../Controllers/authController.js";
 import { API_ERROR } from "../constants/Error_types.js";
+import verifyOtpSignedToken from "../middlewares/verify-otp-validated-token.js";
 
 let route = express.Router();
-route.route("/mobile").post( verifyToken,register_phone_controller);
-route.post("/email", verifyToken, registerUserEmailController);
+route.route("/mobile").post( verifyOtpSignedToken,register_phone_controller);
+route.post("/email", verifyOtpSignedToken, registerUserEmailController);
 
 export default route;
 
