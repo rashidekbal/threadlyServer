@@ -9,6 +9,11 @@ import Response from "../constants/Response.js"; // Class for standardized API r
 import ApiError from "../constants/ApiError.js";
 import { API_ERROR, AUTH_ERROR } from "../constants/Error_types.js";
 import logger, { formErrorBody } from "../utils/Pino.js";
+import {sendOtp, verifyOtp} from "eazyotp"
+import { APP_NAME } from "../constants/nameConstants.js";
+import { getEazyOtpApiKey } from "../utils/env-value-handler.js";
+import { isValidEmail } from "../utils/Regex.js";
+import ErrorBody_apiError from "../constants/ApiError_body.js";
 
 /**
  * Function to send an OTP to a mobile number.
@@ -108,18 +113,10 @@ function verifyOtpMobile(req, res) {
  * - Stores the email address and OTP in the database.
  */
 async function generateOtpEmail(req, res) {
-  let OTP = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit OTP
-  let email = req.body.nameValuePairs.email; // Extract the email address from the request body
-
   try {
-    // Send the OTP via email
-    await sendEmailOtp(email, OTP);
-    // SQL query to insert the email and OTP into the database
-    let query = `insert into otpmodel (phone_email,otp) values (?,?)`;
-
-    // Execute the database query
-    let dbcall = await fetchDb(query, [email, OTP]);
-
+      let email = req.body.nameValuePairs.email; 
+      if(!email||!isValidEmail(email))return res.status(400).json(new ApiError(400,API_ERROR,new ErrorBody_apiError("please check if the email is valid")))
+    await sendOtp(email,APP_NAME,getEazyOtpApiKey()); //send otp via eazyotp sdk
     res.json(new Response(200, "success")); // Send success response
   } catch (error) {
     logger.error(formErrorBody(error,req)); // Log the error
@@ -134,39 +131,21 @@ async function generateOtpEmail(req, res) {
  * - Generates a JWT token and sends it after successful verification.
  */
 async function verifyOtpEmail(req, res) {
+   try {
   let otp = req.body.nameValuePairs.otp; // Extract OTP from the request body
   let email = req.body.nameValuePairs.email; // Extract email address from the request body
-
-  // Validate email format
-  let isvalidEmail = emailRegex.test(email);
-
   // Return 400 Bad Request if OTP or email is invalid
-  if (!otp || !isvalidEmail) return res.status(400).json(new ApiError(400, API_ERROR,{}));
+  if (!otp || !isValidEmail(email)) return res.status(400).json(new ApiError(400, API_ERROR,ErrorBody_apiError("please provide correct req body")));
+ const isOtpValid=await verifyOtp(email,otp,getEazyOtpApiKey());
 
-  // SQL query to validate OTP within a 5-minute timeframe
-  let query = `SELECT * FROM otpmodel WHERE phone_email= ? AND otp=? AND createdAt >=NOW() -INTERVAL 5 MINUTE AND flag='false' `;
-
-  try {
-    // Execute the database query
-    let response = await fetchDb(query, [email, otp]);
-
-    if (response.length > 0) {
+    if (!isOtpValid)return res.status(401).json(new ApiError(401, AUTH_ERROR,ErrorBody_apiError("invalid otp")));
       // Generate a JWT token for the user
       let token = jwt.sign({ email: email }, process.env.SECRET_KEY, {
         expiresIn: "5m", // Token expires in 5 minutes
       });
 
-      // Delete the verified OTP from the database
-      let deleteOtp = await fetchDb(
-        `delete from otpmodel WHERE phone_email=? AND otp=?`,
-        [email, otp]
-      );
-
-      res.json({ token: token }); // Send the token to the user
-    } else {
-      // Return 401 Unauthorized if OTP verification fails
-      res.status(401).json(new ApiError(401, AUTH_ERROR,{}));
-    }
+      return res.json({ token: token }); // Send the token to the user
+   
   } catch (error) {
     // Handle server errors
     logger.error(formErrorBody(error,req));

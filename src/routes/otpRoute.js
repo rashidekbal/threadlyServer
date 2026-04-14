@@ -45,15 +45,7 @@ router.post("/verifyOtpMobile", verifyOtpMobile);
 router.post("/generateOtpEmail", ifUserExistsEmail, generateOtpEmail);
 
 //resend opt email
-router.post("/resendOtpEmail", ifUserExistsEmail, async (req, res) => {
-  let email = req.body.nameValuePairs.email;
-  try {
-    await fetchDb(`delete from otpmodel where phone_email =?`, [
-      email,
-    ]);
-  } catch (error) {}
-  await generateOtpEmail(req, res);
-});
+router.post("/resendOtpEmail", ifUserExistsEmail, generateOtpEmail);
 
 // verify email otp
 router.post("/verifyOtpEmail", verifyOtpEmail);
