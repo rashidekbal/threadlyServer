@@ -5,3 +5,4 @@ export default function validateAdminCreds(cred) {
     process.env.ADMIN_PASSWORD == cred.password
   );
 }
+//migrated

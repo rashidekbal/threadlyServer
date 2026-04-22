@@ -14,3 +14,4 @@ router.route("/editProfilePic/:uuid").delete(adminAuthorizationVerification,chec
 router.route("/restrict/:uuid").patch(adminAuthorizationVerification,checkAdminAccess,restrictUserController);
 router.route("/unRestrict/:uuid").patch(adminAuthorizationVerification,checkAdminAccess,unRestrictUserController);
 export default router
+//migrated

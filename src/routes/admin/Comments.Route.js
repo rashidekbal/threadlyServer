@@ -7,3 +7,4 @@ import adminAuthorizationVerification from "../../middlewares/adminAuthorization
 const router =Router();
 router.route("/:postid").get(adminAuthorizationVerification,checkAdminAccess,getCommentsController)
 export default router;
+//migrated

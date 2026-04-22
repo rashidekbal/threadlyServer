@@ -17,3 +17,4 @@ const storageondisk = multer.diskStorage({
 
 const uploadtoDisk = multer({ storage: storageondisk });
 export { uploadToRam, uploadtoDisk };
+//migrated

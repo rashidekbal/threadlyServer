@@ -14,3 +14,4 @@ export default class ApiError {
         this.errorType=errorType;
     }
 }
+//migrated

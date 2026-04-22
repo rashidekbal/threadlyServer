@@ -15,3 +15,4 @@ function adminAuthorizationVerification(req, res, next) {
   });
 }
 export default adminAuthorizationVerification;
+//migrated

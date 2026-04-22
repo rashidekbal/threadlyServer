@@ -13,3 +13,4 @@ let connection = mysql.createConnection({
   database,
 });
 export default connection;
+//migrated

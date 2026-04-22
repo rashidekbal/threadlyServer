@@ -3,3 +3,4 @@ import { LoginController } from "../../Controllers/admin/Admin.Auth.controller.j
 const router = Router();
 router.route("/login").post(LoginController);
 export default router;
+//migrated

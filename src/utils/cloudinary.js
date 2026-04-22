@@ -53,3 +53,4 @@ async function uploadOnColudinaryviaLocalPath(localpath) {
 }
 
 export { uploadOnColudinaryFromRam, uploadOnColudinaryviaLocalPath };
+//migrated

@@ -10,3 +10,4 @@ export default class AccountRestriction_body{
     }
 
 }
+//migrated

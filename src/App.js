@@ -65,10 +65,10 @@ app.use("/api/messages", MessagesRouter);
 app.use("/api/privacy", PrivacyRouter);
 app.use("/api/search", SearchRouter);
 // all rotes below are for admin panel use 
-app.use("/api/admin/v1/auth", AdminAuthRouter);
+app.use("/api/admin/v1/auth", AdminAuthRouter);//migrated
 app.use("/api/admin/v1/users",AdminUsersRouter);
 app.use("/api/admin/v1/posts",AdminPostsRoute);
 app.use("/api/admin/v1/story",AdminStoryRoute);
-app.use("/api/admin/v1/comments",AdminCommentRoute);
+app.use("/api/admin/v1/comments",AdminCommentRoute);//migrated
 app.use("/api/admin/v1/stats",statsRoute);
 export default server

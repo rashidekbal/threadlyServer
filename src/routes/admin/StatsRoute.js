@@ -7,3 +7,4 @@ import adminAuthorizationVerification from "../../middlewares/adminAuthorization
 const router=Router();
 router.route("/").get(adminAuthorizationVerification,checkAdminAccess,statsController);
 export default router;
+//migrated
