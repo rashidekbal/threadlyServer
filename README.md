@@ -1,5 +1,6 @@
-#Depricated please refer to ts version for laltest features
-https://github.com/rashidekbal/threadly_server_ts
+#Depricated please refer to ts version for latest features
+new repo:
+<a href="https://github.com/rashidekbal/threadly_server_ts">threadly server typescript version</a>
 
 
 # ThreadlyServer (GpGram)
