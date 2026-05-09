@@ -48,16 +48,16 @@ app.get("/", (req, res) => {
   res.send("welcome");
 });
 //routes
-app.use("/api/otp", OptRoute);
+app.use("/api/otp", OptRoute);//migrated
 app.use("/api/auth/register", registerRoute);
-app.use("/api/auth/login", loginRoute);
+app.use("/api/auth/login", loginRoute);//migrated
 app.use("/api/ForgetPassword", ForgetPasswordRoute);
 app.use("/api/auth", AuthRouter);
 app.use("/api/posts", postRoute);
 app.use("/api/like", LikeRouter);
 app.use("/api/follow", followRoute);
 app.use("/api/comment", commentRoute);
-app.use("/api/users", usersRouter);
+app.use("/api/users", usersRouter);//migrated
 app.use("/api/profile", profileRouter);
 app.use("/api/story", storyRouter);
 app.use("/api/fcm", Fcmrouter);
@@ -66,9 +66,9 @@ app.use("/api/privacy", PrivacyRouter);
 app.use("/api/search", SearchRouter);
 // all rotes below are for admin panel use 
 app.use("/api/admin/v1/auth", AdminAuthRouter);//migrated
-app.use("/api/admin/v1/users",AdminUsersRouter);
-app.use("/api/admin/v1/posts",AdminPostsRoute);
-app.use("/api/admin/v1/story",AdminStoryRoute);
+app.use("/api/admin/v1/users",AdminUsersRouter);//migrated
+app.use("/api/admin/v1/posts",AdminPostsRoute);//migrated
+app.use("/api/admin/v1/story",AdminStoryRoute);//migrated
 app.use("/api/admin/v1/comments",AdminCommentRoute);//migrated
-app.use("/api/admin/v1/stats",statsRoute);
+app.use("/api/admin/v1/stats",statsRoute);//migrated
 export default server

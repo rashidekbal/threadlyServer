@@ -139,3 +139,5 @@ count(distinct cl.userid) as comment_likes_count,
 export { removeCommentController, addComentController, getComments ,replyToCommentController,getReplyOfCommentController};
 
 
+
+// migrated

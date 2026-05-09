@@ -31,3 +31,5 @@ router.route("/getStories/:userid").get(verifyToken,accessCheckLayer ,getStoryOf
 router.route("/storyViewed/:storyid").post(verifyToken,StoryViewRecordController);
 router.route("/:storyid/viewedby").get(verifyToken,storyViewed_by_User_controller);
 export default router;
+
+// migrated

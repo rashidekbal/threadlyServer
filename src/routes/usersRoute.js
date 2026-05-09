@@ -16,3 +16,4 @@ usersRouter
 usersRouter.route("/getMyData").get(verifyToken, getMyDataController);
 
 export default usersRouter;
+//migrated

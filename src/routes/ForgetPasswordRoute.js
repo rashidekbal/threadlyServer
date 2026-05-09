@@ -11,3 +11,5 @@ let router = Router();
 router.post("/Mobile", verifyOtpSignedToken, resetPasswordMobileContorler);
 router.post("/Email", verifyOtpSignedToken, resetPasswordEmailContorler);
 export default router;
+
+// migrated

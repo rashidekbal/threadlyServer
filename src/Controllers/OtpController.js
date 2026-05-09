@@ -155,3 +155,4 @@ async function verifyOtpEmail(req, res) {
 
 // Export the functions for use in other parts of the application
 export { sendOtpMobile, verifyOtpMobile, generateOtpEmail, verifyOtpEmail };
+//migrated

@@ -24,3 +24,5 @@ router.route("/getFollowings/:userid").get(verifyToken, accessCheckLayer,getFoll
 router.route("/getAllFollowRequests").get(verifyToken,getAllFollowRequestsController);
 router.route("/rejectFollowRequest/:followerId").delete(verifyToken,rejectFollowRequest);
 export default router;
+
+// migrated

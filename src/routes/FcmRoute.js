@@ -5,3 +5,5 @@ const router = Router();
 
 router.route("/updateToken").patch(verifyToken, updateToken);
 export default router;
+
+// migrated

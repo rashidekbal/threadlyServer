@@ -122,7 +122,7 @@ const StoryViewRecordController=async(req,res)=>{
    let userid = req.ObtainedData;
   let storyid = req.params.storyid;
   let uuid = req.body.nameValuePairs.uuid;
-  if(!postid||!uuid)return res.status(404).json(new ApiError(404, API_ERROR,{}));
+  if(!storyid||!uuid)return res.status(404).json(new ApiError(404, API_ERROR,{}));
   const db_query=`insert into storyview (userid,uuid,storyid) values(?,?,?)`;
   try {
     await fetchDb(db_query,[userid,uuid,storyid])
@@ -143,3 +143,5 @@ export {
   StoryViewRecordController
 };
 
+
+// migrated

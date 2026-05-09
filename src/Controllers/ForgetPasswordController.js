@@ -69,3 +69,5 @@ async function resetPasswordEmailContorler(req, res) {
 // Export the controllers to be used in other parts of the application
 export { resetPasswordMobileContorler, resetPasswordEmailContorler };
 
+
+// migrated

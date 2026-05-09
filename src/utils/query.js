@@ -16,4 +16,4 @@ async function fetchDb(query, value) {
   });
 }
 export default fetchDb;
-//migrated
+//migrated .

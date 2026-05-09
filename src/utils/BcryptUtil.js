@@ -12,3 +12,4 @@ const bcryptUtil={
     hashPassword,verifyPassword
 }
 export default bcryptUtil;
+//migrated

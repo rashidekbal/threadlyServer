@@ -5,3 +5,4 @@ const router=Router();
 router.route("/get").get(verifyToken,searchController)
 
 export default router;
+// migrated

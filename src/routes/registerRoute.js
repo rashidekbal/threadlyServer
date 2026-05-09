@@ -15,5 +15,6 @@ route.route("/mobile").post( verifyOtpSignedToken,register_phone_controller);
 route.post("/email", verifyOtpSignedToken, registerUserEmailController);
 
 export default route;
+//migrated
 
 

@@ -5,3 +5,5 @@ const router=Router();
 router.route("/setPrivate").get(verifyToken,setPrivateController);
 router.route("/setPublic").get(verifyToken,setPublicController);
 export default router;
+
+//migrated
