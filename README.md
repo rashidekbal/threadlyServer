@@ -1,3 +1,6 @@
+#Depricated please refer to ts version for laltest features
+
+
 # ThreadlyServer (GpGram)
 
 **ThreadlyServer** is the backend for **threadly**, a full-featured social media platform inspired by Instagram. Built with Node.js and Express, it serves a mobile client with REST APIs for auth, content, social interactions, real-time chat, stories, push notifications, and an admin panel.
