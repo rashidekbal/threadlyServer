@@ -1,4 +1,5 @@
 #Depricated please refer to ts version for laltest features
+https://github.com/rashidekbal/threadly_server_ts
 
 
 # ThreadlyServer (GpGram)
